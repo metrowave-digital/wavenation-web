@@ -1,65 +1,83 @@
-import Image from "next/image";
+import NowPlaying from "@/components/NowPlaying";
+import NewsletterSignup from "@/components/NewsletterSignup";
+import RecentlyPlayed from "@/components/RecentlyPlayed";
+import StickyPlayer from "@/components/StickyPlayer";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-darkbg text-white flex flex-col items-center px-4 md:px-6 pb-24 pt-6 relative overflow-hidden">
+      {/* Animated Waveform Background */}
+      <div className="pointer-events-none absolute inset-x-0 -top-32 -z-10 h-80">
+        <div className="absolute inset-x-[-20%] top-10 h-64 bg-gradient-to-r from-electric via-magenta to-neon opacity-40 blur-3xl animate-wave" />
+      </div>
+
+      {/* NAVBAR */}
+      <header className="w-full max-w-5xl flex items-center justify-between mb-10">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-electric to-magenta shadow-neon flex items-center justify-center text-xs font-bold">
+            WN
+          </div>
+          <div>
+            <p className="text-lg font-semibold leading-tight">
+              WaveNation FM
+            </p>
+            <p className="text-xs text-white/60 leading-tight">
+              Music • Culture • Community
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+
+        <nav className="hidden md:flex gap-6 text-sm text-white/70">
+          <a href="#listen" className="hover:text-electric">
+            Listen Live
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+          <a href="#recent" className="hover:text-electric">
+            Recently Played
           </a>
-        </div>
-      </main>
-    </div>
+          <a href="#newsletter" className="hover:text-electric">
+            Newsletter
+          </a>
+        </nav>
+      </header>
+
+      {/* HERO */}
+      <section
+        id="listen"
+        className="w-full max-w-3xl text-center flex flex-col items-center mt-4"
+      >
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-electric via-magenta to-neon bg-clip-text text-transparent drop-shadow-neon animate-float">
+          The Sound of WaveNation
+        </h1>
+
+        <p className="mt-4 max-w-xl mx-auto text-sm md:text-base text-white/80">
+          24/7 Southern Soul, R&amp;B, Hip-Hop, Gospel, and more — broadcasting
+          from the culture, for the culture.
+        </p>
+
+        {/* Now Playing Card */}
+        <NowPlaying />
+      </section>
+
+      {/* Recently Played */}
+      <section id="recent" className="w-full max-w-3xl">
+        <RecentlyPlayed />
+      </section>
+
+      {/* Newsletter */}
+      <section
+        id="newsletter"
+        className="w-full max-w-3xl flex flex-col items-center"
+      >
+        <NewsletterSignup />
+      </section>
+
+      {/* Footer */}
+      <footer className="mt-16 text-center opacity-60 text-xs">
+        © {new Date().getFullYear()} WaveNation Media Group · wavenation.media
+      </footer>
+
+      {/* Sticky Global Player */}
+      <StickyPlayer />
+    </main>
   );
 }

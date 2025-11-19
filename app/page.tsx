@@ -1,13 +1,11 @@
 "use client";
 
-import WNHeader from "@/components/ui/WNHeader";
 import WNMobileNav from "@/components/ui/WNMobileNav";
 import StickyPlayer from "@/components/StickyPlayer";
 
 import Hero from "@/components/home/Hero";
 import About from "@/components/home/About";
 import Values from "@/components/home/Values";
-import RecentlyPlayedSection from "@/components/home/RecentlyPlayedSection";
 import SubscribeSection from "@/components/home/SubscribeSection";
 
 export default function Home() {

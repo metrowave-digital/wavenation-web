@@ -1,14 +1,14 @@
 "use client";
 
-export default function ValueCard({
-  icon,
-  title,
-  text,
-}: {
-  icon: any;
+import { ReactNode } from "react";
+
+interface ValueCardProps {
+  icon: ReactNode;
   title: string;
   text: string;
-}) {
+}
+
+export default function ValueCard({ icon, title, text }: ValueCardProps) {
   return (
     <div className="bg-black/80 border border-red-900/70 rounded-2xl p-5 shadow-[0_15px_40px_rgba(0,0,0,0.65)] flex flex-col h-full">
 

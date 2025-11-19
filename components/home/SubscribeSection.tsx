@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import Popup from "@/components/ui/PopUp";
+import { FormEvent } from "react";
 
 export default function SubscribeSection() {
   const [popupVisible, setPopupVisible] = useState(false);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // TODO: send to your API here later
-
-    setPopupVisible(true); // show popup
+    // TODO: send to API later
+    setPopupVisible(true);
   };
 
   return (

@@ -25,12 +25,12 @@ export default function About() {
           </p>
 
           <p>
-            Whether you're tuning in from the heart of the city or across the globe,
+            Whether you&apos;re tuning in from the heart of the city or across the globe,
             we bring real conversation and uplifting energy 24/7.
           </p>
 
           <p className="font-semibold text-white">
-            We’re not just a radio station—{" "}
+            We&apos;re not just a radio station—{" "}
             <span className="text-wn-gold">WaveNation is a movement.</span>
           </p>
 

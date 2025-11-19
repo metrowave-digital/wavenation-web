@@ -21,12 +21,9 @@ import {
 export default function FullHeader() {
   const [active, setActive] = useState<NavItem | null>(null);
   const [isDark, setIsDark] = useState(true); // fake theme toggle for logo
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
 
   /* ---------------------------------------------------
-     Hydration-safe backdrop fade overlay
+     Backdrop fade overlay (no setState here)
   ----------------------------------------------------*/
   useEffect(() => {
     let overlay = document.getElementById("page-fade-overlay");
@@ -48,43 +45,28 @@ export default function FullHeader() {
     }
   }, [active]);
 
-  if (!mounted) return null;
-
   return (
     <header className="w-full bg-wn-black/70 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center px-4 md:px-6 py-3">
 
-        {/* ░░ LEFT: LOGO + WAVENATION TEXT ░░ */}
+        {/* LEFT: LOGO + TEXT */}
         <div className="flex-1 flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2 select-none">
+            <Image
+              src="/WNLogo.svg"
+              alt="WaveNation Logo"
+              width={42}
+              height={42}
+              priority
+            />
 
-            {/* Logo (white or black) */}
-            {isDark ? (
-              <Image
-                src="/WNLogo.svg"
-                alt="WaveNation Logo"
-                width={42}
-                height={42}
-                priority
-              />
-            ) : (
-              <Image
-                src="/WNLogo.svg"
-                alt="WaveNation Logo"
-                width={42}
-                height={42}
-                priority
-              />
-            )}
-
-            {/* WAVENATION TEXT */}
             <span className="text-white font-bold tracking-wide text-lg md:text-xl">
               WAVENATION
             </span>
           </Link>
         </div>
 
-        {/* ░░ CENTER NAV — DESKTOP ONLY ░░ */}
+        {/* CENTER NAV — DESKTOP */}
         <nav className="hidden md:flex flex-1 justify-center gap-8 text-sm font-medium">
           {NAV_ITEMS.map((item) => (
             <div
@@ -112,9 +94,8 @@ export default function FullHeader() {
           ))}
         </nav>
 
-        {/* ░░ RIGHT ICONS — DESKTOP ░░ */}
+        {/* RIGHT ICONS — DESKTOP */}
         <div className="hidden md:flex flex-1 justify-end items-center gap-4 text-white/90">
-
           <button className="hover:text-electric transition" aria-label="Profile">
             <User size={20} />
           </button>
@@ -127,7 +108,7 @@ export default function FullHeader() {
             <Cloud size={20} />
           </button>
 
-          {/* Theme (placeholder action) */}
+          {/* Theme toggle */}
           <button
             onClick={() => setIsDark(!isDark)}
             className="hover:text-electric transition"
@@ -136,15 +117,13 @@ export default function FullHeader() {
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          {/* SEARCH ICON — LAST IN THE LIST */}
           <button className="hover:text-electric transition" aria-label="Search">
             <Search size={20} />
           </button>
         </div>
 
-        {/* ░░ MOBILE ICON BAR — ALL ICONS + MENU ░░ */}
+        {/* MOBILE ICONS */}
         <div className="flex md:hidden items-center gap-4 text-white/90">
-
           <button className="hover:text-electric transition">
             <User size={20} />
           </button>
@@ -164,12 +143,10 @@ export default function FullHeader() {
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          {/* Search icon (mobile) */}
           <button className="hover:text-electric transition">
             <Search size={20} />
           </button>
 
-          {/* Hamburger menu */}
           <button className="hover:text-electric transition">
             <Menu size={26} />
           </button>

@@ -33,9 +33,6 @@ export default function NowPlaying() {
 
       <p className="text-lg text-white/80">{data.artist}</p>
 
-      <p className="mt-3 text-sm text-white/50">
-        {data.listeners} listening
-      </p>
     </div>
   );
 }

@@ -3,63 +3,141 @@
 @tailwind utilities;
 
 /* -------------------------------------------------------
-   🌊 WaveNation Theme (Dark + Light)
+   🌊 WaveNation Global Theme
+   - Dark by default
+   - Light mode toggled via html.light
 -------------------------------------------------------- */
 
-/* Dark Mode (default before hydration) */
+/* COLOR MODE: DARK (DEFAULT) */
 html.dark body {
   @apply bg-wn-black text-white;
 }
 
-/* Light Mode */
+/* COLOR MODE: LIGHT */
 html.light body {
   @apply bg-wn-bg-light text-wn-text-light;
 }
 
-/* Before hydration (default dark) */
+/* Base body (before hydration → default dark) */
 body {
   @apply bg-wn-black text-white transition-colors duration-300;
   font-family: var(--font-fira-sans), sans-serif;
 }
 
-/* UX Improvements */
+/* -------------------------------------------------------
+   UX IMPROVEMENTS
+-------------------------------------------------------- */
+
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-img {
+img,
+svg {
   user-select: none;
+  pointer-events: none;
 }
 
-/* Scrollbar Styling */
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Disable overscroll glow on mobile */
+body {
+  overscroll-behavior: none;
+}
+
+/* -------------------------------------------------------
+   SCROLLBAR STYLING
+-------------------------------------------------------- */
+
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 6px;
 }
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 html.light ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.25);
 }
 
-/* WaveNation Animations */
-@keyframes wave {
-  0% { transform: translateX(-25%) skewX(-8deg); }
-  50% { transform: translateX(0%) skewX(-4deg); }
-  100% { transform: translateX(25%) skewX(-8deg); }
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+/* -------------------------------------------------------
+   CUSTOM WAVENATION ANIMATIONS
+-------------------------------------------------------- */
+
+/* Wave (background motion) */
+@keyframes wave {
+  0%   { transform: translateX(-25%) skewX(-8deg); }
+  50%  { transform: translateX(0%)  skewX(-4deg); }
+  100% { transform: translateX(25%) skewX(-8deg); }
 }
 
 .animate-wave {
   animation: wave 18s ease-in-out infinite alternate;
 }
 
+/* Float (hover-like idle movement) */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
 .animate-float {
   animation: float 8s ease-in-out infinite;
 }
 
+/* -------------------------------------------------------
+   UTILITY ENHANCEMENTS
+-------------------------------------------------------- */
+
+/* Smooth focus */
+:focus-visible {
+  outline: 2px solid var(--wn-gold, #E4B500);
+  outline-offset: 4px;
+}
+
+/* Hide tap highlight */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent text selection on icons/buttons */
+button svg {
+  user-select: none;
+}
+
+/* Selection highlight */
+::selection {
+  background: #E4B500;
+  color: #000;
+}
+html.light ::selection {
+  background: #00B3FF;
+  color: #fff;
+}
+
+/* -------------------------------------------------------
+   MODAL / OVERLAY SUPPORT (used by your PopUp)
+-------------------------------------------------------- */
+
+#wn-overlay {
+  @apply fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 pointer-events-none opacity-0;
+}
+
+#wn-overlay.visible {
+  @apply opacity-100 pointer-events-auto;
+}

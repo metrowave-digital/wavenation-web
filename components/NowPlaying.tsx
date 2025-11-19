@@ -2,48 +2,40 @@
 
 import { useEffect, useState } from "react";
 
-interface NowPlayingResponse {
-  nowPlaying: {
-    artist: string;
-    title: string;
-    startedAt?: string;
-  };
-}
-
 export default function NowPlaying() {
-  const [artist, setArtist] = useState("");
-  const [title, setTitle] = useState("");
+  const [data, setData] = useState({
+    artist: "",
+    title: "",
+    listeners: 0,
+  });
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const res = await fetch("/api/now-playing", { cache: "no-store" });
-        const json: NowPlayingResponse = await res.json();
-        setArtist(json.nowPlaying?.artist || "");
-        setTitle(json.nowPlaying?.title || "");
-      } catch (error) {
-        console.error("Failed to load now playing", error);
-      }
+      const res = await fetch("/api/now-playing", { cache: "no-store" });
+      const json = await res.json();
+      setData(json.nowPlaying);
     };
 
     load();
-    const interval = setInterval(load, 10000);
+    const interval = setInterval(load, 8000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="mt-10 p-6 bg-darkcard/70 border border-magenta/40 rounded-2xl shadow-magenta max-w-md w-full text-center backdrop-blur-xl">
+    <div className="mt-10 p-6 bg-darkcard/70 border border-magenta/40 rounded-2xl shadow-magenta text-center">
       <p className="text-xs uppercase tracking-[0.25em] text-magenta/70">
         Now Playing
       </p>
-      <p className="mt-3 text-2xl font-bold text-electric">
-        {title || "Waiting for track…"}
+
+      <p className="mt-4 text-2xl font-bold text-electric">
+        {data.title || "Loading…"}
       </p>
-      {artist ? (
-        <p className="mt-1 text-lg text-white/80">{artist}</p>
-      ) : (
-        <p className="mt-1 text-sm text-white/50">Metadata will appear here.</p>
-      )}
+
+      <p className="text-lg text-white/80">{data.artist}</p>
+
+      <p className="mt-3 text-sm text-white/50">
+        {data.listeners} listening
+      </p>
     </div>
   );
 }

@@ -1,89 +1,52 @@
-let nowPlaying: {
-  artist: string;
-  title: string;
-  startedAt?: string;
-} = {
-  artist: "",
-  title: "",
-  startedAt: undefined,
-};
-
+let lastSong = "";
 let history: { artist: string; title: string; playedAt: string }[] = [];
 
-function sanitize(value: unknown): string {
-  if (typeof value !== "string") return "";
-  return value.trim().slice(0, 200);
-}
-
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    const contentType = req.headers.get("content-type") || "";
+    const url = "http://s1.free-shoutcast.com:18116/stats?sid=1&json=1";
+    const res = await fetch(url, { cache: "no-store" });
+    const data = await res.json();
 
+    const raw = data.songtitle || "";
     let artist = "";
-    let title = "";
-    let secret = "";
+    let title = raw;
 
-    if (contentType.includes("application/x-www-form-urlencoded")) {
-      const bodyText = await req.text();
-      const params = new URLSearchParams(bodyText);
-      artist = sanitize(params.get("artist"));
-      title = sanitize(params.get("title"));
-      secret = sanitize(params.get("secret"));
-    } else if (contentType.includes("application/json")) {
-      const json = await req.json();
-      artist = sanitize((json as any).artist);
-      title = sanitize((json as any).title);
-      secret = sanitize((json as any).secret);
-    } else {
-      const bodyText = await req.text();
-      const params = new URLSearchParams(bodyText);
-      artist = sanitize(params.get("artist"));
-      title = sanitize(params.get("title"));
-      secret = sanitize(params.get("secret"));
+    if (raw.includes(" - ")) {
+      const parts = raw.split(" - ");
+      artist = parts[0];
+      title = parts.slice(1).join(" - ");
     }
 
-    if (secret !== process.env.METADATA_SECRET) {
-      return new Response("Forbidden", { status: 403 });
-    }
+    // If song changed → update history
+    if (raw && raw !== lastSong) {
+      const playedAt = new Date().toISOString();
 
-    // Only update if track actually changed
-    const trackChanged =
-      artist &&
-      title &&
-      (artist !== nowPlaying.artist || title !== nowPlaying.title);
-
-    if (trackChanged) {
-      const now = new Date().toISOString();
-
-      // Push previous into history
-      if (nowPlaying.artist || nowPlaying.title) {
+      if (lastSong) {
         history.unshift({
-          artist: nowPlaying.artist,
-          title: nowPlaying.title,
-          playedAt: nowPlaying.startedAt || now,
+          artist,
+          title,
+          playedAt,
         });
-        history = history.slice(0, 5); // keep last 5
+
+        history = history.slice(0, 5); // keep max 5
       }
 
-      nowPlaying = {
-        artist,
-        title,
-        startedAt: now,
-      };
-
-      console.log("Now playing updated:", nowPlaying);
+      lastSong = raw;
     }
 
-    return new Response("OK");
+    return Response.json({
+      nowPlaying: {
+        artist,
+        title,
+        listeners: data.currentlisteners || 0,
+      },
+      history,
+    });
   } catch (error) {
-    console.error("Metadata POST error", error);
-    return new Response("Error", { status: 500 });
+    console.error("Error fetching metadata:", error);
+    return Response.json({
+      nowPlaying: { artist: "", title: "", listeners: 0 },
+      history,
+    });
   }
-}
-
-export async function GET() {
-  return Response.json({
-    nowPlaying,
-    history,
-  });
 }

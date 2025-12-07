@@ -1,0 +1,143 @@
+/* WRAPPER */
+.panel {
+  width: 100%;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #000;
+  position: relative;
+}
+
+/* HERO IMAGE — REDUCED HEIGHT */
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 300px; /* <<< REDUCED */
+}
+
+@media (min-width: 640px) {
+  .imageWrapper {
+    height: 360px; /* tablet */
+  }
+}
+
+@media (min-width: 1024px) {
+  .imageWrapper {
+    height: 400px; /* desktop */
+  }
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* CINEMATIC LIGHT LAYERS (unchanged) */
+.vignetteMain {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, transparent 40%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+}
+
+.vignetteLeft {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.55), transparent 35%);
+  pointer-events: none;
+}
+
+.vignetteBottom {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.9));
+  pointer-events: none;
+}
+
+/* GRAIN */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+}
+
+/* GLASS CARD — REDUCED HEIGHT + TIGHTER SPACING */
+.glass {
+  position: relative;
+  width: 92%;
+  max-width: 800px;
+
+  margin: -60px auto 20px; /* <<< less overlap & overall height */
+  padding: 28px 32px 28px; /* <<< reduced padding */
+
+  background: rgba(12,12,12,0.65);
+  border-radius: 28px;
+
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.15);
+
+  box-shadow: 
+    0 16px 40px rgba(0,0,0,0.4),
+    0 0 22px rgba(255,255,255,0.05) inset;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* <<< smaller gap */
+}
+
+/* TYPOGRAPHY (slightly reduced sizes) */
+.title {
+  color: #fff;
+  font-size: 2rem; /* was 2.4rem */
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.4px;
+  text-shadow: 0 5px 14px rgba(0,0,0,0.6);
+}
+
+.excerpt {
+  color: rgba(255,255,255,0.9);
+  font-size: 0.95rem; /* slightly smaller */
+  line-height: 1.6;
+}
+
+.divider {
+  width: 55px;
+  height: 2px;
+  background: rgba(255,255,255,0.22);
+  border-radius: 2px;
+  margin: 4px 0 4px;
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.author {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+}
+
+.button {
+  padding: 10px 22px;
+  background: #fff;
+  color: #000;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 0 18px rgba(255,255,255,0.32);
+  transition: 0.2s ease;
+}
+
+.button:hover {
+  background: #e6e6e6;
+  box-shadow: 0 0 24px rgba(255,255,255,0.4);
+}

@@ -1,0 +1,35 @@
+.container {
+  width: 100%;
+  margin: 60px auto;
+  max-width: 1400px;
+  padding: 0 20px;
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-left: 6px solid #e92c63;
+  padding-left: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

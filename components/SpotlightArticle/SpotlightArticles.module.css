@@ -1,0 +1,59 @@
+.section {
+  position: relative;
+  width: 100vw;               /* FULL WIDTH */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
+  padding: 4rem 0;
+  background: rgba(18, 18, 18, 0.7);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 25% 10%,
+    rgba(255, 0, 80, 0.12),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.heading {
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin-bottom: 1.8rem;
+}
+
+/* FEATURED ROW (3 horizontal cards) */
+.featuredRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 900px) {
+  .featuredRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* GRID FOR REMAINING CARDS */
+.grid {
+  display: grid;
+  gap: 1.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}

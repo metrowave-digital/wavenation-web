@@ -1,0 +1,142 @@
+/* ============================================================
+   HERO SLIDER — OUTER WRAPPER FOR HEADER + SLIDER
+   ============================================================ */
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+}
+
+/* ============================================================
+   HEADER STYLES
+   ============================================================ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--wn-electric, #00b3ff);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  max-width: 70%;
+}
+
+/* ============================================================
+   SLIDER WRAPPER (16:9 RESPONSIVE HERO)
+   ============================================================ */
+
+.sliderWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(4px);
+}
+
+/* ============================================================
+   SLIDE STACKING — FADE BETWEEN SLIDES
+   ============================================================ */
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.slide > * {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
+   ERROR STATE
+   ============================================================ */
+
+.error {
+  padding: 2rem;
+  text-align: center;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+   ============================================================ */
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
+  .title {
+    font-size: 1.3rem;
+  }
+  .subtitle {
+    font-size: 0.9rem;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  .wrapper {
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    max-width: 100%;
+  }
+
+  .sliderWrapper {
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+  }
+}
+
+/* ---------- Small Mobile ---------- */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .sliderWrapper {
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+  }
+}

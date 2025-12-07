@@ -1,11 +1,9 @@
 export async function getNewsTicker() {
   try {
+    const base = process.env.NEXT_PUBLIC_CMS_URL?.replace(/\/+$/, "");
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_CMS_URL}/api/articles?limit=4&sort=-publishedAt`,
-      {
-        // Revalidate every 60 seconds (or adjust)
-        next: { revalidate: 60 },
-      }
+      `${base}/api/articles?limit=4&sort=-publishedAt`,
+      { next: { revalidate: 60 } }
     );
 
     if (!res.ok) {

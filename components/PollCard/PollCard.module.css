@@ -1,0 +1,185 @@
+/* ============================== */
+/* CARD LAYOUT */
+/* ============================== */
+
+.card {
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #222;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Heading row (title + countdown) */
+.headingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heading {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.countdown {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  color: #ccc;
+}
+
+/* ============================== */
+/* QUESTION & META */
+/* ============================== */
+
+.question {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: -4px;
+}
+
+.totalVotes {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* ============================== */
+/* OPTIONS LIST */
+/* ============================== */
+
+.optionsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option {
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.option:hover {
+  background: #222;
+}
+
+/* Selected option outline */
+.selected {
+  outline: 1.5px solid rgba(0, 179, 255, 0.45);
+  box-shadow: 0 0 10px rgba(0, 179, 255, 0.12);
+}
+
+/* Winner highlight */
+.winner {
+  border: 1px solid rgba(0, 179, 255, 0.35);
+  box-shadow: 0 0 12px rgba(0, 179, 255, 0.18);
+}
+
+/* Option header (label + percent) */
+.optionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.percentage {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  display: inline-block;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ============================== */
+/* BAR GRAPH */
+/* ============================== */
+
+.barWrapper {
+  margin-top: 6px;
+  background: #333;
+  height: 6px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Animated bar fill */
+.bar {
+  height: 6px;
+  background: linear-gradient(90deg, #0a7abb, #1fd965);
+  background-size: 125% 100%;
+  opacity: 0.85;
+  transition: width 0.4s ease-out;
+}
+
+/* ============================== */
+/* BUTTONS */
+/* ============================== */
+
+.submit {
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #00b3ff;
+  color: #000;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s ease;
+}
+
+.submit:hover:not(:disabled) {
+  background: #00c3ff;
+}
+
+.submit:disabled {
+  background: #555;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Thank-you / ended state */
+.thanks {
+  text-align: center;
+  padding: 12px;
+  background: #333;
+  color: #888;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ============================== */
+/* RESPONSIVE */
+/* ============================== */
+
+@media (max-width: 600px) {
+  .card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .heading {
+    font-size: 1.1rem;
+  }
+
+  .question {
+    font-size: 1rem;
+  }
+
+  .percentage {
+    min-width: 32px;
+  }
+}

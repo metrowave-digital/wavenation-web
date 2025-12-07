@@ -1,0 +1,70 @@
+.card {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 260px;
+  display: flex;
+  align-items: flex-end;
+  background: #000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 18px rgba(0, 179, 255, 0.4);
+}
+
+.image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.75);
+  transition: filter 0.3s ease;
+}
+
+.card:hover .image {
+  filter: brightness(0.55);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  color: white;
+}
+
+.title {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.description {
+  font-size: 0.9rem;
+  margin-top: 6px;
+  opacity: 0.8;
+}
+
+.button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #00b3ff;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+.button:hover {
+  background: #39ff14;
+}

@@ -2,30 +2,23 @@
 
 import { useEffect } from "react";
 
-interface AdBannerProps {
-  slot: string;
-  className?: string;
-}
-
-export function AdBanner({ slot, className }: AdBannerProps) {
+export default function AdBanner() {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      console.log("AdSense error:", e);
+    } catch (err) {
+      console.error("AdSense error:", err);
     }
   }, []);
 
   return (
-    <div className={className}>
-      <ins
-        className="adsbygoogle block text-center"
-        style={{ display: "block" }}
-        data-ad-client="ca-pub-3124981228718299"
-        data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      ></ins>
-    </div>
+    <ins
+      className="adsbygoogle"
+      style={{ display: "block" }}
+      data-ad-client="ca-pub-3124981228718299"
+      data-ad-slot="1234567890"
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
   );
 }

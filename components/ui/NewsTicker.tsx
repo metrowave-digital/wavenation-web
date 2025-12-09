@@ -4,39 +4,51 @@ import { Facebook, Instagram, Youtube, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+/* ---------------------------------------------
+   TYPES
+--------------------------------------------- */
 interface Article {
   id: string | number;
   title: string;
   slug?: string;
 }
 
-interface CrawlSeparator {
-  separator: true;
+interface SeparatorItem {
+  type: "separator";
 }
 
-type CrawlItem = Article | CrawlSeparator;
+interface ArticleItem {
+  type: "article";
+  data: Article;
+}
+
+type CrawlItem = ArticleItem | SeparatorItem;
 
 interface NewsTickerProps {
   articles: Article[];
 }
 
+/* ---------------------------------------------
+   NEWS TICKER
+--------------------------------------------- */
 export default function NewsTicker({ articles }: NewsTickerProps) {
-  // ---- Hover speed state ----
   const [hovered, setHovered] = useState(false);
 
-  // ---- Build crawl list (safe, typed, no "any") ----
+  /* ---------------------------------------------
+     BUILD CRAWL LIST
+     (typed, repeat 3x for infinite perfectly)
+  --------------------------------------------- */
   const crawlItems: CrawlItem[] = useMemo(() => {
     if (!articles || articles.length === 0) return [];
 
-    const withBullets: CrawlItem[] = articles.flatMap((a) => [
-      a,
-      { separator: true } as CrawlSeparator,
+    const base: CrawlItem[] = articles.flatMap((a) => [
+      { type: "article", data: a } as ArticleItem,
+      { type: "separator" } as SeparatorItem,
     ]);
 
-    return [...withBullets, ...withBullets, ...withBullets];
+    return [...base, ...base, ...base];
   }, [articles]);
 
-  // ---- Render guard (after hooks, no violation) ----
   if (!articles || articles.length === 0) return null;
 
   return (
@@ -48,7 +60,7 @@ export default function NewsTicker({ articles }: NewsTickerProps) {
           Trending
         </div>
 
-        {/* TICKER */}
+        {/* TICKER WRAPPER */}
         <div className="flex-1 overflow-hidden whitespace-nowrap relative h-6">
           <div
             className={`
@@ -59,27 +71,30 @@ export default function NewsTicker({ articles }: NewsTickerProps) {
             onMouseLeave={() => setHovered(false)}
           >
             {crawlItems.map((item, i) =>
-              "separator" in item ? (
-                <span key={`sep-${i}`} className="text-electric text-sm select-none px-2">
+              item.type === "separator" ? (
+                <span
+                  key={`sep-${i}`}
+                  className="text-electric text-sm px-2 select-none"
+                >
                   •
                 </span>
               ) : (
                 <Link
-                  key={`item-${i}`}
-                  href={item.slug ? `/news/${item.slug}` : `/news/${item.id}`}
+                  key={`article-${i}`}
+                  href={item.data.slug ? `/news/${item.data.slug}` : `/news/${item.data.id}`}
                   className="
                     text-[11px] sm:text-sm text-white font-medium 
                     hover:text-electric transition-colors whitespace-nowrap
                   "
                 >
-                  {item.title}
+                  {item.data.title}
                 </Link>
               )
             )}
           </div>
         </div>
 
-        {/* DESKTOP RIGHT PILL */}
+        {/* RIGHT NAV (DESKTOP) */}
         <div className="hidden sm:flex items-center bg-white/10 backdrop-blur-sm px-4 py-1 rounded-full gap-4">
           <nav className="hidden md:flex items-center gap-4 text-xs font-medium text-white/90">
             <Link href="/news" className="hover:text-electric">News</Link>
@@ -99,11 +114,14 @@ export default function NewsTicker({ articles }: NewsTickerProps) {
         </div>
 
         {/* MOBILE SOCIALS */}
-        <div className="flex sm:hidden items-center gap-2 ml-1">
-          <Link href="#"><Facebook size={14} className="text-white/90 hover:text-electric transition" /></Link>
-          <Link href="#"><Instagram size={14} className="text-white/90 hover:text-electric transition" /></Link>
+        <div className="flex sm:hidden items-center gap-2">
+          <Link href="#">
+            <Facebook size={14} className="text-white/90 hover:text-electric transition" />
+          </Link>
+          <Link href="#">
+            <Instagram size={14} className="text-white/90 hover:text-electric transition" />
+          </Link>
         </div>
-
       </div>
     </div>
   );

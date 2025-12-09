@@ -4,21 +4,27 @@ import HeroSliderClient from "./HeroSliderClient";
 import { SlideContent } from "./SlideItem";
 import styles from "./HeroSlider.module.css";
 
-const API_BASE_URL = "https://wavenation-cms-1dfs.onrender.com";
+const rawCMS =
+  process.env.NEXT_PUBLIC_CMS_URL ||
+  "https://wavenation-cms-1dfs.onrender.com";
 
-// ===============================
-// TYPES
-// ===============================
+const API_BASE_URL = rawCMS.replace(/\/+$/, "");
+
+/* ===============================
+   TYPES
+=============================== */
+
 interface HeroImage {
-  url: string;
+  url?: string;
 }
 
 interface Category {
-  name: string;
+  name?: string;
+  title?: string;
 }
 
 interface SEOOgImage {
-  url: string;
+  url?: string;
 }
 
 interface SEO {
@@ -27,32 +33,33 @@ interface SEO {
 }
 
 interface Article {
-  id: number;
+  id: number | string;
   title: string;
   slug: string;
   status: string;
-  publishedDate?: string;
+  publishedAt?: string;
   heroImage?: HeroImage | null;
   seo?: SEO | null;
   category?: Category | null;
 }
 
 interface ArticlesResponse {
-  docs: Article[];
+  docs?: Article[];
 }
 
-// ===============================
-// FETCH (SSR)
-// ===============================
+/* ===============================
+   FETCH (SSR)
+=============================== */
 
 async function getSlides(): Promise<SlideContent[]> {
   try {
-    const url = `${API_BASE_URL}/api/articles?limit=5&sort=-publishedDate&where[status][equals]=published`;
+    const url = `${API_BASE_URL}/api/articles?limit=5&sort=-publishedAt&where[status][equals]=published&depth=2`;
 
     const res = await fetch(url, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
+      next: { revalidate: 0 },
     });
 
     if (!res.ok) return [];
@@ -70,13 +77,14 @@ async function getSlides(): Promise<SlideContent[]> {
         ? rawImage
         : `${API_BASE_URL}${rawImage}`;
 
-      const categoryName = article.category?.name ?? "WaveNation News";
+      const categoryName =
+        article.category?.name ||
+        article.category?.title ||
+        "WaveNation News";
 
-      const excerptSrc = article.seo?.description || article.title;
+      const source = article.seo?.description || article.title;
       const excerpt =
-        excerptSrc.length > 160
-          ? `${excerptSrc.slice(0, 157)}...`
-          : excerptSrc;
+        source.length > 160 ? `${source.slice(0, 157)}...` : source;
 
       return {
         id: article.id,
@@ -88,21 +96,20 @@ async function getSlides(): Promise<SlideContent[]> {
       };
     });
   } catch (e) {
-    console.error("CMS Fetch Error:", e);
+    console.error("CMS Fetch Error (HeroSlider):", e);
     return [];
   }
 }
 
-// ===============================
-// MAIN COMPONENT
-// ===============================
+/* ===============================
+   MAIN COMPONENT
+=============================== */
 
 export default async function HeroSlider() {
   const slides = await getSlides();
 
   return (
     <section className={styles.wrapper}>
-      {/* HEADER BLOCK */}
       <header className={styles.header}>
         <h2 className={styles.title}>Latest WaveNation News</h2>
         <p className={styles.subtitle}>
@@ -110,7 +117,6 @@ export default async function HeroSlider() {
         </p>
       </header>
 
-      {/* SLIDER */}
       <div className={styles.sliderOuter}>
         <HeroSliderClient slides={slides} />
       </div>

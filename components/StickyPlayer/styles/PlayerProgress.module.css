@@ -1,0 +1,67 @@
+/* Wrapper */
+.wrapper {
+  width: 100%;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== LIVE MODE =====*/
+.liveContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff2a2a;
+  animation: pulse 1s infinite;
+}
+
+.liveText {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #ff2a2a;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+}
+
+/* ===== VOD MODE =====*/
+.barWrapper {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.barBg {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.barFill {
+  height: 3px;
+  background: #e11d48; /* WaveNation pink-red */
+  transition: width 0.2s linear;
+}

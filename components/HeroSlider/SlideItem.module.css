@@ -46,7 +46,7 @@
 }
 
 /* ============================================================
-   CATEGORY TAG (FLOATING TOP-RIGHT)
+   CATEGORY TAG
    ============================================================ */
 
 .category {
@@ -84,16 +84,16 @@
   max-width: 90%;
 }
 
-/* TITLE — smaller, cleaner */
+/* TITLE */
 .title {
   font-size: 1.85rem;
   font-weight: 800;
   line-height: 1.25;
   max-width: 700px;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-/* EXCERPT — minimized */
+/* EXCERPT */
 .excerpt {
   font-size: 0.9rem;
   opacity: 0.82;
@@ -124,39 +124,70 @@
    ============================================================ */
 
 @keyframes kenBurnsZoomInLeft {
-  0% { transform: scale(1.05) translateX(12px); }
-  100% { transform: scale(1.18) translateX(-22px); }
+  0% {
+    transform: scale(1.05) translateX(12px);
+  }
+  100% {
+    transform: scale(1.18) translateX(-22px);
+  }
 }
 
 @keyframes kenBurnsZoomInRight {
-  0% { transform: scale(1.05) translateX(-12px); }
-  100% { transform: scale(1.18) translateX(22px); }
+  0% {
+    transform: scale(1.05) translateX(-12px);
+  }
+  100% {
+    transform: scale(1.18) translateX(22px);
+  }
 }
 
 @keyframes kenBurnsZoomOutLeft {
-  0% { transform: scale(1.22) translateX(16px); }
-  100% { transform: scale(1.05) translateX(-18px); }
+  0% {
+    transform: scale(1.22) translateX(16px);
+  }
+  100% {
+    transform: scale(1.05) translateX(-18px);
+  }
 }
 
 @keyframes kenBurnsZoomOutRight {
-  0% { transform: scale(1.22) translateX(-16px); }
-  100% { transform: scale(1.05) translateX(18px); }
+  0% {
+    transform: scale(1.22) translateX(-16px);
+  }
+  100% {
+    transform: scale(1.05) translateX(18px);
+  }
 }
 
-.kenBurnsZoomInLeft { animation: kenBurnsZoomInLeft 8s ease-in-out forwards; }
-.kenBurnsZoomInRight { animation: kenBurnsZoomInRight 8s ease-in-out forwards; }
-.kenBurnsZoomOutLeft { animation: kenBurnsZoomOutLeft 8s ease-in-out forwards; }
-.kenBurnsZoomOutRight { animation: kenBurnsZoomOutRight 8s ease-in-out forwards; }
+.kenBurnsZoomInLeft {
+  animation: kenBurnsZoomInLeft 8s ease-in-out forwards;
+}
+.kenBurnsZoomInRight {
+  animation: kenBurnsZoomInRight 8s ease-in-out forwards;
+}
+.kenBurnsZoomOutLeft {
+  animation: kenBurnsZoomOutLeft 8s ease-in-out forwards;
+}
+.kenBurnsZoomOutRight {
+  animation: kenBurnsZoomOutRight 8s ease-in-out forwards;
+}
 
 /* ============================================================
    RESPONSIVE BREAKPOINTS
    ============================================================ */
 
 @media (max-width: 1024px) {
-  .slide { height: 480px; }
+  .slide {
+    height: 480px;
+  }
 
-  .title { font-size: 1.6rem; }
-  .excerpt { font-size: 0.85rem; max-width: 90%; }
+  .title {
+    font-size: 1.6rem;
+  }
+  .excerpt {
+    font-size: 0.85rem;
+    max-width: 90%;
+  }
 
   .content {
     bottom: 26px;
@@ -171,10 +202,17 @@
 }
 
 @media (max-width: 768px) {
-  .slide { height: 420px; }
+  .slide {
+    height: 420px;
+  }
 
-  .title { font-size: 1.45rem; }
-  .excerpt { font-size: 0.8rem; max-width: 100%; }
+  .title {
+    font-size: 1.45rem;
+  }
+  .excerpt {
+    font-size: 0.8rem;
+    max-width: 100%;
+  }
 
   .content {
     bottom: 20px;
@@ -190,10 +228,17 @@
 }
 
 @media (max-width: 480px) {
-  .slide { height: 380px; }
+  .slide {
+    height: 380px;
+  }
 
-  .title { font-size: 1.25rem; line-height: 1.28; }
-  .excerpt { font-size: 0.72rem; }
+  .title {
+    font-size: 1.25rem;
+    line-height: 1.28;
+  }
+  .excerpt {
+    font-size: 0.72rem;
+  }
 
   .content {
     bottom: 16px;

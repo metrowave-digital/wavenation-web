@@ -7,38 +7,80 @@
   display: flex;
   align-items: flex-end;
   background: #000;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.35s ease, box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
+/* 🔮 Hover zoom + neon glow */
 .card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 18px rgba(0, 179, 255, 0.4);
+  transform: perspective(900px) rotateX(4deg) rotateY(-4deg) scale(1.03);
+  box-shadow:
+    0 0 22px rgba(0, 179, 255, 0.55),
+    0 0 40px rgba(0, 179, 255, 0.25);
 }
 
+/* 🔥 Grayscale → color + zoom */
 .image {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: brightness(0.75);
-  transition: filter 0.3s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+
+  filter: grayscale(100%) brightness(0.75);
+  transform: scale(1);
+  
+  transition:
+    filter 0.45s ease,
+    transform 0.6s ease;
 }
 
 .card:hover .image {
-  filter: brightness(0.55);
+  filter: grayscale(0%) brightness(1.1) saturate(1.25);
+  transform: scale(1.08);
 }
 
+/* 🌑 Strong readability overlay (fix 1) */
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.15),
+    rgba(0,0,0,0.5),
+    rgba(0,0,0,0.85)
+  );
+  opacity: 1;
+  transition: opacity 0.4s ease;
 }
 
+/* ✨ Fade-up text animation + blur background (fix 3) */
 .content {
   position: relative;
   z-index: 2;
   padding: 20px;
   color: white;
+
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+
+  background: rgba(0, 0, 0, 0.2); /* improves legibility */
+  backdrop-filter: blur(2px);     /* frosted effect */
+  border-radius: 12px;
+}
+
+.card:hover .content {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+/* 🔤 Text shadow for readability (fix 2) */
+.title,
+.description {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.85);
 }
 
 .title {
@@ -50,21 +92,105 @@
 .description {
   font-size: 0.9rem;
   margin-top: 6px;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
-.button {
-  margin-top: 12px;
-  padding: 8px 16px;
-  background: #00b3ff;
-  color: black;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.25s ease;
+/* 🌈 Subtle neon inner border */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  box-shadow: inset 0 0 16px rgba(0, 179, 255, 0.35);
 }
 
-.button:hover {
-  background: #39ff14;
+.card:hover::after {
+  opacity: 1;
 }
+
+/* ========================================= */
+/* 📱 MOBILE OPTIMIZATION                    */
+/* ========================================= */
+
+@media (max-width: 768px) {
+
+  .card {
+    height: 220px;                 /* Slightly shorter for mobile */
+    transform: none !important;    /* Disable hover tilt */
+    box-shadow: none;
+  }
+
+  .card:hover {
+    transform: none !important;    /* Disable tilt on touch devices */
+    box-shadow: none;              /* Remove hover glow */
+  }
+
+  .image {
+    transform: scale(1);           /* No zoom on mobile */
+    filter: grayscale(0%) brightness(0.9); /* Keep readable, even without hover */
+  }
+
+  .card:hover .image {
+    transform: scale(1);           /* Keep stable */
+    filter: grayscale(0%) brightness(1); /* Slight boost only */
+  }
+
+  .overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.25),
+      rgba(0,0,0,0.6),
+      rgba(0,0,0,0.9)
+    );
+  }
+
+  .content {
+    padding: 16px;
+    opacity: 1;                    /* Always visible */
+    transform: translateY(0);      /* No animation delay */
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(3px);
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  /* Remove neon border glow for mobile */
+  .card::after {
+    display: none;
+  }
+}
+
+/* =============================== */
+/* 📌 SCROLL-TRIGGERED ANIMATIONS */
+/* =============================== */
+
+.card {
+  opacity: 0;
+  transform: translateY(25px);
+  transition: 
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out;
+}
+
+/* When visible on scroll */
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Optional stagger (slightly delay each card) */
+.card:nth-child(1) { transition-delay: 0.05s; }
+.card:nth-child(2) { transition-delay: 0.10s; }
+.card:nth-child(3) { transition-delay: 0.15s; }
+.card:nth-child(4) { transition-delay: 0.20s; }
+.card:nth-child(5) { transition-delay: 0.25s; }
+.card:nth-child(6) { transition-delay: 0.30s; }

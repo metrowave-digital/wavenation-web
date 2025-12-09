@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import Link from "next/link";
 import styles from "./SpotlightArticle.module.css";
 
 export interface SpotlightArticleProps {
@@ -18,15 +20,13 @@ export default function SpotlightArticle({
   href,
   variant = "vertical",
 }: SpotlightArticleProps) {
+  const cardClassName =
+    variant === "horizontal"
+      ? `${styles.card} ${styles.horizontal}`
+      : `${styles.card} ${styles.vertical}`;
+
   return (
-    <a
-      className={
-        variant === "horizontal"
-          ? `${styles.card} ${styles.horizontal}`
-          : `${styles.card} ${styles.vertical}`
-      }
-      href={href}
-    >
+    <Link href={href} className={cardClassName}>
       <div
         className={styles.background}
         style={{ backgroundImage: `url(${image})` }}
@@ -37,9 +37,9 @@ export default function SpotlightArticle({
       <div className={styles.content}>
         <span className={styles.category}>{category}</span>
         <h3 className={styles.title}>{title}</h3>
-        <p className={styles.excerpt}>{excerpt}</p>
+        {excerpt && <p className={styles.excerpt}>{excerpt}</p>}
         <button className={styles.button}>Read Article</button>
       </div>
-    </a>
+    </Link>
   );
 }

@@ -1,3 +1,4 @@
+// components/HeroSlider/HeroSliderClient.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -11,8 +12,7 @@ interface Props {
 
 const AUTO_SLIDE_INTERVAL = 8000;
 
-// ⭐ Allowed by React purity rules.
-// useState initializer can safely run Math.random() ONCE.
+// Use Math.random only in a useState initializer
 function generateRandomClasses(slidesLength: number): string[] {
   const candidates = [
     slideStyles.kenBurnsZoomInLeft,
@@ -30,12 +30,10 @@ function generateRandomClasses(slidesLength: number): string[] {
 export default function HeroSliderClient({ slides }: Props) {
   const [current, setCurrent] = useState(0);
 
-  // ⭐ This is the ONLY legal place to use Math.random() in React 18 strict mode.
   const [motionClasses] = useState<string[]>(() =>
     generateRandomClasses(slides.length)
   );
 
-  // Auto rotation
   useEffect(() => {
     if (slides.length < 2) return;
 
@@ -46,7 +44,6 @@ export default function HeroSliderClient({ slides }: Props) {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  // Fallback for empty slides
   if (!slides || slides.length === 0) {
     return (
       <div className={styles.sliderWrapper}>

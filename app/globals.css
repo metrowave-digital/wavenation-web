@@ -141,3 +141,28 @@ html.light ::selection {
 #wn-overlay.visible {
   @apply opacity-100 pointer-events-auto;
 }
+
+/* -------------------------------------------------------
+   NEWS TICKER CRAWL ANIMATIONS
+   Required for NewsTicker.tsx
+-------------------------------------------------------- */
+
+@keyframes crawl {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes crawlSlow {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Default speed */
+.animate-crawl {
+  animation: crawl 35s linear infinite;
+}
+
+/* Hover speed (slower) */
+.animate-crawlSlow {
+  animation: crawlSlow 65s linear infinite;
+}

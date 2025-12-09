@@ -4,7 +4,7 @@ import React from "react";
 import styles from "./SlideItem.module.css";
 
 export interface SlideContent {
-  id: number;
+  id: number | string;
   title: string;
   excerpt: string;
   category: string;
@@ -39,7 +39,7 @@ const SlideItem: React.FC<SlideItemProps> = ({
       {/* Darkened overlay */}
       <div className={styles.overlay} />
 
-      {/* CATEGORY TAG — top-right & NOT inside content */}
+      {/* CATEGORY TAG */}
       <span className={styles.category}>{category}</span>
 
       {/* TEXT CONTENT SECTION */}
@@ -48,7 +48,13 @@ const SlideItem: React.FC<SlideItemProps> = ({
 
         <p className={styles.excerpt}>
           {excerpt}
-          <button className={styles.readMore}>Read More</button>
+          <button
+            className={styles.readMore}
+            type="button"
+            aria-label="Read more"
+          >
+            Read More
+          </button>
         </p>
       </div>
     </a>

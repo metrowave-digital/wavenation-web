@@ -1,0 +1,74 @@
+.strip {
+  width: 100%;
+  height: 70px;
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255,255,255,0.08);
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 0 1.5rem;
+  position: sticky;
+  bottom: 0;
+  z-index: 999;
+}
+
+.artworkWrapper {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.artwork {
+  object-fit: cover;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.artist {
+  color: #ccc;
+  font-size: 0.8rem;
+  margin-top: -2px;
+}
+
+.playButton {
+  margin-left: auto;
+  font-size: 1.3rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.progressWrapper {
+  width: 140px;
+  height: 4px;
+  background: #333;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress {
+  width: 30%;
+  height: 100%;
+  background: #ff0055;
+}
+
+.expand {
+  background: none;
+  color: #fff;
+  border: none;
+  font-size: 1.3rem;
+}

@@ -1,0 +1,337 @@
+/* ==========================================
+   ULTRA PREMIUM CINEMATIC HERO
+   ========================================== */
+
+.hero {
+  position: relative;
+
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+
+  min-height: 110vh;
+
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+/* Vignette + gradient wash */
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(circle at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.9) 100%),
+    linear-gradient(to bottom right, rgba(0,0,0,0.5), rgba(0,0,0,0.2));
+}
+
+/* Subtle film/noise layer */
+.noise {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.12;
+  pointer-events: none;
+  background-image: url("/textures/noise.png"); /* optional, add a tiny noise texture */
+  mix-blend-mode: soft-light;
+}
+
+/* Glow orbs */
+.glowLeft,
+.glowRight {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 999px;
+  filter: blur(60px);
+  opacity: 0.55;
+  z-index: 2;
+}
+
+.glowLeft {
+  top: 10%;
+  left: -5%;
+  background: radial-gradient(circle, #00e5ff, transparent 70%);
+}
+
+.glowRight {
+  bottom: -10%;
+  right: -5%;
+  background: radial-gradient(circle, #ff1f7a, transparent 70%);
+}
+
+/* Floating particles */
+.particles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  opacity: 0.1;
+}
+
+/* Randomized-ish placement using nth-child */
+.particle:nth-child(1) { top: 15%; left: 20%; }
+.particle:nth-child(2) { top: 35%; left: 10%; }
+.particle:nth-child(3) { top: 25%; left: 45%; }
+.particle:nth-child(4) { top: 60%; left: 18%; }
+.particle:nth-child(5) { top: 75%; left: 30%; }
+.particle:nth-child(6) { top: 70%; left: 60%; }
+.particle:nth-child(7) { top: 50%; left: 70%; }
+.particle:nth-child(8) { top: 25%; left: 78%; }
+.particle:nth-child(9) { top: 40%; left: 85%; }
+.particle:nth-child(10) { top: 65%; left: 82%; }
+.particle:nth-child(11) { top: 18%; left: 60%; }
+.particle:nth-child(12) { top: 10%; left: 40%; }
+.particle:nth-child(13) { top: 85%; left: 50%; }
+.particle:nth-child(14) { top: 90%; left: 25%; }
+
+/* ==========================================
+   LAYOUT
+   ========================================== */
+
+.layout {
+  position: relative;
+  z-index: 5;
+
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 4rem;
+
+  width: min(1600px, 90vw);
+  margin: auto;
+}
+
+/* ==========================================
+   LEFT SIDE
+   ========================================== */
+
+.left {
+  color: #fff;
+  position: relative;
+}
+
+.mastheadRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.6rem;
+}
+
+.masthead {
+  font-size: 0.95rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.issueTag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25);
+  opacity: 0.8;
+}
+
+/* Portrait */
+.portraitFrame {
+  position: relative;
+  width: 420px;
+  height: 540px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.75);
+  transform: translateZ(0);
+}
+
+.portrait {
+  object-fit: cover;
+}
+
+.portraitInnerGlow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 10% 0%, rgba(255,255,255,0.4), transparent 55%);
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+/* Headline */
+.artistName {
+  margin-top: 2rem;
+  font-size: 5.2rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.85);
+}
+
+/* Tagline */
+.tagline {
+  margin-top: 1rem;
+  font-size: 1.35rem;
+  font-style: italic;
+  opacity: 0.9;
+  max-width: 460px;
+}
+
+/* CTA Button */
+.button {
+  margin-top: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  padding: 0.95rem 2.1rem;
+  border-radius: 999px;
+
+  background: linear-gradient(90deg, #ff004d, #ff8a00);
+  color: #fff;
+
+  font-size: 1.05rem;
+  font-weight: 700;
+
+  box-shadow: 0 15px 40px rgba(0,0,0,0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+
+.button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  opacity: 0.95;
+}
+
+/* ==========================================
+   RIGHT SIDE — CARDS
+   ========================================== */
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  z-index: 6;
+  min-height: 1px;
+}
+
+.card {
+  position: relative;
+  height: 260px;
+  border-radius: 20px;
+  overflow: hidden;
+
+  box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease;
+  background: #000;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 65px rgba(0,0,0,0.7);
+  opacity: 0.98;
+}
+
+.cardImage {
+  object-fit: cover;
+}
+
+/* Card overlay */
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding: 1.6rem;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.9));
+
+  color: #fff;
+}
+
+.cardOverlay h3 {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.cardOverlay p {
+  margin-top: 6px;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+
+  .mastheadRow {
+    justify-content: center;
+  }
+
+  .portraitFrame {
+    margin: 0 auto;
+    width: 320px;
+    height: 420px;
+  }
+
+  .artistName {
+    font-size: 3.4rem;
+    letter-spacing: 0.06em;
+  }
+
+  .tagline {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cards {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    min-height: 100vh;
+  }
+
+  .portraitFrame {
+    width: 260px;
+    height: 340px;
+  }
+
+  .artistName {
+    font-size: 2.6rem;
+    letter-spacing: 0.04em;
+  }
+
+  .card {
+    height: 220px;
+  }
+}

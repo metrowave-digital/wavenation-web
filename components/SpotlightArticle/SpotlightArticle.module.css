@@ -4,7 +4,8 @@
   overflow: hidden;
   background: #000;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: block;
 }
 
 /* VERTICAL CARD (GRID) */
@@ -27,6 +28,11 @@
   .horizontal {
     height: 300px;
   }
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6);
 }
 
 .background {

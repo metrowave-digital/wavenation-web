@@ -9,34 +9,40 @@ import styles from "./CTASection.module.css";
 const CTASection: React.FC = () => {
   const cards = [
     {
-      title: "Playlists",
-      description: "Curated vibes from WaveNation editors.",
-      image: "/images/cta/playlists.jpg",
+      title: "Music & Playlists",
+      description: "Explore curated playlists, charts, and the hottest tracks on WaveNation.",
+      image: "/images/cta/music-playlists.jpg",
+      link: "/playlists",
     },
     {
       title: "Discover Artists",
-      description: "Find emerging R&B, Hip-Hop & Southern Soul talent.",
-      image: "/images/cta/artists.jpg",
+      description: "Find rising R&B, Hip-Hop, Gospel, and Southern Soul talent from our culture.",
+      image: "/images/cta/discover-artists.jpg",
+      link: "/artists",
     },
     {
-      title: "Music Videos",
-      description: "Watch interviews, videos & exclusive sessions.",
-      image: "/images/cta/music-videos.jpg",
+      title: "Shows & Podcasts",
+      description: "Stream interviews, radio shows, podcasts, and exclusive WaveNation video sessions.",
+      image: "/images/cta/shows-podcasts.jpg",
+      link: "/shows",
     },
     {
-      title: "Creator Hub",
-      description: "Upload, monetize, and grow on WaveNation.",
+      title: "Read the Latest News",
+      description: "Stay informed with culture news, music updates, reviews, and trending stories.",
+      image: "/images/cta/latest-news.jpg",
+      link: "/news",
+    },
+    {
+      title: "Join the Creator Hub",
+      description: "Upload content, build your audience, and monetize your work on WaveNation.",
       image: "/images/cta/creator-hub.jpg",
+      link: "/creator-hub",
     },
     {
-      title: "Podcasts",
-      description: "Tap into culture, commentary & storytelling.",
-      image: "/images/cta/podcasts.jpg",
-    },
-    {
-      title: "Southern Soul Hub",
-      description: "Your home for Southern Soul shows & playlists.",
-      image: "/images/cta/southern-soul.jpg",
+      title: "WaveNation+",
+      description: "Unlock ad-free radio, exclusive TV content, early releases, and premium shows.",
+      image: "/images/cta/wavenation-plus.jpg",
+      link: "/plus",
     },
   ];
 

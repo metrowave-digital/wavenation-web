@@ -1,5 +1,5 @@
 /* ============================================================
-   HERO SLIDER — OUTER WRAPPER FOR HEADER + SLIDER
+   HERO SLIDER — OUTER WRAPPER
    ============================================================ */
 
 .wrapper {
@@ -11,7 +11,7 @@
 }
 
 /* ============================================================
-   HEADER STYLES
+   HEADER
    ============================================================ */
 
 .header {
@@ -37,8 +37,12 @@
 }
 
 /* ============================================================
-   SLIDER WRAPPER (16:9 RESPONSIVE HERO)
+   SLIDER WRAPPER (16:9)
    ============================================================ */
+
+.sliderOuter {
+  width: 100%;
+}
 
 .sliderWrapper {
   position: relative;
@@ -47,13 +51,13 @@
   overflow: hidden;
 
   border-radius: 16px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(4px);
 }
 
 /* ============================================================
-   SLIDE STACKING — FADE BETWEEN SLIDES
+   SLIDE STACK
    ============================================================ */
 
 .slide {
@@ -79,21 +83,20 @@
 }
 
 /* ============================================================
-   ERROR STATE
+   ERROR
    ============================================================ */
 
 .error {
   padding: 2rem;
   text-align: center;
   font-size: 1rem;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 /* ============================================================
-   RESPONSIVE BREAKPOINTS
+   RESPONSIVE
    ============================================================ */
 
-/* ---------- Tablet ---------- */
 @media (max-width: 1024px) {
   .title {
     font-size: 1.3rem;
@@ -103,7 +106,6 @@
   }
 }
 
-/* ---------- Mobile ---------- */
 @media (max-width: 768px) {
   .wrapper {
     gap: 1rem;
@@ -124,7 +126,6 @@
   }
 }
 
-/* ---------- Small Mobile ---------- */
 @media (max-width: 480px) {
   .title {
     font-size: 1.1rem;

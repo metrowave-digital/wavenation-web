@@ -1,5 +1,3 @@
-// app/page.tsx
-
 import WNMobileNav from "@/components/ui/WNMobileNav";
 import StickyPlayer from "@/components/StickyPlayer/StickyPlayer";
 
@@ -14,37 +12,29 @@ import NewsletterCTA from "@/components/NewsletterCTA/NewsletterCTA";
 import type { SpotlightArticleItem } from "@/components/SpotlightArticle/SpotlightArticles";
 
 /* ------------------------------------------
-   MAIN PAGE
+   MAIN PAGE (SERVER)
 ------------------------------------------- */
 
 export default async function Home() {
-  // Normalize CMS URL (remove trailing slash safely)
   const rawCMS = process.env.NEXT_PUBLIC_CMS_URL || "";
   const CMS = rawCMS.replace(/\/+$/, "");
 
-  /* ------------------------------------------
-     FETCH SPOTLIGHT ARTICLES
-  ------------------------------------------- */
   let spotlightArticles: SpotlightArticleItem[] = [];
 
   try {
     const res = await fetch(
       `${CMS}/api/articles?limit=20&sort=-publishedAt&depth=2`,
-      {
-        cache: "no-store",
-      }
+      { cache: "no-store" }
     );
 
-    if (!res.ok)
-      throw new Error(`CMS responded ${res.status}: ${res.statusText}`);
+    if (!res.ok) throw new Error(`CMS responded ${res.status}`);
 
     const json = (await res.json()) as { docs?: SpotlightArticleItem[] };
     const docs = json?.docs ?? [];
 
-    // Shuffle + take 7 spotlight items
-    spotlightArticles = [...docs]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 7);
+    // ❗ DO NOT RANDOMIZE ON SERVER — causes hydration mismatch
+    spotlightArticles = docs; // we'll randomize inside the client component instead
+
   } catch (err) {
     console.error("SpotlightArticles CMS Fetch Error:", err);
   }
@@ -69,10 +59,7 @@ export default async function Home() {
         <HeroSection />
       </section>
 
-      {/* Articles Horizontal Scroll */}
       <ArticlesSection />
-
-      {/* Artist Spotlight */}
       <ArtistSpotlight />
 
       {/* CTA */}
@@ -85,15 +72,13 @@ export default async function Home() {
         <NewsletterCTA />
       </section>
 
-      {/* Spotlight Section */}
+      {/* Spotlight Section (randomized in client) */}
       <section className="mt-12 sm:mt-16 lg:mt-20">
-        <SpotlightArticles articles={spotlightArticles} />
+        <SpotlightArticles articles={spotlightArticles} randomize />
       </section>
 
-      {/* FOOTER */}
-      <footer className="mt-24 text-center opacity-60 text-xs font-inter">
-        © {new Date().getFullYear()} MetroWave Media Group · wavenation.media
-      </footer>
+      {/* Footer — avoid hydration mismatch */}
+      <FooterYearSafe />
 
       {/* Padding so StickyPlayer doesn’t overlap content */}
       <div className="h-24" />
@@ -101,5 +86,19 @@ export default async function Home() {
       <WNMobileNav />
       <StickyPlayer />
     </main>
+  );
+}
+
+/* ------------------------------------------
+   HYDRATION-SAFE FOOTER YEAR
+------------------------------------------- */
+
+function FooterYearSafe() {
+  return (
+    <footer className="mt-24 text-center opacity-60 text-xs font-inter">
+      © {/* static year for SSR, dynamic year applied by client JS */}
+      <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
+      MetroWave Media Group · wavenation.media
+    </footer>
   );
 }

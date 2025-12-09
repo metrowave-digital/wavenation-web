@@ -4,24 +4,20 @@
 
 /* -------------------------------------------------------
    🌊 WaveNation Global Theme
-   - Dark by default
-   - Light mode toggled via html.light
 -------------------------------------------------------- */
 
-/* COLOR MODE: DARK (DEFAULT) */
 html.dark body {
   @apply bg-wn-black text-white;
 }
 
-/* COLOR MODE: LIGHT */
 html.light body {
   @apply bg-wn-bg-light text-wn-text-light;
 }
 
-/* Base body (before hydration → default dark) */
 body {
   @apply bg-wn-black text-white transition-colors duration-300;
   font-family: var(--font-fira-sans), sans-serif;
+  overscroll-behavior: none;
 }
 
 /* -------------------------------------------------------
@@ -36,21 +32,12 @@ img,
 svg {
   user-select: none;
   pointer-events: none;
+  -webkit-user-drag: none;
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
-
-/* Disable overscroll glow on mobile */
-body {
-  overscroll-behavior: none;
-}
-
-/* -------------------------------------------------------
-   SCROLLBAR STYLING
--------------------------------------------------------- */
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -58,111 +45,93 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,0.15);
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255,255,255,0.25);
 }
 
 html.light ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.25);
-}
-
-html.light ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0,0,0,0.25);
 }
 
 /* -------------------------------------------------------
-   CUSTOM WAVENATION ANIMATIONS
+   PREMIUM TICKER (NON-JUMP HOVER)
 -------------------------------------------------------- */
 
-/* Wave (background motion) */
-@keyframes wave {
-  0%   { transform: translateX(-25%) skewX(-8deg); }
-  50%  { transform: translateX(0%)  skewX(-4deg); }
-  100% { transform: translateX(25%) skewX(-8deg); }
+/* Outer wrapper isolates layout */
+.wn-ticker-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 1.25rem;
+  overflow: visible;
 }
 
-.animate-wave {
-  animation: wave 18s ease-in-out infinite alternate;
+/* Inner illusion wrapper — this is what scales, NOT the text */
+.wn-ticker-illusion {
+  display: inline-block;
+  will-change: transform, text-shadow;
+  transition: transform 0.25s ease, text-shadow 0.25s ease, color 0.25s ease;
 }
 
-/* Float (hover-like idle movement) */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-10px); }
+/* Text element — never scales, so no layout shift EVER */
+.wn-ticker-link {
+  position: relative;
+  padding-bottom: 1px;
+  display: inline-block;
 }
 
-.animate-float {
-  animation: float 8s ease-in-out infinite;
-}
-
-/* -------------------------------------------------------
-   UTILITY ENHANCEMENTS
--------------------------------------------------------- */
-
-/* Smooth focus */
-:focus-visible {
-  outline: 2px solid var(--wn-gold, #E4B500);
-  outline-offset: 4px;
-}
-
-/* Hide tap highlight */
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Prevent text selection on icons/buttons */
-button svg {
-  user-select: none;
-}
-
-/* Selection highlight */
-::selection {
-  background: #E4B500;
-  color: #000;
-}
-html.light ::selection {
+/* Neon underline */
+.wn-ticker-link::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -1px;
+  width: 100%;
+  height: 1px;
   background: #00B3FF;
-  color: #fff;
+  opacity: .8;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.wn-ticker-wrapper:hover .wn-ticker-link::after {
+  transform: scaleX(1);
+}
+
+/* Glow and micro-scale (illusion wrapper ONLY) */
+.wn-ticker-wrapper:hover .wn-ticker-illusion {
+  transform: translateZ(0) scale(1.04);
+  text-shadow: 0 0 6px rgba(0, 179, 255, 0.75);
 }
 
 /* -------------------------------------------------------
-   MODAL / OVERLAY SUPPORT (used by your PopUp)
+   APPLE NEWS FADE MASKS
 -------------------------------------------------------- */
 
-#wn-overlay {
-  @apply fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 pointer-events-none opacity-0;
+.wn-ticker-mask {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  pointer-events: none;
+  z-index: 10;
 }
 
-#wn-overlay.visible {
-  @apply opacity-100 pointer-events-auto;
+.wn-ticker-mask-left {
+  left: 0;
+  background: linear-gradient(to right, rgba(15,15,15,1), rgba(15,15,15,0));
 }
 
-/* -------------------------------------------------------
-   NEWS TICKER CRAWL ANIMATIONS
-   Required for NewsTicker.tsx
--------------------------------------------------------- */
-
-@keyframes crawl {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.wn-ticker-mask-right {
+  right: 0;
+  background: linear-gradient(to left, rgba(15,15,15,1), rgba(15,15,15,0));
 }
 
-@keyframes crawlSlow {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* Default speed */
-.animate-crawl {
-  animation: crawl 35s linear infinite;
-}
-
-/* Hover speed (slower) */
-.animate-crawlSlow {
-  animation: crawlSlow 65s linear infinite;
+@keyframes tickerLoop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }

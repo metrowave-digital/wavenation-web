@@ -1,75 +1,86 @@
-// components/HeroSlider/HeroSliderClient.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
-import SlideItem, { SlideContent } from "./SlideItem";
-import styles from "./HeroSlider.module.css";
-import slideStyles from "./SlideItem.module.css";
+import { useEffect, useRef, useState } from "react";
+import SlideItem from "./SlideItem";
 
-interface Props {
-  slides: SlideContent[];
+interface Slide {
+  id: number | string;
+  title: string;
+  excerpt?: string;
+  category?: string;
+  image: string;
+  href: string;
+  motionClassName?: string;
 }
 
-const AUTO_SLIDE_INTERVAL = 8000;
-
-// Use Math.random only in a useState initializer
-function generateRandomClasses(slidesLength: number): string[] {
-  const candidates = [
-    slideStyles.kenBurnsZoomInLeft,
-    slideStyles.kenBurnsZoomInRight,
-    slideStyles.kenBurnsZoomOutLeft,
-    slideStyles.kenBurnsZoomOutRight,
-  ];
-
-  return Array.from({ length: slidesLength }, () => {
-    const idx = Math.floor(Math.random() * candidates.length);
-    return candidates[idx];
-  });
+interface HeroSliderClientProps {
+  slides: Slide[];
+  autoPlay?: boolean;
+  interval?: number;
 }
 
-export default function HeroSliderClient({ slides }: Props) {
-  const [current, setCurrent] = useState(0);
+export default function HeroSliderClient({
+  slides,
+  autoPlay = true,
+  interval = 6000,
+}: HeroSliderClientProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const [motionClasses] = useState<string[]>(() =>
-    generateRandomClasses(slides.length)
-  );
+  // Hydration-safe mounted check (no setState in effects)
+  const mounted = useRef(false);
 
   useEffect(() => {
-    if (slides.length < 2) return;
+    mounted.current = true;
+  }, []);
+
+  // Autoplay logic
+  useEffect(() => {
+    if (!autoPlay || slides.length === 0) return;
 
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, AUTO_SLIDE_INTERVAL);
+      setActiveIndex((prev) =>
+        prev + 1 >= slides.length ? 0 : prev + 1
+      );
+    }, interval);
 
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [autoPlay, slides.length, interval]);
 
-  if (!slides || slides.length === 0) {
-    return (
-      <div className={styles.sliderWrapper}>
-        <div className={styles.error}>No articles available.</div>
-      </div>
-    );
-  }
+  if (!slides || slides.length === 0) return null;
 
   return (
-    <div className={styles.sliderWrapper}>
-      {slides.map((slide, index) => {
-        const isActive = index === current;
-
-        return (
-          <div
+    <section className="HeroSlider relative w-full h-full overflow-hidden">
+      <div className="absolute inset-0">
+        {slides.map((slide, index) => (
+          <SlideItem
             key={slide.id}
-            className={`${styles.slide} ${isActive ? styles.active : ""}`}
-          >
-            <SlideItem
-              {...slide}
-              isActive={isActive}
-              motionClassName={motionClasses[index]}
-            />
-          </div>
-        );
-      })}
-    </div>
+            _id={slide.id} // <-- IMPORTANT: matches SlideItemProps
+            title={slide.title}
+            excerpt={slide.excerpt}
+            category={slide.category}
+            href={slide.href}
+            image={slide.image}
+            motionClassName={slide.motionClassName}
+            isActive={mounted.current && index === activeIndex}
+          />
+        ))}
+      </div>
+
+      {/* NAV DOTS */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setActiveIndex(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            className={`w-3 h-3 rounded-full transition-all ${
+              mounted.current && i === activeIndex
+                ? "bg-electric scale-110"
+                : "bg-white/40"
+            }`}
+          />
+        ))}
+      </div>
+    </section>
   );
 }

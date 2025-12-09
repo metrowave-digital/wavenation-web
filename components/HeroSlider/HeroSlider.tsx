@@ -1,7 +1,6 @@
 // components/HeroSlider/HeroSlider.tsx (SERVER)
 
 import HeroSliderClient from "./HeroSliderClient";
-import { SlideContent } from "./SlideItem";
 import styles from "./HeroSlider.module.css";
 
 const rawCMS =
@@ -47,11 +46,21 @@ interface ArticlesResponse {
   docs?: Article[];
 }
 
+/* New slide type */
+interface SlideItemData {
+  id: number | string;
+  title: string;
+  excerpt: string;
+  category: string;
+  image: string;
+  href: string;
+}
+
 /* ===============================
    FETCH (SSR)
 =============================== */
 
-async function getSlides(): Promise<SlideContent[]> {
+async function getSlides(): Promise<SlideItemData[]> {
   try {
     const url = `${API_BASE_URL}/api/articles?limit=5&sort=-publishedAt&where[status][equals]=published&depth=2`;
 

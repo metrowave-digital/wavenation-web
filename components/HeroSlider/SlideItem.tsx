@@ -1,64 +1,51 @@
-// components/HeroSlider/SlideItem.tsx
+"use client";
 
-import React from "react";
+import { useEffect, useRef } from "react";
 import styles from "./SlideItem.module.css";
 
-export interface SlideContent {
-  id: number | string;
+export interface SlideItemProps {
+  _id: string | number;  // unused, but prefix fixes ESLint
   title: string;
-  excerpt: string;
-  category: string;
-  image: string;
+  excerpt?: string;
+  category?: string;
   href: string;
-}
-
-interface SlideItemProps extends SlideContent {
+  image: string;
+  isActive: boolean;
   motionClassName?: string;
-  isActive?: boolean;
 }
 
-const SlideItem: React.FC<SlideItemProps> = ({
+export default function SlideItem({
+  _id, // eslint-safe unused var
   title,
   excerpt,
   category,
-  image,
   href,
+  image,
+  isActive,
   motionClassName,
-  isActive = false,
-}) => {
+}: SlideItemProps) {
+
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    mounted.current = true;
+  }, []);
+
+  const animationClass =
+    mounted.current && isActive && motionClassName ? motionClassName : "";
+
   return (
     <a className={styles.slide} href={href}>
-      {/* Background image */}
       <div
-        className={`${styles.background} ${
-          isActive && motionClassName ? motionClassName : ""
-        }`}
+        className={`${styles.background} ${animationClass}`}
         style={{ backgroundImage: `url(${image})` }}
       />
 
-      {/* Darkened overlay */}
-      <div className={styles.overlay} />
-
-      {/* CATEGORY TAG */}
-      <span className={styles.category}>{category}</span>
-
-      {/* TEXT CONTENT SECTION */}
-      <div className={styles.content}>
-        <h2 className={styles.title}>{title}</h2>
-
-        <p className={styles.excerpt}>
-          {excerpt}
-          <button
-            className={styles.readMore}
-            type="button"
-            aria-label="Read more"
-          >
-            Read More
-          </button>
-        </p>
+      <div className={styles.overlay}>
+        {category && <span className={styles.category}>{category}</span>}
+        <h3 className={styles.title}>{title}</h3>
+        {excerpt && <p className={styles.excerpt}>{excerpt}</p>}
       </div>
     </a>
   );
-};
-
-export default SlideItem;
+}

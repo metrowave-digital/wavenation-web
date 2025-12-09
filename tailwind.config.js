@@ -101,7 +101,7 @@ module.exports = {
        *  ANIMATIONS
        * ---------------------------------------------- */
       animation: {
-        // CRAWL SPEEDS
+        // TICKER SPEEDS
         crawl: "crawl 22s linear infinite",
         crawlSlow: "crawl 35s linear infinite",
 

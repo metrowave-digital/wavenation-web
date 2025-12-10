@@ -22,21 +22,20 @@ export default async function Home() {
   let spotlightArticles: SpotlightArticleItem[] = [];
 
   try {
+    // FIXED: publishedDate is the REAL field your CMS exposes
     const res = await fetch(
-      `${CMS}/api/articles?limit=20&sort=-publishedAt&depth=2`,
+      `${CMS}/api/articles?limit=20&sort=-publishedDate&depth=2`,
       { cache: "no-store" }
     );
 
-    if (!res.ok) throw new Error(`CMS responded ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`CMS responded ${res.status}`);
+    }
 
     const json = (await res.json()) as { docs?: SpotlightArticleItem[] };
-    const docs = json?.docs ?? [];
-
-    // ❗ DO NOT RANDOMIZE ON SERVER — causes hydration mismatch
-    spotlightArticles = docs; // we'll randomize inside the client component instead
-
+    spotlightArticles = json?.docs ?? [];
   } catch (err) {
-    console.error("SpotlightArticles CMS Fetch Error:", err);
+    console.error("🔥 SpotlightArticles CMS Fetch Error:", err);
   }
 
   return (
@@ -48,18 +47,21 @@ export default async function Home() {
         relative overflow-hidden font-fira
       "
     >
-      {/* Background effects */}
+      {/* BACKGROUND VFX */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-40 -left-20 w-96 h-96 bg-wn-red/40 rounded-full blur-3xl opacity-60" />
         <div className="absolute -bottom-40 -right-10 w-[28rem] h-[28rem] bg-wn-gold/20 rounded-full blur-3xl opacity-80" />
       </div>
 
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section className="mt-4 sm:mt-6 lg:mt-10">
         <HeroSection />
       </section>
 
+      {/* LATEST ARTICLES */}
       <ArticlesSection />
+
+      {/* ARTIST SPOTLIGHT */}
       <ArtistSpotlight />
 
       {/* CTA */}
@@ -67,20 +69,20 @@ export default async function Home() {
         <CTASection />
       </section>
 
-      {/* Newsletter */}
+      {/* NEWSLETTER CTA */}
       <section className="mt-20 lg:mt-24">
         <NewsletterCTA />
       </section>
 
-      {/* Spotlight Section (randomized in client) */}
+      {/* SPOTLIGHT ARTICLES */}
       <section className="mt-12 sm:mt-16 lg:mt-20">
         <SpotlightArticles articles={spotlightArticles} randomize />
       </section>
 
-      {/* Footer — avoid hydration mismatch */}
+      {/* FOOTER */}
       <FooterYearSafe />
 
-      {/* Padding so StickyPlayer doesn’t overlap content */}
+      {/* Prevent StickyPlayer overlap */}
       <div className="h-24" />
 
       <WNMobileNav />
@@ -90,14 +92,15 @@ export default async function Home() {
 }
 
 /* ------------------------------------------
-   HYDRATION-SAFE FOOTER YEAR
+   HYDRATION SAFE FOOTER YEAR
 ------------------------------------------- */
 
 function FooterYearSafe() {
   return (
     <footer className="mt-24 text-center opacity-60 text-xs font-inter">
-      © {/* static year for SSR, dynamic year applied by client JS */}
-      <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
+      ©
+      <span suppressHydrationWarning>{new Date().getFullYear()}</span>
+      {" "}
       MetroWave Media Group · wavenation.media
     </footer>
   );

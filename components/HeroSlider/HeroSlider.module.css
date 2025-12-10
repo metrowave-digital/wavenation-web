@@ -1,143 +1,313 @@
 /* ============================================================
-   HERO SLIDER — OUTER WRAPPER
-   ============================================================ */
+   WAVENATION HERO SLIDER — 60/40 LAYOUT
+============================================================ */
 
-.wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  position: relative;
-}
-
-/* ============================================================
-   HEADER
-   ============================================================ */
-
-.header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.title {
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--wn-electric, #00b3ff);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  line-height: 1.2;
-}
-
-.subtitle {
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 0.95rem;
-  line-height: 1.4;
-  max-width: 70%;
-}
-
-/* ============================================================
-   SLIDER WRAPPER (16:9)
-   ============================================================ */
-
-.sliderOuter {
-  width: 100%;
-}
-
-.sliderWrapper {
+.root {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  max-width: 1440px;
+  margin-inline: auto;
+  border-radius: 18px;
   overflow: hidden;
-
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(4px);
+  background: radial-gradient(circle at top left, #020617, #020617 40%, #000 100%);
 }
 
-/* ============================================================
-   SLIDE STACK
-   ============================================================ */
+/* LAYOUT -------------------------------------------------- */
 
-.slide {
+.inner {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: clamp(360px, 60vw, 520px);
+}
+
+/* LEFT: MEDIA --------------------------------------------- */
+
+.media {
+  position: relative;
+  flex: 0 0 60%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #020617;
+  cursor: pointer;
+}
+
+.mediaLayer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mediaImage,
+.mediaVideo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.8s ease-in-out;
+  object-fit: cover;
 }
 
-.active {
-  opacity: 1;
-  pointer-events: auto;
+/* Soft Ken Burns ----------------------------------------- */
+
+.mediaImage {
+  transform: scale(1.04);
+  animation: kb 14s ease-in-out forwards;
+}
+
+@keyframes kb {
+  0% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+/* Dark gradient & color wash ----------------------------- */
+
+.mediaGradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 0, rgba(56, 189, 248, 0.35), transparent 55%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.25));
+  z-index: 2;
+}
+
+/* Badge row ---------------------------------------------- */
+
+.mediaBadgeRow {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
   z-index: 3;
 }
 
-.slide > * {
+.badgeGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.liveBadge,
+.counterBadge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.98);
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.liveBadge {
+  background: linear-gradient(
+    to right,
+    rgba(56, 189, 248, 0.85),
+    rgba(236, 72, 153, 0.9)
+  );
+  border-color: rgba(248, 250, 252, 0.7);
+  color: #020617;
+}
+
+/* Clickable overlay so media is accessible ---------------- */
+
+.mediaTitleOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+}
+
+/* RIGHT: CONTENT ------------------------------------------ */
+
+.content {
+  position: relative;
+  flex: 0 0 40%;
+  padding: 26px 30px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #f9fafb;
+  background: radial-gradient(circle at 0 0, #020617, #020617 35%, #020617 60%, #000 100%);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+  color: #e5e7eb;
+}
+
+.metaDot {
+  opacity: 0.65;
+}
+
+.title {
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: 1.15;
+  margin-top: 8px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top: 10px;
+  line-height: 1.5;
+  color: #e5e7eb;
+}
+
+/* BUTTON -------------------------------------------------- */
+
+.buttonRow {
+  margin-top: 20px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(to right, #fde047, #fb923c);
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: none;
+  box-shadow: 0 14px 45px rgba(251, 191, 36, 0.25);
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    filter 160ms ease-out;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 60px rgba(251, 191, 36, 0.35);
+  filter: brightness(1.02);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+}
+
+/* AUTOPLAY ------------------------------------------------ */
+
+.autoplayRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.progressTrack {
   width: 100%;
+  height: 3px;
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressBar {
   height: 100%;
+  background: linear-gradient(to right, #22c55e, #eab308, #fb923c);
+  transform-origin: left;
+  transform: scaleX(0);
 }
 
-/* ============================================================
-   ERROR
-   ============================================================ */
+/* DOTS ---------------------------------------------------- */
 
-.error {
-  padding: 2rem;
-  text-align: center;
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.65);
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+.dot,
+.dotActive {
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
 
-@media (max-width: 1024px) {
+.dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(148, 163, 184, 0.7);
+}
+
+.dotActive {
+  width: 18px;
+  height: 8px;
+  background: #fbbf24;
+}
+
+/* ACCESSIBILITY FOCUS ------------------------------------ */
+
+.dot:focus-visible,
+.button:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+/* MOBILE -------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .inner {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .media {
+    flex: unset;
+    height: 260px;
+  }
+
+  .content {
+    flex: unset;
+    padding: 20px 18px 24px;
+  }
+}
+
+@media (max-width: 640px) {
   .title {
-    font-size: 1.3rem;
-  }
-  .subtitle {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .wrapper {
-    gap: 1rem;
-  }
-
-  .title {
-    font-size: 1.2rem;
+    font-size: 20px;
   }
 
   .subtitle {
-    font-size: 0.85rem;
-    max-width: 100%;
+    font-size: 13px;
   }
 
-  .sliderWrapper {
-    aspect-ratio: 4 / 3;
-    border-radius: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .title {
-    font-size: 1.1rem;
+  .meta {
+    font-size: 10px;
   }
 
-  .subtitle {
-    font-size: 0.8rem;
-    line-height: 1.35;
+  .buttonRow {
+    margin-top: 16px;
   }
 
-  .sliderWrapper {
-    aspect-ratio: 1 / 1;
-    border-radius: 10px;
+  .autoplayRow {
+    margin-top: 18px;
   }
 }

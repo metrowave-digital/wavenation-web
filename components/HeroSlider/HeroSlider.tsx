@@ -1,134 +1,155 @@
-// components/HeroSlider/HeroSlider.tsx (SERVER)
-
+// components/HeroSlider/HeroSlider.tsx
 import HeroSliderClient from "./HeroSliderClient";
-import styles from "./HeroSlider.module.css";
+import type { SlideData } from "./HeroSlider.types";
 
-const rawCMS =
-  process.env.NEXT_PUBLIC_CMS_URL ||
-  "https://wavenation-cms-1dfs.onrender.com";
+const CMS = process.env.NEXT_PUBLIC_CMS_URL?.replace(/\/+$/, "") ?? "";
 
-const API_BASE_URL = rawCMS.replace(/\/+$/, "");
-
-/* ===============================
-   TYPES
-=============================== */
-
-interface HeroImage {
+/* -------------------------------------------------------
+   Types for Payload article shape (safe, no any)
+-------------------------------------------------------- */
+interface CMSImage {
   url?: string;
+  alt?: string;
 }
 
-interface Category {
+interface CMSCategory {
   name?: string;
   title?: string;
 }
 
-interface SEOOgImage {
-  url?: string;
+interface CMSAuthor {
+  displayName?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
 }
 
-interface SEO {
-  description?: string | null;
-  ogImage?: SEOOgImage | null;
+interface CMSStandardFields {
+  subtitle?: string | null;
+  heroImage?: CMSImage | null;
+  category?: CMSCategory | null;
 }
 
-interface Article {
-  id: number | string;
-  title: string;
-  slug: string;
-  status: string;
-  publishedAt?: string;
-  heroImage?: HeroImage | null;
-  seo?: SEO | null;
-  category?: Category | null;
+interface CMSArticle {
+  id?: string | number;
+  title?: string;
+  slug?: string;
+  publishedDate?: string | Date | null;
+  readingTime?: number | null;
+
+  author?: CMSAuthor | null;
+
+  heroImage?: CMSImage | null;
+  standardFields?: CMSStandardFields | null;
+
+  seo?: {
+    ogImage?: CMSImage | null;
+  } | null;
 }
 
-interface ArticlesResponse {
-  docs?: Article[];
-}
+/* -------------------------------------------------------
+   Fetch + transform CMS articles into SlideData
+-------------------------------------------------------- */
+async function getSlides(): Promise<SlideData[]> {
+  const res = await fetch(
+    `${CMS}/api/articles?limit=5&sort=-publishedDate&depth=2`,
+    { cache: "no-store" }
+  );
 
-/* New slide type */
-interface SlideItemData {
-  id: number | string;
-  title: string;
-  excerpt: string;
-  category: string;
-  image: string;
-  href: string;
-}
-
-/* ===============================
-   FETCH (SSR)
-=============================== */
-
-async function getSlides(): Promise<SlideItemData[]> {
-  try {
-    const url = `${API_BASE_URL}/api/articles?limit=5&sort=-publishedAt&where[status][equals]=published&depth=2`;
-
-    const res = await fetch(url, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      next: { revalidate: 0 },
-    });
-
-    if (!res.ok) return [];
-
-    const data: ArticlesResponse = await res.json();
-    const docs = data.docs ?? [];
-
-    return docs.map((article) => {
-      const rawImage =
-        article.heroImage?.url ||
-        article.seo?.ogImage?.url ||
-        "/images/editorial/default-hero.jpg";
-
-      const imageUrl = rawImage.startsWith("http")
-        ? rawImage
-        : `${API_BASE_URL}${rawImage}`;
-
-      const categoryName =
-        article.category?.name ||
-        article.category?.title ||
-        "WaveNation News";
-
-      const source = article.seo?.description || article.title;
-      const excerpt =
-        source.length > 160 ? `${source.slice(0, 157)}...` : source;
-
-      return {
-        id: article.id,
-        title: article.title,
-        excerpt,
-        category: categoryName,
-        image: imageUrl,
-        href: `/news/${article.slug}`,
-      };
-    });
-  } catch (e) {
-    console.error("CMS Fetch Error (HeroSlider):", e);
+  if (!res.ok) {
+    console.error("HeroSlider fetch failed", res.status);
     return [];
   }
+
+  const json = await res.json();
+  const docs: CMSArticle[] = json.docs ?? [];
+
+  return docs.map((a): SlideData => {
+    /* ---------------------------------------------
+       IMAGE RESOLUTION
+    --------------------------------------------- */
+    const rawImg =
+      a.heroImage?.url ||
+      a.standardFields?.heroImage?.url ||
+      a.seo?.ogImage?.url ||
+      null;
+
+    const imageUrl = rawImg
+      ? rawImg.startsWith("http")
+        ? rawImg
+        : `${CMS}${rawImg}`
+      : null;
+
+    /* ---------------------------------------------
+       BASIC FIELDS
+    --------------------------------------------- */
+    const title = a.title ?? "Untitled story";
+    const subtitle =
+      typeof a.standardFields?.subtitle === "string"
+        ? a.standardFields.subtitle
+        : null;
+
+    const href = `/news/${a.slug ?? ""}`;
+
+    /* ---------------------------------------------
+       AUTHOR NAME RESOLUTION
+    --------------------------------------------- */
+    const authorName =
+      a.author?.displayName ||
+      (a.author?.firstName
+        ? `${a.author.firstName} ${a.author.lastName ?? ""}`.trim()
+        : null) ||
+      null;
+
+    /* ---------------------------------------------
+       CATEGORY & META
+    --------------------------------------------- */
+    const categoryLabel =
+      a.standardFields?.category?.name ??
+      a.standardFields?.category?.title ??
+      null;
+
+    const publishedDateLabel = a.publishedDate
+      ? new Date(a.publishedDate).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        })
+      : null;
+
+    const readingTimeLabel = a.readingTime
+      ? `${a.readingTime} min read`
+      : null;
+
+    /* ---------------------------------------------
+       FINAL SlideData RETURN
+    --------------------------------------------- */
+    return {
+      id: a.id ?? href,
+
+      title,
+      subtitle,
+      href,
+      authorName,
+
+      mediaType: "image",
+      imageUrl,
+      imageAlt: a.heroImage?.alt ?? title,
+      videoUrl: null,
+      videoPoster: imageUrl,
+
+      categoryLabel,
+      publishedDateLabel,
+      readingTimeLabel,
+    };
+  });
 }
 
-/* ===============================
-   MAIN COMPONENT
-=============================== */
-
+/* -------------------------------------------------------
+   SERVER COMPONENT WRAPPER
+-------------------------------------------------------- */
 export default async function HeroSlider() {
   const slides = await getSlides();
 
-  return (
-    <section className={styles.wrapper}>
-      <header className={styles.header}>
-        <h2 className={styles.title}>Latest WaveNation News</h2>
-        <p className={styles.subtitle}>
-          Breaking stories, culture, music, and entertainment — updated daily.
-        </p>
-      </header>
+  if (!slides.length) return null;
 
-      <div className={styles.sliderOuter}>
-        <HeroSliderClient slides={slides} />
-      </div>
-    </section>
-  );
+  return <HeroSliderClient slides={slides} />;
 }

@@ -372,10 +372,9 @@ useEffect(() => {
         {/* Desktop nav */}
         <div className="hidden sm:flex items-center bg-white/10 backdrop-blur-sm px-4 py-1 rounded-full gap-4">
           <nav className="hidden md:flex items-center gap-4 text-xs text-white/90">
-            <Link href="/news" className="hover:text-electric">News</Link>
-            <Link href="/culture" className="hover:text-electric">Culture</Link>
-            <Link href="/music" className="hover:text-electric">Music</Link>
-            <Link href="/features" className="hover:text-electric">Features</Link>
+            <Link href="/submissions" className="hover:text-electric">Submissions</Link>
+            <Link href="/partner" className="hover:text-electric">Advertise</Link>
+            <Link href="/portal" className="hover:text-electric">Portal</Link>
           </nav>
 
           <div className="hidden md:block w-px h-5 bg-white/25" />

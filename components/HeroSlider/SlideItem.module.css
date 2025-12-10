@@ -1,255 +1,215 @@
-/* ============================================================
-   SLIDE WRAPPER
-   ============================================================ */
+/* ================================
+   SLIDE BASE
+================================ */
 
 .slide {
   position: relative;
-  display: block;
   width: 100%;
-  height: 580px;
+  height: 100%;
+  display: block;
   overflow: hidden;
-  border-radius: 16px;
+  color: #ffffff;
   text-decoration: none;
-  color: white;
 }
 
-/* ============================================================
-   BACKGROUND IMAGE
-   ============================================================ */
+/* BACKGROUND IMAGE (KEN BURNS / DRIFT) */
 
 .background {
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
-  transform-origin: center;
+  background-position: center center;
   filter: brightness(0.78);
-  z-index: 1;
+  transform-origin: center;
+  transform: scale(1.05) translateX(0);
+  transition:
+    filter 800ms ease-in-out,
+    transform 8000ms ease-in-out;
 }
 
-/* ============================================================
-   IMAGE OVERLAY
-   ============================================================ */
+.backgroundActive {
+  filter: brightness(0.92);
+  transform: scale(1.15) translateX(-10px);
+}
+
+/* OVERLAY */
 
 .overlay {
   position: absolute;
   inset: 0;
-
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.05) 0%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.75) 100%
-  );
-
-  z-index: 2;
+  background:
+    radial-gradient(
+      circle at 10% 0,
+      rgba(0, 179, 255, 0.32),
+      transparent 55%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.65) 50%,
+      rgba(0, 0, 0, 0.9) 100%
+    );
+  z-index: 1;
 }
 
-/* ============================================================
-   CATEGORY TAG
-   ============================================================ */
-
-.category {
-  position: absolute;
-  top: 22px;
-  right: 22px;
-  z-index: 4;
-
-  padding: 6px 14px;
-  background: #e92c63;
-  border-radius: 6px;
-
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
-  pointer-events: none;
-}
-
-/* ============================================================
-   CONTENT (BOTTOM-LEFT)
-   ============================================================ */
+/* CONTENT */
 
 .content {
   position: absolute;
-  bottom: 34px;
-  left: 34px;
-  right: 34px;
-  z-index: 3;
-
+  inset: 0;
+  padding: 1.6rem 1.8rem 1.9rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 90%;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 600ms ease-in-out,
+    transform 600ms ease-in-out;
+}
+
+.contentActive {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* CATEGORY BADGE */
+
+.categoryBadge {
+  align-self: flex-start;
+  margin-bottom: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* TITLE */
+
 .title {
-  font-size: 1.85rem;
+  font-size: 1.9rem;
   font-weight: 800;
-  line-height: 1.25;
-  max-width: 700px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  line-height: 1.2;
+  max-width: 34rem;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
 }
 
 /* EXCERPT */
+
 .excerpt {
   font-size: 0.9rem;
-  opacity: 0.82;
-  max-width: 75%;
   line-height: 1.4;
+  max-width: 34rem;
+  opacity: 0.88;
 }
 
-/* INLINE READ MORE */
-.readMore {
-  background: none;
-  border: none;
-  color: #00b3ff;
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-left: 6px;
-  cursor: pointer;
-  text-decoration: underline;
-  transition: color 0.25s ease;
-  padding: 0;
+/* KICKER */
+
+.kicker {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
 }
 
-.readMore:hover {
-  color: #39ff14;
-}
-
-/* ============================================================
-   KEN BURNS ANIMATIONS
-   ============================================================ */
-
-@keyframes kenBurnsZoomInLeft {
-  0% {
-    transform: scale(1.05) translateX(12px);
-  }
-  100% {
-    transform: scale(1.18) translateX(-22px);
-  }
-}
-
-@keyframes kenBurnsZoomInRight {
-  0% {
-    transform: scale(1.05) translateX(-12px);
-  }
-  100% {
-    transform: scale(1.18) translateX(22px);
-  }
-}
-
-@keyframes kenBurnsZoomOutLeft {
-  0% {
-    transform: scale(1.22) translateX(16px);
-  }
-  100% {
-    transform: scale(1.05) translateX(-18px);
-  }
-}
-
-@keyframes kenBurnsZoomOutRight {
-  0% {
-    transform: scale(1.22) translateX(-16px);
-  }
-  100% {
-    transform: scale(1.05) translateX(18px);
-  }
-}
-
-.kenBurnsZoomInLeft {
-  animation: kenBurnsZoomInLeft 8s ease-in-out forwards;
-}
-.kenBurnsZoomInRight {
-  animation: kenBurnsZoomInRight 8s ease-in-out forwards;
-}
-.kenBurnsZoomOutLeft {
-  animation: kenBurnsZoomOutLeft 8s ease-in-out forwards;
-}
-.kenBurnsZoomOutRight {
-  animation: kenBurnsZoomOutRight 8s ease-in-out forwards;
-}
-
-/* ============================================================
-   RESPONSIVE BREAKPOINTS
-   ============================================================ */
+/* ================================
+   RESPONSIVE
+================================ */
 
 @media (max-width: 1024px) {
-  .slide {
-    height: 480px;
+  .content {
+    padding: 1.35rem 1.4rem 1.6rem;
   }
 
   .title {
     font-size: 1.6rem;
   }
+
   .excerpt {
     font-size: 0.85rem;
-    max-width: 90%;
-  }
-
-  .content {
-    bottom: 26px;
-    left: 26px;
-    right: 26px;
-  }
-
-  .category {
-    top: 18px;
-    right: 18px;
   }
 }
 
 @media (max-width: 768px) {
-  .slide {
-    height: 420px;
+  .content {
+    padding: 1.2rem 1.25rem 1.4rem;
   }
 
   .title {
-    font-size: 1.45rem;
+    font-size: 1.4rem;
   }
+
   .excerpt {
     font-size: 0.8rem;
-    max-width: 100%;
   }
 
-  .content {
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-  }
-
-  .category {
-    top: 14px;
-    right: 14px;
-    font-size: 0.75rem;
+  .categoryBadge {
+    font-size: 0.65rem;
   }
 }
 
 @media (max-width: 480px) {
-  .slide {
-    height: 380px;
+  .content {
+    padding: 1rem 1rem 1.25rem;
   }
 
   .title {
     font-size: 1.25rem;
-    line-height: 1.28;
   }
+
   .excerpt {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
   }
 
-  .content {
-    bottom: 16px;
-    left: 16px;
-    right: 16px;
-  }
-
-  .category {
-    top: 12px;
-    right: 12px;
-    padding: 4px 10px;
+  .kicker {
     font-size: 0.7rem;
   }
+}
+
+.slideItem {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.slideImage {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  z-index: 1;
+}
+
+.slideGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75),
+    transparent
+  );
+  z-index: 2;
+}
+
+.slideTitle {
+  position: absolute;
+  bottom: 16px;
+  left: 14px;
+  right: 14px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  z-index: 3;
+  text-shadow: 0px 3px 12px rgba(0,0,0,0.8);
 }

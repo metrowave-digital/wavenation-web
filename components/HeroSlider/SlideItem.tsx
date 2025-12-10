@@ -1,51 +1,35 @@
-"use client";
+// components/HeroSlider/SlideItem.tsx
+import Image from "next/image";
+import Link from "next/link";
+import type { SlideData } from "./HeroSlider.types";
 
-import { useEffect, useRef } from "react";
-import styles from "./SlideItem.module.css";
-
-export interface SlideItemProps {
-  _id: string | number;  // unused, but prefix fixes ESLint
-  title: string;
-  excerpt?: string;
-  category?: string;
-  href: string;
-  image: string;
+interface SlideItemProps {
+  slide: SlideData;
   isActive: boolean;
-  motionClassName?: string;
 }
 
-export default function SlideItem({
-  _id, // eslint-safe unused var
-  title,
-  excerpt,
-  category,
-  href,
-  image,
-  isActive,
-  motionClassName,
-}: SlideItemProps) {
-
-  const mounted = useRef(false);
-
-  useEffect(() => {
-    mounted.current = true;
-  }, []);
-
-  const animationClass =
-    mounted.current && isActive && motionClassName ? motionClassName : "";
-
+export default function SlideItem({ slide, isActive }: SlideItemProps) {
   return (
-    <a className={styles.slide} href={href}>
-      <div
-        className={`${styles.background} ${animationClass}`}
-        style={{ backgroundImage: `url(${image})` }}
-      />
+    <div className={`slide-item ${isActive ? "active" : ""}`}>
+      <Link href={slide.href}>
+        {slide.imageUrl ? (
+          <Image
+            src={slide.imageUrl}
+            alt={slide.imageAlt ?? slide.title}
+            fill
+            className="slide-image"
+          />
+        ) : (
+          <div className="slide-placeholder">
+            No image available
+          </div>
+        )}
 
-      <div className={styles.overlay}>
-        {category && <span className={styles.category}>{category}</span>}
-        <h3 className={styles.title}>{title}</h3>
-        {excerpt && <p className={styles.excerpt}>{excerpt}</p>}
-      </div>
-    </a>
+        <div className="slide-content">
+          <h3>{slide.title}</h3>
+          {slide.subtitle && <p>{slide.subtitle}</p>}
+        </div>
+      </Link>
+    </div>
   );
 }

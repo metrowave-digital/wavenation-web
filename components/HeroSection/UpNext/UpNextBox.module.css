@@ -1,256 +1,261 @@
+/* ============================================================
+   UP NEXT BOX — THEME TOKENS (DARK DEFAULT)
+============================================================ */
+
 .upNextBox {
-  background: #111;
-  border-radius: 16px;
+  /* BACKGROUND */
+  --un-bg: radial-gradient(circle at top left, #161a2d, #0b0d0f 60%);
+  --un-border: rgba(255, 255, 255, 0.08);
+
+  /* TEXT */
+  --un-header: #00b3ff;          /* section header */
+  --un-title: #ffffff;           /* show title */
+  --un-text: #ffffff;            /* primary text */
+  --un-subtext: #cfd3d8;         /* artist / secondary */
+  --un-muted: #a2a8b3;           /* meta / time */
+
+  /* STATION BADGE (🔑 FIX) */
+  --un-station-bg: rgba(255, 255, 255, 0.08);
+  --un-station-text: #ffffff;
+
+  /* UI */
+  --un-pill-bg: #e92c63;
+  --un-progress-bg: rgba(255, 255, 255, 0.14);
+
+  --un-card-bg: rgba(255, 255, 255, 0.06);
+  --un-avatar-bg: #222;
+  --un-art-bg: #111;
+
+  background: var(--un-bg);
+  border-radius: 18px;
   padding: 22px;
+
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: box-shadow 0.3s ease;
+  gap: 16px;
+
+  border: 1px solid var(--un-border);
 }
 
-.upNextBox:hover {
-  box-shadow: 0 0 20px rgba(255, 0, 180, 0.25);
+/* ============================================================
+   LIGHT THEME — HIGH CONTRAST
+============================================================ */
+
+:global([data-theme="light"]) .upNextBox,
+:global(html.light) .upNextBox,
+:global(body.light) .upNextBox,
+:global(.theme-light) .upNextBox {
+  /* BACKGROUND */
+  --un-bg: linear-gradient(180deg, #ffffff, #eef2f8);
+  --un-border: rgba(11, 13, 15, 0.14);
+
+  /* TEXT */
+  --un-header: #005fa3;
+  --un-title: #0b0d0f;
+  --un-text: #0b0d0f;
+  --un-subtext: #2f3440;
+  --un-muted: #4b5563;
+
+  /* STATION BADGE (🔑 FIX) */
+  --un-station-bg: rgba(11, 13, 15, 0.08);
+  --un-station-text: #0b0d0f;
+
+  /* UI */
+  --un-pill-bg: #e92c63;
+  --un-progress-bg: rgba(11, 13, 15, 0.18);
+
+  --un-card-bg: rgba(11, 13, 15, 0.06);
+  --un-avatar-bg: #dfe3ea;
+  --un-art-bg: #e6e9f0;
 }
 
-.upNextHeaderRow {
+/* ============================================================
+   HEADER
+============================================================ */
+
+.headerRow {
   display: flex;
   justify-content: space-between;
-  color: #fff;
+  align-items: center;
 }
 
-.upNextHeader {
-  font-size: 1.2rem;
+.headerTitle {
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--un-header);
+}
+
+.countdown {
+  font-size: 0.8rem;
+  color: var(--un-muted);
+}
+
+.livePill {
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--un-pill-bg);
+  color: #ffffff;
   font-weight: 700;
 }
 
-.upNextCountdown {
-  font-size: 0.9rem;
-  color: #bbb;
-}
+/* ============================================================
+   STATION BADGE (UP NEXT / LIVE NOW)
+============================================================ */
 
 .stationBadge {
-  background: rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
   padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  color: #ccc;
+  border-radius: 999px;
+
+  background: var(--un-station-bg);
+  color: var(--un-station-text);
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
+
+/* LIVE OVERRIDE (when styles.liveBadge is added) */
+.liveBadge {
+  background: linear-gradient(90deg, #e92c63, #00b3ff);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 0 18px rgba(233, 44, 99, 0.45);
+}
+
+/* ============================================================
+   PROGRESS
+============================================================ */
+
+.progressWrapper {
+  height: 5px;
+  background: var(--un-progress-bg);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #e92c63, #00b3ff);
+}
+
+/* ============================================================
+   NOW PLAYING
+============================================================ */
+
+.nowPlayingBox {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--un-card-bg);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.trackTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--un-text);
+}
+
+.trackArtist {
+  font-size: 0.8rem;
+  color: var(--un-subtext);
+}
+
+/* ============================================================
+   MAIN LAYOUT
+============================================================ */
 
 .upNextMain {
   display: flex;
   gap: 16px;
 }
 
-/* ARTWORK */
-.upNextArtworkWrapper {
-  position: relative;
-  width: 110px;
-  height: 110px;
-}
+/* ============================================================
+   ARTWORK
+============================================================ */
 
-.artGlow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, #ff0090, transparent 70%);
-  filter: blur(18px);
-  opacity: 0.4;
-}
-
-.upNextArtwork {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
+.artwork {
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
   overflow: hidden;
-  background: #222;
-}
-
-.artShimmer {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #333, #555, #333);
-  background-size: 300% 300%;
-  animation: shimmerGlow 2.5s infinite linear;
-  opacity: 0.3;
-}
-
-@keyframes shimmerGlow {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 200% 200%; }
-  100% { background-position: 0% 0%; }
-}
-
-.artPlaceholder {
+  background: var(--un-art-bg);
   position: relative;
-  z-index: 2;
-  color: #777;
-  font-size: 0.8rem;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-/* INFO */
-.upNextInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.titleRow {
-  display: flex;
-  justify-content: space-between;
-  color: #fff;
-}
-
-.upNextTitle {
-  margin: 0;
-  font-size: 1.3rem;
-}
-
-.hostAvatar {
-  width: 36px;
-  height: 36px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #eee;
-  font-size: 0.9rem;
-}
-
-.upNextLine {
-  width: 100%;
-  height: 1px;
-  background: rgba(255,255,255,0.1);
-}
-
-.metaGrid {
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 8px;
-}
-
-.metaLabel {
-  color: #aaa;
-  font-size: 0.75rem;
-}
-
-.metaValue {
-  color: #fff;
-  font-size: 0.95rem;
-}
-
-.artImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hostAvatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.fallbackAvatar {
-  width: 100%;
-  height: 100%;
-  background: #444;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #eee;
-  font-weight: 700;
-  border-radius: 50%;
+.artLive {
+  box-shadow: 0 0 24px rgba(233, 44, 99, 0.5);
 }
 
 .artFallback {
-  width: 100%;
   height: 100%;
-  background: #222;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #888;
+  display: grid;
+  place-items: center;
+  color: var(--un-muted);
 }
 
-.liveBadge {
-  background: #ff004c !important;
-  color: #fff !important;
+/* ============================================================
+   INFO
+============================================================ */
+
+.info {
+  flex: 1;
+}
+
+.showTitle {
+  font-size: 1.2rem;
   font-weight: 700;
-}
-
-.liveIndicator {
-  color: #ff004c;
-  font-weight: 800;
-  font-size: 1rem;
-  animation: pulseLive 1.2s infinite;
-}
-
-@keyframes pulseLive {
-  0% { opacity: 1; }
-  50% { opacity: .4; }
-  100% { opacity: 1; }
-}
-
-/* highlight the whole panel when live */
-.liveNowActive {
-  border: 1px solid #ff004c !important;
-  box-shadow: 0 0 18px rgba(255, 0, 80, 0.4);
-}
-
-/* artwork red glow */
-.liveArtwork {
-  box-shadow: 0 0 18px rgba(255, 0, 80, 0.5);
-}
-
-/* LIVE progress bar */
-.progressWrapper {
-  width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
-  overflow: hidden;
-  margin: 6px 0 12px;
-}
-
-.progressBar {
-  height: 100%;
-  background: linear-gradient(90deg, #ff004c, #ff9500);
-  transition: width 1s linear;
-}
-
-/* Live track display */
-.nowPlayingBox {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 10px 14px;
-  border-radius: 12px;
+  color: var(--un-title);
   margin-bottom: 10px;
 }
 
-.trackCover {
-  width: 46px;
-  height: 46px;
-  border-radius: 8px;
-  object-fit: cover;
+.hostRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.trackTitle {
-  color: #fff;
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--un-avatar-bg);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+
+  color: var(--un-text);
+  font-weight: 700;
+}
+
+.hostName {
   font-size: 0.9rem;
-  font-weight: 600;
+  color: var(--un-text);
 }
 
-.trackArtist {
-  color: #bbb;
-  font-size: 0.8rem;
+.time {
+  font-size: 0.75rem;
+  color: var(--un-muted);
+}
+
+@media (max-width: 640px) {
+  .upNextMain {
+    flex-direction: column;
+  }
+
+  .artwork {
+    width: 100%;
+    height: 160px;
+  }
 }

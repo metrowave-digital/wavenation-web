@@ -1,70 +1,127 @@
 "use client";
 
-import { usePlayerController } from "./hooks/usePlayerController";
+import { usePlayerShared } from "./PlayerShared";
+
+import { PlayerMobileBar } from "./ui/PlayerMobileBar";
+import PlayerExpandedSheet from "./ui/PlayerExpandedSheet";
 import PlayerDesktopBar from "./ui/PlayerDesktopBar";
-import PlayerMobileBar from "./ui/PlayerMobileBar";
 import PlayerQueue from "./ui/PlayerQueue";
+import PlayerCarMode  from "./ui/PlayerCarMode";
 
 export default function StickyPlayer() {
-  const controller = usePlayerController();
+  const {
+    registerAudioEl,
+
+    currentTrack,
+    currentShow,
+    isLive,
+    isPlaying,
+    currentTime,
+    duration,
+
+    queue,
+    currentIndex,
+    expandedMobile,
+    volume,
+
+    togglePlayPause,
+    playNext,
+    playPrev,
+    seek,
+    jumpToLive,
+    toggleQueue,
+    setExpandedMobile,
+    setVolume,
+  } = usePlayerShared();
 
   return (
     <>
-      {/* AUDIO ELEMENT */}
+      {/* GLOBAL AUDIO ELEMENT */}
       <audio
-        ref={controller.registerAudioEl}
-        src={controller.currentTrack?.src}
-        onTimeUpdate={controller.handleTimeUpdate}
-        onLoadedMetadata={controller.handleLoadedMetadata}
-        onEnded={controller.handleEnded}
-        className="hidden"
+        ref={(el) => registerAudioEl(el)}
+        src={currentTrack?.src}
+        preload="none"
+        playsInline
+        hidden
       />
 
-      {/* DESKTOP PLAYER */}
-      <PlayerDesktopBar
-        currentTrack={controller.currentTrack}
-        currentShow={controller.currentShow}
-        isLive={controller.isLive}
-        isPlaying={controller.isPlaying}
-        currentTime={controller.currentTime}
-        duration={controller.duration}
-        volume={controller.volume}
-        onVolumeChange={controller.setVolume}
-        onPlayPause={controller.togglePlayPause}
-        onNext={controller.playNext}
-        onPrev={controller.playPrev}
-        onSeek={controller.seek}
-        onToggleQueue={controller.toggleQueue}
-        onReturnToLive={controller.jumpToLive}
-        onOpenVoiceMemo={controller.openVoiceMemo}
-        hasLiveTrack={controller.hasLiveTrack}
-      />
-
-      {/* MOBILE PLAYER */}
+      {/* MOBILE BAR */}
       <PlayerMobileBar
-        currentTrack={controller.currentTrack}
-        currentShow={controller.currentShow}
-        isLive={controller.isLive}
-        isPlaying={controller.isPlaying}
-        currentTime={controller.currentTime}
-        duration={controller.duration}
-        onPlayPause={controller.togglePlayPause}
-        onSeek={controller.seek}
-        onToggleQueue={controller.toggleQueue}
-        onReturnToLive={controller.jumpToLive}
-        onOpenVoiceMemo={controller.openVoiceMemo}
-        hasLiveTrack={controller.hasLiveTrack}
-        expanded={controller.expandedMobile}
-        setExpanded={controller.setExpandedMobile}
+        currentTrack={currentTrack}
+        currentShow={currentShow}
+        isLive={isLive}
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        duration={duration}
+        onPlayPause={togglePlayPause}
+        onSeek={seek}
+        onReturnToLive={jumpToLive}
+        onOpenQueue={toggleQueue}
+        expanded={expandedMobile}
+        setExpanded={setExpandedMobile}
       />
 
-      {/* QUEUE */}
+      {/* MOBILE EXPANDED */}
+      <PlayerExpandedSheet
+        currentTrack={currentTrack}
+        currentShow={currentShow}
+        isLive={isLive}
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        duration={duration}
+        expanded={expandedMobile}
+        onClose={() => setExpandedMobile(false)}
+        onPlayPause={togglePlayPause}
+        onSeek={seek}
+        onToggleQueue={toggleQueue}
+        onOpenVoiceMemo={() => {}}
+        onReturnToLive={jumpToLive}
+        hasLiveTrack={queue?.some((t) => t.isLive)}
+      />
+
+      {/* DESKTOP BAR */}
+      <PlayerDesktopBar
+        currentTrack={currentTrack}
+        currentShow={currentShow}
+        isLive={isLive}
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        duration={duration}
+        volume={volume}
+        onVolumeChange={setVolume}
+        onPlayPause={togglePlayPause}
+        onNext={playNext}
+        onPrev={playPrev}
+        onSeek={seek}
+        onToggleQueue={toggleQueue}
+        onReturnToLive={jumpToLive}
+        onOpenVoiceMemo={() => {}}
+        hasLiveTrack={queue?.some((t) => t.isLive)}
+      />
+
+      {/* QUEUE (rendered but visibility controlled internally) */}
       <PlayerQueue
-        open={controller.isQueueOpen}
-        queue={controller.queue}
-        currentIndex={controller.currentIndex}
-        onSelectTrack={controller.playTrackAtIndex}
-        onClose={controller.toggleQueue}
+        open={false}
+        queue={queue ?? []}
+        currentIndex={currentIndex ?? 0}
+        onSelectTrack={() => {}}
+        onClose={toggleQueue}
+      />
+
+      {/* CAR MODE */}
+      <PlayerCarMode
+        enabled={false}
+        onClose={() => {}}
+        currentTrack={currentTrack}
+        currentShow={currentShow}
+        isLive={isLive}
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        duration={duration}
+        onPlayPause={togglePlayPause}
+        onNext={playNext}
+        onPrev={playPrev}
+        onSeek={seek}
       />
     </>
   );

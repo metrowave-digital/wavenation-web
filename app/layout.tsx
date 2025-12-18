@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
-import { WNThemeProvider } from "@/components/ui/theme/WNThemeProvider";
+import { WNThemeProvider } from "@/components/ui/ThemeToggle/WNThemeProvider";
 import FullHeader from "@/components/ui/header/FullHeader";
 import NewsTicker from "@/components/ui/NewsTicker";
+import StickyPlayer from "@/components/StickyPlayer/StickyPlayer";
 import { getNewsTicker } from "@/lib/getNewsTicker";
 
 export const metadata: Metadata = {
@@ -39,6 +40,9 @@ export default async function RootLayout({
 
           {/* MAIN CONTENT */}
           <main>{children}</main>
+
+          {/* GLOBAL STICKY PLAYER */}
+          <StickyPlayer />
         </WNThemeProvider>
       </body>
     </html>

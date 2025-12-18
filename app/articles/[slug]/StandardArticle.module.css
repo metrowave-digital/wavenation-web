@@ -1,0 +1,185 @@
+/* ================= BASE ================= */
+.article {
+  background: #0B0D0F;
+  color: #FFFFFF;
+}
+
+/* ================= HERO ================= */
+.hero {
+  position: relative;
+  min-height: 75vh;
+  display: flex;
+  align-items: flex-end;
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+}
+
+.heroImage img {
+  object-fit: cover;
+  filter: brightness(0.55);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: 4rem 1.5rem;
+}
+
+.badges span {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.breaking {
+  background: #E92C63;
+}
+
+.editorPick {
+  background: #39FF14;
+  color: #000;
+}
+
+.category {
+  display: block;
+  margin-top: 1rem;
+  color: #00B3FF;
+  letter-spacing: 0.12em;
+}
+
+.title {
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  margin: 1rem 0;
+}
+
+.dek {
+  color: #DDDDDD;
+  max-width: 720px;
+}
+
+.byline {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #AAAAAA;
+}
+
+.updated {
+  margin-left: 0.5rem;
+}
+
+/* ================= META BAR ================= */
+.metaBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #1F1F21;
+  font-size: 0.85rem;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  margin-left: 0.5rem;
+}
+
+.save {
+  color: #39FF14;
+}
+
+/* ================= ADS ================= */
+.adSlot {
+  margin: 3rem auto;
+  max-width: 720px;
+  padding: 2rem;
+  text-align: center;
+  background: #161A2D;
+  color: #888;
+}
+
+/* ================= BODY ================= */
+.body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  line-height: 1.8;
+}
+
+.body h2 {
+  margin-top: 3rem;
+}
+
+.pullQuote {
+  margin: 3rem 0;
+  padding-left: 1.5rem;
+  border-left: 4px solid #E92C63;
+  font-size: 1.4rem;
+}
+
+.inlineImage {
+  margin: 2.5rem 0;
+}
+
+/* ================= MEDIA ================= */
+.mediaTieIn {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #1F1F21;
+}
+
+/* ================= CONTEXT ================= */
+.context {
+  margin: 3rem 0;
+  padding: 1.5rem;
+  background: #161A2D;
+}
+
+/* ================= AUTHOR ================= */
+.author {
+  max-width: 720px;
+  margin: 4rem auto;
+  display: flex;
+  gap: 1rem;
+}
+
+/* ================= RELATED ================= */
+.related {
+  max-width: 720px;
+  margin: 3rem auto;
+}
+
+/* ================= CTA ================= */
+.cta {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: #161A2D;
+}
+
+.cta button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #00B3FF;
+  border: none;
+  color: #000;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding-bottom: 4rem;
+}
+
+.tags span {
+  margin-right: 0.5rem;
+}
+
+.footerActions {
+  margin-top: 1rem;
+}

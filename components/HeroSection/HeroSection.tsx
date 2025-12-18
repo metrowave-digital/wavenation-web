@@ -1,30 +1,22 @@
 // components/HeroSection/HeroSection.tsx
-
-import HeroSlider from "@/components/HeroSlider/HeroSlider";
-import LiveTvBox from "./LiveTvBox";
+import HeroSlider from "./HeroSlider/HeroSlider";
+import LiveTvBox from "./LiveTVBox/LiveTVBox";
 import UpNextBox from "./UpNext/UpNextBox";
-
 import styles from "./HeroSection.module.css";
 
 export default function HeroSection() {
   return (
     <section className={styles.wrapper}>
       <div className={styles.container}>
-        {/* LEFT: HERO SLIDER */}
+        {/* LEFT */}
         <div className={styles.left}>
-          <div className={styles.sliderWrapperFix}>
-            <HeroSlider />
-          </div>
+          <HeroSlider />
         </div>
 
-        {/* RIGHT: LIVE TV + UP NEXT */}
+        {/* RIGHT */}
         <div className={styles.right}>
-          <div className={styles.card}>
-            <LiveTvBox />
-          </div>
-          <div className={styles.card}>
-            <UpNextBox />
-          </div>
+          <LiveTvBox />
+          <UpNextBox />
         </div>
       </div>
     </section>

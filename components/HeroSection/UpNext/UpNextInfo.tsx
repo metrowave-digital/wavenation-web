@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
 import styles from "./UpNextBox.module.css";
 
 interface Props {
@@ -22,39 +21,23 @@ export default function UpNextInfo({
   avatar,
 }: Props) {
   return (
-    <div className={styles.upNextInfo}>
-      <div className={styles.titleRow}>
-        <h3 className={styles.upNextTitle}>{title}</h3>
+    <div className={styles.info}>
+      <h3 className={styles.showTitle}>{title}</h3>
 
-        <div className={styles.hostAvatar}>
+      <div className={styles.hostRow}>
+        <div className={styles.avatar}>
           {avatar ? (
-            <Image src={avatar} alt="Host Avatar" fill className={styles.avatarImg} />
+            <Image src={avatar} alt={host} fill />
           ) : (
-            <span className={styles.avatarFallback}>
-              {host.charAt(0).toUpperCase()}
-            </span>
+            <span>{host[0]}</span>
           )}
         </div>
-      </div>
 
-      <div className={styles.upNextLine}></div>
-
-      <div className={styles.metaGrid}>
         <div>
-          <p className={styles.metaLabel}>Host</p>
-          <p className={styles.metaValue}>{host}</p>
-        </div>
-        <div>
-          <p className={styles.metaLabel}>Date</p>
-          <p className={styles.metaValue}>{date}</p>
-        </div>
-        <div>
-          <p className={styles.metaLabel}>Start</p>
-          <p className={styles.metaValue}>{start}</p>
-        </div>
-        <div>
-          <p className={styles.metaLabel}>End</p>
-          <p className={styles.metaValue}>{end}</p>
+          <p className={styles.hostName}>{host}</p>
+          <p className={styles.time}>
+            {date} • {start}–{end}
+          </p>
         </div>
       </div>
     </div>

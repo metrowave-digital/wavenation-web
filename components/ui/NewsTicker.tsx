@@ -2,23 +2,18 @@
 
 import { Facebook, Instagram, Youtube, X } from "lucide-react";
 import Link from "next/link";
-import {
-  useMemo,
-  useState,
-  useRef,
-  useEffect,
-  PointerEvent,
-  TouchEvent,
-} from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
+import { SOCIAL_LINKS } from "@/config/socialLinks";
 
 /* -------------------------------------------------------
    TYPES
 -------------------------------------------------------- */
 
 interface Article {
-  id: string | number;
+  id: string;
   title: string;
-  slug?: string;
+  slug: string;
+  badges?: string[];
 }
 
 interface ArticleItem {
@@ -32,372 +27,252 @@ interface SeparatorItem {
 
 type CrawlItem = ArticleItem | SeparatorItem;
 
-type DragEventType =
-  | PointerEvent<HTMLDivElement>
-  | TouchEvent<HTMLDivElement>;
+/* -------------------------------------------------------
+   CONSTANTS
+-------------------------------------------------------- */
+
+const BREAKING_DURATION_MS = 10_000;
+const FADE_DURATION_MS = 400;
 
 /* -------------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 
 export default function NewsTicker({ articles }: { articles: Article[] }) {
-  const [speed, setSpeed] = useState(32);
+  const [activeBreaking, setActiveBreaking] = useState<Article | null>(null);
+  const [showBreaking, setShowBreaking] = useState(false);
+  const [dismissedBreakingId, setDismissedBreakingId] =
+    useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [paused, setPaused] = useState(false); // ⭐ Feature K — mobile tap toggle
 
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Drag momentum memory
-  const startX = useRef(0);
-  const lastX = useRef(0);
-  const velocity = useRef(0);
-  const lastTime = useRef(0);
-  const momentumFrame = useRef(0);
-  const isMomentum = useRef(false);
-
-  // Hover pause timer
-  const hoverTimer = useRef<NodeJS.Timeout | null>(null);
-
-  // For hover bubble
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const isMobile =
+    typeof window !== "undefined" &&
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   /* -------------------------------------------------------
-     BUILD LOOP x3
+     PURE BREAKING DETECTION (NO SIDE EFFECTS)
+  -------------------------------------------------------- */
+
+  const cmsBreakingArticle = useMemo(
+    () => articles.find(a => a.badges?.includes("breaking")) ?? null,
+    [articles]
+  );
+
+  /* -------------------------------------------------------
+     BREAKING STATE MACHINE (ESLINT-SAFE)
+  -------------------------------------------------------- */
+
+  useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    // No breaking OR already dismissed → do nothing
+    if (
+      !cmsBreakingArticle ||
+      cmsBreakingArticle.id === dismissedBreakingId
+    ) {
+      return;
+    }
+
+    // New breaking article arrived → clear dismissal (ASYNC)
+    if (
+      dismissedBreakingId &&
+      cmsBreakingArticle.id !== dismissedBreakingId
+    ) {
+      setTimeout(() => {
+        setDismissedBreakingId(null);
+      }, 0);
+    }
+
+    // Show breaking (ASYNC)
+    timerRef.current = setTimeout(() => {
+      setActiveBreaking(cmsBreakingArticle);
+      setShowBreaking(true);
+    }, 0);
+
+    // Auto-expire
+    timerRef.current = setTimeout(() => {
+      setShowBreaking(false);
+
+      setTimeout(() => {
+        setActiveBreaking(null);
+        setDismissedBreakingId(cmsBreakingArticle.id);
+      }, FADE_DURATION_MS);
+    }, BREAKING_DURATION_MS);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [cmsBreakingArticle, dismissedBreakingId]);
+
+  /* -------------------------------------------------------
+     NON-BREAKING TICKER ITEMS
   -------------------------------------------------------- */
 
   const crawlItems: CrawlItem[] = useMemo(() => {
-    if (!articles.length) return [];
+    const nonBreaking = articles.filter(
+      a => !a.badges?.includes("breaking")
+    );
 
-    const mapped: CrawlItem[] = articles.flatMap((a) => [
+    if (!nonBreaking.length) return [];
+
+    const mapped: CrawlItem[] = nonBreaking.flatMap(a => [
       { type: "article", data: a },
       { type: "separator" },
     ]);
 
-    return [...mapped, ...mapped, ...mapped];
+    return [...mapped, ...mapped];
   }, [articles]);
 
-/* -------------------------------------------------------
-   AI ADAPTIVE SPEED — ULTRA SLOW (Airport News Mode)
--------------------------------------------------------- */
-
-useEffect(() => {
-  if (!dragRef.current) return;
-
-  const width = dragRef.current.scrollWidth;
-  const viewport = window.innerWidth;
-
-  const titles = articles.map((a) => a.title);
-  const totalChars = titles.reduce((acc, t) => acc + t.length, 0);
-  const avgLen = totalChars / (titles.length || 1);
-
-  // A — Headline Length Modifier (more influence)
-  const headlineFactor =
-    avgLen >= 100 ? 1.9 :
-    avgLen >= 70 ? 1.6 :
-    avgLen >= 50 ? 1.4 :
-    avgLen >= 30 ? 1.2 : 1.0;
-
-  // B — Content Width Modifier
-  let widthFactor = width / viewport;
-  widthFactor = Math.max(1.3, Math.min(widthFactor, 3.5));
-
-  // C — Drag Velocity Influence (reduced drastically)
-  let velocityBoost = Math.abs(velocity.current);
-  velocityBoost = Math.min(velocityBoost * 1.5, 0.2);
-  const userFactor = 1 + velocityBoost;
-
-  // D — Device Adaptation (mobile slower)
-  const isMobile = viewport < 768;
-  const deviceFactor = isMobile ? 1.4 : 1.0;
-
-  // BASE ULTRA SLOW SPEED
-  let ideal =
-    135 * headlineFactor * deviceFactor / (widthFactor * userFactor);
-
-  // Clamp to VERY slow range
-  ideal = Math.max(110, Math.min(ideal, 160));
-
-  setSpeed(ideal);
-}, [articles]);
-
-
   /* -------------------------------------------------------
-     PAUSE / RESUME ENGINE
--------------------------------------------------------- */
+     DRAG HANDLING
+  -------------------------------------------------------- */
 
-  const pauseAnimation = () => {
-    if (dragRef.current) dragRef.current.style.animationPlayState = "paused";
-  };
-
-  const resumeAnimation = () => {
-    if (!paused && dragRef.current)
-      dragRef.current.style.animationPlayState = "running";
-  };
-
-  /* -------------------------------------------------------
-     FEATURE K — TAP TO PAUSE / TAP TO RESUME
--------------------------------------------------------- */
-
-  const togglePause = () => {
-    if (!dragRef.current) return;
-
-    if (paused) {
-      setPaused(false);
-      dragRef.current.style.animationPlayState = "running";
-    } else {
-      setPaused(true);
-      dragRef.current.style.animationPlayState = "paused";
-    }
-  };
-
-  /* -------------------------------------------------------
-     HOVER AUTO PAUSE
--------------------------------------------------------- */
-
-  const scheduleHoverPause = () => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    hoverTimer.current = setTimeout(() => pauseAnimation(), 2000);
-  };
-
-  const cancelHoverPause = () => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    resumeAnimation();
-  };
-
-  /* -------------------------------------------------------
-     DRAG SYSTEM
--------------------------------------------------------- */
-
-  const extractX = (e: DragEventType) =>
-    "touches" in e ? e.touches[0]?.clientX ?? 0 : e.clientX;
-
-  const onStart = (e: DragEventType) => {
-    cancelAnimationFrame(momentumFrame.current);
-    isMomentum.current = false;
-
-    pauseAnimation();
+  const onStart = () => {
+    if (activeBreaking) return;
     setIsDragging(true);
-
-    startX.current = extractX(e);
-    lastX.current = extractX(e);
-    lastTime.current = performance.now();
-
     if (dragRef.current) {
-      const c = getComputedStyle(dragRef.current);
-      const matrix = c.transform;
-      const currentX =
-        matrix !== "none" ? parseFloat(matrix.split(",")[4]) : 0;
-
-      dragRef.current.dataset.offset = currentX.toString();
       dragRef.current.style.animationPlayState = "paused";
-    }
-  };
-
-  const onMove = (e: DragEventType) => {
-    if (!isDragging || !dragRef.current) return;
-
-    const x = extractX(e);
-    const dx = x - startX.current;
-
-    const offset = parseFloat(dragRef.current.dataset.offset ?? "0");
-    dragRef.current.style.transform = `translateX(${offset + dx}px)`;
-
-    // Track velocity
-    const now = performance.now();
-    const dt = now - lastTime.current;
-    velocity.current = (x - lastX.current) / dt;
-
-    lastX.current = x;
-    lastTime.current = now;
-  };
-
-  /* -------------------------------------------------------
-     MOMENTUM
--------------------------------------------------------- */
-
-  const momentumScroll = () => {
-    if (!dragRef.current) return;
-    isMomentum.current = true;
-
-    velocity.current *= 0.95;
-
-    const match = dragRef.current.style.transform.match(
-      /translateX\((-?\d+\.?\d*)px\)/
-    );
-
-    const currentX = match ? parseFloat(match[1]) : 0;
-    const nextX = currentX + velocity.current * 14;
-
-    dragRef.current.style.transform = `translateX(${nextX}px)`;
-
-    if (Math.abs(velocity.current) > 0.04) {
-      momentumFrame.current = requestAnimationFrame(momentumScroll);
-    } else {
-      isMomentum.current = false;
-      dragRef.current.style.transform = "";
-      resumeAnimation();
     }
   };
 
   const onEnd = () => {
-    if (!isDragging) return;
+    if (!isDragging || activeBreaking) return;
     setIsDragging(false);
-
-    if (Math.abs(velocity.current) > 0.02) momentumScroll();
-    else resumeAnimation();
+    if (dragRef.current) {
+      dragRef.current.style.animationPlayState = "running";
+      dragRef.current.style.transform = "";
+    }
   };
 
   if (!articles.length) return null;
 
   /* -------------------------------------------------------
      RENDER
--------------------------------------------------------- */
+  -------------------------------------------------------- */
 
   return (
-    <div
-      className="w-full bg-[#0F0F0F]/80 backdrop-blur-xl border-b border-white/10 relative overflow-hidden touch-pan-x select-none"
-      onClick={togglePause} // ⭐ Feature K
-    >
-      {/* Masks */}
-      <div className="wn-ticker-mask wn-ticker-mask-left"></div>
-      <div className="wn-ticker-mask wn-ticker-mask-right"></div>
+    <div className="w-full border-b border-white/10 overflow-hidden">
 
-      <div className="max-w-7xl mx-auto flex items-center px-4 py-2 gap-4">
-        <div className="bg-electric text-black font-bold uppercase text-[10px] px-3 py-1.5 rounded-md">
-          Trending
-        </div>
-
-        {/* TRACK */}
-        <div
-          className="flex-1 overflow-hidden relative h-6"
-          onPointerDown={onStart}
-          onPointerMove={onMove}
-          onPointerUp={onEnd}
-          onPointerLeave={onEnd}
-          onTouchStart={onStart}
-          onTouchMove={onMove}
-          onTouchEnd={onEnd}
+      {/* BREAKING BANNER */}
+      {activeBreaking && (
+        <Link
+          href={`/news/${activeBreaking.slug}`}
+          className={`
+            block bg-[#E92C63] text-white
+            transition-opacity
+            ${showBreaking ? "opacity-100" : "opacity-0"}
+            breaking-pulse
+          `}
+          style={{ transitionDuration: `${FADE_DURATION_MS}ms` }}
         >
-          <div className="absolute inset-0 flex items-center whitespace-nowrap overflow-hidden">
-            <div
-              ref={dragRef}
-              className="flex will-change-transform"
-              style={{
-                animation: `tickerLoop ${speed}s linear infinite`,
-              }}
-            >
-              {/* TRACK A */}
-              <div className="flex items-center gap-6">
-                {crawlItems.map((item, i) =>
-                  item.type === "separator" ? (
-                    <span key={`A-sep-${i}`} className="text-electric text-sm px-2">•</span>
-                  ) : (
-                    <span
-                      key={`A-${i}`}
-                      className="wn-ticker-wrapper"
-                      onMouseEnter={() => {
-                        setHoveredIndex(i);
-                        scheduleHoverPause();
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredIndex(null);
-                        cancelHoverPause();
-                      }}
-                    >
-                      <span
-                        className={`wn-ticker-illusion transition-all duration-300 ${
-                          hoveredIndex === i ? "scale-125 z-10 relative" : ""
-                        }`}
-                      >
-                        <Link
-                          href={
-                            item.data.slug
-                              ? `/news/${item.data.slug}`
-                              : `/news/${item.data.id}`
-                          }
-                          className="wn-ticker-link text-[11px] sm:text-sm text-white hover:text-electric whitespace-nowrap leading-none transition-colors"
-                        >
-                          {item.data.title}
-                        </Link>
-                      </span>
-                    </span>
-                  )
-                )}
-              </div>
+          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-4">
+            <span className="text-[10px] font-extrabold tracking-widest uppercase bg-black/30 px-3 py-1 rounded-full">
+              Breaking
+            </span>
+            <span className="text-sm sm:text-base font-semibold truncate">
+              {activeBreaking.title}
+            </span>
+          </div>
+        </Link>
+      )}
 
-              {/* TRACK B */}
-              <div className="flex items-center gap-6">
-                {crawlItems.map((item, i) =>
-                  item.type === "separator" ? (
-                    <span key={`B-sep-${i}`} className="text-electric text-sm px-2">•</span>
-                  ) : (
-                    <span
-                      key={`B-${i}`}
-                      className="wn-ticker-wrapper"
-                      onMouseEnter={() => {
-                        setHoveredIndex(10000 + i);
-                        scheduleHoverPause();
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredIndex(null);
-                        cancelHoverPause();
-                      }}
-                    >
-                      <span
-                        className={`wn-ticker-illusion transition-all duration-300 ${
-                          hoveredIndex === 10000 + i
-                            ? "scale-125 z-10 relative"
-                            : ""
-                        }`}
-                      >
-                        <Link
-                          href={
-                            item.data.slug
-                              ? `/news/${item.data.slug}`
-                              : `/news/${item.data.id}`
-                          }
-                          className="wn-ticker-link text-[11px] sm:text-sm text-white hover:text-electric whitespace-nowrap leading-none transition-colors"
-                        >
-                          {item.data.title}
-                        </Link>
-                      </span>
-                    </span>
-                  )
-                )}
+      {/* STANDARD TICKER */}
+      {!activeBreaking && (
+        <div className="bg-[#0B0D0F]/90 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto flex items-center px-4 py-2 gap-4">
+
+            <div className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#00B3FF]/10 text-[#00B3FF]">
+              Trending
+            </div>
+
+            <div
+              className="flex-1 overflow-hidden relative h-6"
+              onPointerDown={onStart}
+              onPointerUp={onEnd}
+              onPointerLeave={onEnd}
+              onTouchStart={onStart}
+              onTouchEnd={onEnd}
+            >
+              <div className="absolute inset-0 flex items-center whitespace-nowrap">
+                <div
+                  ref={dragRef}
+                  className="flex"
+                  style={{ animation: "tickerLoop 130s linear infinite" }}
+                >
+                  {[0, 1].map(track => (
+                    <div key={track} className="flex items-center gap-6">
+                      {crawlItems.map((item, i) =>
+                        item.type === "separator" ? (
+                          <span key={i} className="text-[#00B3FF]/70">•</span>
+                        ) : (
+                          <Link
+                            key={i}
+                            href={`/news/${item.data.slug}`}
+                            onClick={e => e.stopPropagation()}
+                            className="text-[11px] sm:text-sm text-white/90 hover:text-[#00B3FF]"
+                          >
+                            {item.data.title}
+                          </Link>
+                        )
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
+            </div>
+
+            {/* SOCIAL ICONS */}
+            <div className="hidden sm:flex items-center gap-3 text-white/80">
+              {SOCIAL_LINKS.map(link => {
+                const href =
+                  isMobile && link.appUrl ? link.appUrl : link.webUrl;
+
+                const Icon =
+                  link.platform === "facebook" ? Facebook :
+                  link.platform === "instagram" ? Instagram :
+                  link.platform === "x" ? X :
+                  Youtube;
+
+                return (
+                  <a
+                    key={link.platform}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`WaveNation on ${link.name}`}
+                  >
+                    <Icon size={14} className="hover:text-[#00B3FF]" />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>
-
-        {/* Desktop nav */}
-        <div className="hidden sm:flex items-center bg-white/10 backdrop-blur-sm px-4 py-1 rounded-full gap-4">
-          <nav className="hidden md:flex items-center gap-4 text-xs text-white/90">
-            <Link href="/submissions" className="hover:text-electric">Submissions</Link>
-            <Link href="/partner" className="hover:text-electric">Advertise</Link>
-            <Link href="/portal" className="hover:text-electric">Portal</Link>
-          </nav>
-
-          <div className="hidden md:block w-px h-5 bg-white/25" />
-
-          <div className="flex items-center gap-3 text-white/90">
-            <Link href="#"><Facebook size={16} className="hover:text-electric" /></Link>
-            <Link href="#"><Instagram size={16} className="hover:text-electric" /></Link>
-            <Link href="#"><X size={16} className="hover:text-electric" /></Link>
-            <Link href="#"><Youtube size={16} className="hover:text-electric" /></Link>
-          </div>
-        </div>
-
-        {/* Mobile icons */}
-        <div className="flex sm:hidden items-center gap-2">
-          <Link href="#"><Facebook size={14} className="text-white/90 hover:text-electric" /></Link>
-          <Link href="#"><Instagram size={14} className="text-white/90 hover:text-electric" /></Link>
-        </div>
-      </div>
+      )}
 
       <style>{`
         @keyframes tickerLoop {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
+        }
+
+        @keyframes breakingPulse {
+          0% { box-shadow: 0 0 0 rgba(233,44,99,.4); }
+          50% { box-shadow: 0 0 14px rgba(233,44,99,.6); }
+          100% { box-shadow: 0 0 0 rgba(233,44,99,.4); }
+        }
+
+        .breaking-pulse {
+          animation: breakingPulse 2.5s ease-in-out infinite;
         }
       `}</style>
     </div>

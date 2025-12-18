@@ -1,42 +1,16 @@
 import WNMobileNav from "@/components/ui/WNMobileNav";
-import StickyPlayer from "@/components/StickyPlayer/StickyPlayer";
 
 import HeroSection from "@/components/HeroSection/HeroSection";
-import SpotlightArticles from "@/components/SpotlightArticle/SpotlightArticles";
-import CTASection from "@/components/CTASection/CTASection";
-
-import ArtistSpotlight from "@/components/ArtistSpotlight/ArtistSpotlightHero";
-import ArticlesSection from "@/components/ArticlesSection/ArticlesSection";
+import FeaturedPlaylists from "@/components/Playlists/FeaturedPlaylists/FeaturedPlaylists";
+import ArticlesSection from "@/components/Articles/ArticlesSection/ArticlesSection";
 import NewsletterCTA from "@/components/NewsletterCTA/NewsletterCTA";
 
-import type { SpotlightArticleItem } from "@/components/SpotlightArticle/SpotlightArticles";
 
 /* ------------------------------------------
    MAIN PAGE (SERVER)
 ------------------------------------------- */
 
 export default async function Home() {
-  const rawCMS = process.env.NEXT_PUBLIC_CMS_URL || "";
-  const CMS = rawCMS.replace(/\/+$/, "");
-
-  let spotlightArticles: SpotlightArticleItem[] = [];
-
-  try {
-    // FIXED: publishedDate is the REAL field your CMS exposes
-    const res = await fetch(
-      `${CMS}/api/articles?limit=20&sort=-publishedDate&depth=2`,
-      { cache: "no-store" }
-    );
-
-    if (!res.ok) {
-      throw new Error(`CMS responded ${res.status}`);
-    }
-
-    const json = (await res.json()) as { docs?: SpotlightArticleItem[] };
-    spotlightArticles = json?.docs ?? [];
-  } catch (err) {
-    console.error("🔥 SpotlightArticles CMS Fetch Error:", err);
-  }
 
   return (
     <main
@@ -58,25 +32,15 @@ export default async function Home() {
         <HeroSection />
       </section>
 
+      {/* FEATURED PLAYLISTS */}
+      <FeaturedPlaylists />
+
       {/* LATEST ARTICLES */}
       <ArticlesSection />
-
-      {/* ARTIST SPOTLIGHT */}
-      <ArtistSpotlight />
-
-      {/* CTA */}
-      <section className="mt-20 lg:mt-24">
-        <CTASection />
-      </section>
 
       {/* NEWSLETTER CTA */}
       <section className="mt-20 lg:mt-24">
         <NewsletterCTA />
-      </section>
-
-      {/* SPOTLIGHT ARTICLES */}
-      <section className="mt-12 sm:mt-16 lg:mt-20">
-        <SpotlightArticles articles={spotlightArticles} randomize />
       </section>
 
       {/* FOOTER */}
@@ -86,7 +50,6 @@ export default async function Home() {
       <div className="h-24" />
 
       <WNMobileNav />
-      <StickyPlayer />
     </main>
   );
 }

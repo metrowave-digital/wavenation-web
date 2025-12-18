@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { Track, TrackType } from "../types";
+import type { Track } from "../types";
 
 export interface UsePlayerControllerResult {
   queue: Track[];
@@ -36,6 +36,10 @@ export interface UsePlayerControllerResult {
 }
 
 export function usePlayerController(): UsePlayerControllerResult {
+  /* --------------------------------------------------
+     CORE STATE
+  -------------------------------------------------- */
+
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
 
   const [queue, setQueue] = useState<Track[]>([
@@ -77,26 +81,35 @@ export function usePlayerController(): UsePlayerControllerResult {
   const [expandedMobile, setExpandedMobile] = useState(false);
   const [currentShow, setCurrentShow] = useState<string | null>(null);
 
+  /* --------------------------------------------------
+     DERIVED STATE
+  -------------------------------------------------- */
+
   const currentTrack = useMemo(
     () => queue[currentIndex] ?? null,
     [queue, currentIndex]
   );
 
-  const isLive = currentTrack?.type === "live" || currentTrack?.isLive === true;
+  const isLive =
+    currentTrack?.type === "live" || currentTrack?.isLive === true;
 
   const hasLiveTrack = useMemo(
     () => queue.some((t) => t.type === "live" || t.isLive),
     [queue]
   );
 
-  /* NOW PLAYING LIVE POLL */
+  /* --------------------------------------------------
+     NOW PLAYING (LIVE POLL)
+  -------------------------------------------------- */
+
   useEffect(() => {
     let mounted = true;
+
     const loadLive = async () => {
       try {
         const r = await fetch("/api/now-playing", { cache: "no-store" });
         const json = await r.json();
-        if (!mounted || !json.nowPlaying) return;
+        if (!mounted || !json?.nowPlaying) return;
 
         const np = json.nowPlaying;
 
@@ -131,21 +144,34 @@ export function usePlayerController(): UsePlayerControllerResult {
     };
   }, []);
 
-  /* SYNC VOLUME */
+  /* --------------------------------------------------
+     SYNC VOLUME
+  -------------------------------------------------- */
+
   useEffect(() => {
-    if (audioEl) audioEl.volume = volume;
+    if (audioEl) {
+      audioEl.volume = volume;
+    }
   }, [audioEl, volume]);
 
-  /* AUTOPLAY LIVE (ONCE) */
+  /* --------------------------------------------------
+     AUTOPLAY LIVE (FIRST LOAD)
+  -------------------------------------------------- */
+
   useEffect(() => {
     if (!audioEl || !currentTrack) return;
     if (!isLive) return;
 
-    audioEl.play().then(() => setIsPlaying(true)).catch(() => {});
+    audioEl
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch(() => {});
+  }, [audioEl, currentTrack, isLive]);
 
-  }, [audioEl, currentTrack?.id, isLive]);
+  /* --------------------------------------------------
+     TRACK CHANGE HANDLING
+  -------------------------------------------------- */
 
-  /* TRACK CHANGE */
   useEffect(() => {
     if (!audioEl || !currentTrack) return;
 
@@ -156,20 +182,30 @@ export function usePlayerController(): UsePlayerControllerResult {
     const shouldPlay = currentTrack.type === "live" || isPlaying;
 
     if (shouldPlay) {
-      audioEl.play().then(() => setIsPlaying(true)).catch(() => {});
+      audioEl
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
     } else {
       audioEl.pause();
       setIsPlaying(false);
     }
-  }, [currentTrack?.id]);
+  }, [audioEl, currentTrack, isPlaying]);
 
-  /* HANDLERS */
-  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+  /* --------------------------------------------------
+     AUDIO EVENT HANDLERS
+  -------------------------------------------------- */
+
+  const handleTimeUpdate = (
+    e: React.SyntheticEvent<HTMLAudioElement>
+  ) => {
     if (isLive) return;
     setCurrentTime(e.currentTarget.currentTime);
   };
 
-  const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+  const handleLoadedMetadata = (
+    e: React.SyntheticEvent<HTMLAudioElement>
+  ) => {
     if (isLive) return;
     const d = e.currentTarget.duration;
     if (!Number.isNaN(d)) {
@@ -185,9 +221,13 @@ export function usePlayerController(): UsePlayerControllerResult {
     }
   };
 
-  /* CONTROLS */
+  /* --------------------------------------------------
+     CONTROLS
+  -------------------------------------------------- */
+
   const togglePlayPause = () => {
     if (!audioEl) return;
+
     if (audioEl.paused) {
       audioEl.play().then(() => setIsPlaying(true));
     } else {
@@ -196,14 +236,21 @@ export function usePlayerController(): UsePlayerControllerResult {
     }
   };
 
-  const playNext = () =>
-    setCurrentIndex((i) => (i < queue.length - 1 ? i + 1 : i));
+  const playNext = () => {
+    setCurrentIndex((i) =>
+      i < queue.length - 1 ? i + 1 : i
+    );
+  };
 
-  const playPrev = () =>
-    setCurrentIndex((i) => (i > 0 ? i - 1 : i));
+  const playPrev = () => {
+    setCurrentIndex((i) =>
+      i > 0 ? i - 1 : i
+    );
+  };
 
   const seek = (percent: number) => {
     if (!audioEl || isLive || duration == null) return;
+
     const newTime = (percent / 100) * duration;
     audioEl.currentTime = newTime;
     setCurrentTime(newTime);
@@ -216,7 +263,9 @@ export function usePlayerController(): UsePlayerControllerResult {
   };
 
   const jumpToLive = () => {
-    const idx = queue.findIndex((t) => t.type === "live" || t.isLive);
+    const idx = queue.findIndex(
+      (t) => t.type === "live" || t.isLive
+    );
     if (idx !== -1) {
       setCurrentIndex(idx);
       setIsPlaying(true);
@@ -224,13 +273,27 @@ export function usePlayerController(): UsePlayerControllerResult {
     }
   };
 
-  const toggleQueue = () => setIsQueueOpen((x) => !x);
-  const openVoiceMemo = () =>
-    window.open("mailto:voice@wavenation.media?subject=Voice Memo", "_blank");
+  const toggleQueue = () => {
+    setIsQueueOpen((v) => !v);
+  };
 
-  const registerAudioEl = useCallback((el: HTMLAudioElement | null) => {
-    setAudioEl(el);
-  }, []);
+  const openVoiceMemo = () => {
+    window.open(
+      "mailto:voice@wavenation.media?subject=Voice Memo",
+      "_blank"
+    );
+  };
+
+  const registerAudioEl = useCallback(
+    (el: HTMLAudioElement | null) => {
+      setAudioEl(el);
+    },
+    []
+  );
+
+  /* --------------------------------------------------
+     PUBLIC API
+  -------------------------------------------------- */
 
   return {
     queue,

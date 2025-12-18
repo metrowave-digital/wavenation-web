@@ -1,0 +1,102 @@
+.section {
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.inner {
+  width: 92%;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* ============================
+   DESKTOP GRID
+============================ */
+.grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  background: #111;
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.06);
+}
+
+.category {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(11,13,15,0.75);
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #00b3ff;
+  border: 1px solid rgba(0,179,255,0.35);
+}
+
+.content {
+  padding: 1rem 1.2rem 1.7rem;
+}
+
+.title {
+  font-size: 1.1rem;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.excerpt {
+  color: #aaa;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* ============================
+   MOBILE SLIDER (ARTICLES ONLY)
+============================ */
+@media (max-width: 768px) {
+  .grid {
+    display: flex;
+    gap: 1.2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 1rem;
+  }
+
+  .grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .card {
+    flex: 0 0 88%;
+    scroll-snap-align: center;
+  }
+}

@@ -1,133 +1,44 @@
-/* ====================================
-   HERO WRAPPER (NORMAL SECTION)
-==================================== */
 .wrapper {
   width: 100%;
-  position: relative;
-  background: transparent;
-
-  /* 🔥 MATCH OTHER SECTIONS */
-  margin-top: .5rem;        /* ~ mt-8 */
-  margin-bottom: .5rem;     /* gives spacing before Articles */
-
-  /* Fully responsive spacing */
+  padding: 1rem 0 3rem;
 }
 
-@media (min-width: 640px) {
-  .wrapper {
-    margin-top: .5rem;    /* sm:mt-10 */
-    margin-bottom: .5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .wrapper {
-    margin-top: .5rem;    /* lg:mt-14 */
-    margin-bottom: .5rem;
-  }
-}
-
-/* ====================================
-   INNER GRID
-==================================== */
+/* ===== DESKTOP GRID (60 / 40) ===== */
 .container {
-  width: 100%;
   max-width: 1500px;
   margin: 0 auto;
+  padding-inline: 1rem;
 
-  /* match global px-4 sm:px-6 lg:px-10 xl:px-14 */
-  padding-left: 1rem;
-  padding-right: 1rem;  /* px-5 */
-
-  display: flex;
+  display: grid;
+  grid-template-columns: 3fr 2fr; /* 🔑 60 / 40 */
   gap: 32px;
-  align-items: stretch;
+
+  height: 560px;
 }
 
-@media (min-width: 640px) {
-  .container {
-    padding-left: 1rem;   /* sm:px-6 */
-    padding-right: 1rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding-left: 1rem;   /* lg:px-10 */
-    padding-right: 1rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    padding-left: .5rem;   /* xl:px-14 */
-    padding-right: .5rem;
-  }
-}
-
-/* ====================================
-   LEFT HERO
-==================================== */
-.left {
-  flex: 2;
-  min-height: 540px;
-  border-radius: 18px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* ====================================
-   SLIDER WRAPPER
-==================================== */
-.sliderWrapperFix {
-  width: 100%;
-  height: 100%;
-  min-height: 540px;
-  border-radius: 18px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* ====================================
-   RIGHT COLUMN
-==================================== */
+/* LEFT / RIGHT */
+.left,
 .right {
-  flex: 1.2;
+  height: 100%;
+  min-height: 0;          /* 🔑 prevents flex/grid overflow */
   display: flex;
   flex-direction: column;
+}
+
+/* RIGHT STACK */
+.right {
   gap: 24px;
 }
 
-.card {
-  background: #080808;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 16px;
-}
-
-/* ====================================
-   RESPONSIVE
-==================================== */
+/* ===== MOBILE ===== */
 @media (max-width: 1024px) {
   .container {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    height: auto;
   }
 
-  .left {
-    min-height: 420px;
-  }
-
-  .sliderWrapperFix {
-    min-height: 420px;
-  }
-}
-
-@media (max-width: 600px) {
-  .left {
-    min-height: 320px;
-  }
-
-  .sliderWrapperFix {
-    min-height: 320px;
+  .left,
+  .right {
+    height: auto;
   }
 }

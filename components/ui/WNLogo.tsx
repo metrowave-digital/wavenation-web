@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useWNTheme } from "./theme/WNThemeProvider";
+import { useWNTheme } from "./ThemeToggle/WNThemeProvider";
 
 export default function WNLogo({ size = 52 }: { size?: number }) {
   const { resolvedTheme } = useWNTheme();

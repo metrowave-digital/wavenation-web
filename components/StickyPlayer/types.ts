@@ -51,17 +51,27 @@ export interface UpNextShow {
   key: string;
 }
 
+/**
+ * Shape returned by /api/now-playing
+ * (maps cleanly into Track updates)
+ */
 export interface NowPlayingTrack {
-  track: string;
+  title: string;
   artist: string;
   cover: string | null;
+  showName?: string | null;
 }
 
 /* ===========================================
    PLAYER TRACK STRUCTURES (UNIFIED)
 =========================================== */
 
-export type TrackType = "live" | "vod" | "podcast" | "music" | "video";
+export type TrackType =
+  | "live"
+  | "vod"
+  | "podcast"
+  | "music"
+  | "video";
 
 export interface Track {
   id: string;

@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import MegaMenu from "./MegaMenu";
 import { NAV_ITEMS, type NavItem } from "./navData";
+import { useWNTheme } from "@/components/ui/ThemeToggle/WNThemeProvider";
 
 // Icons
 import {
@@ -20,7 +21,11 @@ import {
 
 export default function FullHeader() {
   const [active, setActive] = useState<NavItem | null>(null);
-  const [isDark, setIsDark] = useState(true); // fake theme toggle for logo
+
+  /* ---------------------------------
+     GLOBAL THEME (real source of truth)
+  ---------------------------------- */
+  const { resolvedTheme, toggleTheme } = useWNTheme();
 
   /* ---------------------------------------------------
      Backdrop fade overlay (no setState here)
@@ -49,7 +54,7 @@ export default function FullHeader() {
     <header className="w-full bg-wn-black/70 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center px-4 md:px-6 py-3">
 
-        {/* LEFT: LOGO + TEXT */}
+        {/* LEFT: LOGO */}
         <div className="flex-1 flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2 select-none">
             <Image
@@ -59,7 +64,6 @@ export default function FullHeader() {
               height={42}
               priority
             />
-
             <span className="text-white font-bold tracking-wide text-lg md:text-xl">
               WAVENATION
             </span>
@@ -108,13 +112,17 @@ export default function FullHeader() {
             <Cloud size={20} />
           </button>
 
-          {/* Theme toggle */}
+          {/* ✅ REAL THEME TOGGLE */}
           <button
-            onClick={() => setIsDark(!isDark)}
+            onClick={toggleTheme}
             className="hover:text-electric transition"
             aria-label="Toggle Theme"
           >
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            {resolvedTheme === "dark" ? (
+              <Sun size={20} />
+            ) : (
+              <Moon size={20} />
+            )}
           </button>
 
           <button className="hover:text-electric transition" aria-label="Search">
@@ -136,11 +144,17 @@ export default function FullHeader() {
             <Cloud size={20} />
           </button>
 
+          {/* ✅ REAL THEME TOGGLE (mobile) */}
           <button
-            onClick={() => setIsDark(!isDark)}
+            onClick={toggleTheme}
             className="hover:text-electric transition"
+            aria-label="Toggle Theme"
           >
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            {resolvedTheme === "dark" ? (
+              <Sun size={20} />
+            ) : (
+              <Moon size={20} />
+            )}
           </button>
 
           <button className="hover:text-electric transition">

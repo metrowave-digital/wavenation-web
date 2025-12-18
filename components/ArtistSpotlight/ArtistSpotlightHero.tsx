@@ -7,7 +7,7 @@ import gsap from "gsap";
 import styles from "./ArtistSpotlightHero.module.css";
 
 /* ================================
-   TYPES (with safe optional fields)
+   TYPES
 ================================ */
 interface MediaType { url?: string | null }
 interface RelationType {
@@ -29,9 +29,6 @@ interface Props {
   tagline?: string | null;
 }
 
-/* ================================
-   SAFE COMPONENT
-================================ */
 export default function ArtistSpotlightHero(props: Props) {
   const {
     bannerImage,
@@ -43,15 +40,12 @@ export default function ArtistSpotlightHero(props: Props) {
     tagline,
   } = props;
 
-  /* SAFE IMAGE FALLBACKS */
-  const backdrop =
-    bannerImage?.url || "/artist-spotlight/fallback-banner.png";
+  const heroRef = useRef<HTMLDivElement>(null);
 
+  /* SAFE FALLBACKS */
+  const backdrop = bannerImage?.url || "/artist-spotlight/fallback-banner.png";
   const portrait =
-    artistImage?.url ||
-    artist?.image?.url ||
-    "/artist-spotlight/fallback-artist.jpg";
-
+    artistImage?.url || artist?.image?.url || "/artist-spotlight/fallback-artist.jpg";
   const name = artist?.name || "Featured Artist";
 
   const articleImg =
@@ -69,92 +63,95 @@ export default function ArtistSpotlightHero(props: Props) {
 
   const safeSlug = (slug?: string | null) => slug || "";
 
-  /* ============================================
-     BASIC FADE-IN ANIMATIONS (NO PARALLAX)
-  ============================================ */
-  const heroRef = useRef<HTMLDivElement>(null);
-
+  /* SUBTLE FADE ONLY */
   useEffect(() => {
     if (!heroRef.current) return;
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-    tl.from(`.${styles.portraitFrame}`, { opacity: 0, y: 50, duration: 1 })
-      .from(`.${styles.artistName}`, { opacity: 0, y: 30, duration: 1 }, "-=0.5")
-      .from(`.${styles.cards} > *`, { opacity: 0, y: 40, stagger: 0.2 }, "-=0.5");
-
+    gsap.from(heroRef.current.children, {
+      opacity: 0,
+      y: 24,
+      duration: 0.8,
+      stagger: 0.12,
+      ease: "power2.out",
+    });
   }, []);
 
-  /* ============================================
-     RENDER
-  ============================================ */
   return (
     <section
+      ref={heroRef}
       className={styles.hero}
       style={{ backgroundImage: `url(${backdrop})` }}
-      ref={heroRef}
     >
-      <div className={styles.vignette} />
+      <div className={styles.overlay} />
 
-      <div className={styles.layout}>
-
+      <div className={styles.container}>
         {/* LEFT */}
         <div className={styles.left}>
-          <div className={styles.mastheadRow}>
-            <span className={styles.masthead}>WAVENATION</span>
-            <span className={styles.issueTag}>FEATURED ARTIST</span>
+          <span className={styles.kicker}>FEATURED ARTIST</span>
+
+          <div className={styles.portrait}>
+            <Image src={portrait} alt={name} fill />
           </div>
 
-          <div className={styles.portraitFrame}>
-            <Image
-              src={portrait}
-              alt={name}
-              fill
-              className={styles.portrait}
-            />
-          </div>
-
-          <h1 className={styles.artistName}>{name}</h1>
+          <h1 className={styles.name}>{name}</h1>
 
           {tagline && <p className={styles.tagline}>{tagline}</p>}
 
-          <Link href={`/profiles/${safeSlug(artist?.slug)}`} className={styles.button}>
+          <Link
+            href={`/profiles/${safeSlug(artist?.slug)}`}
+            className={styles.cta}
+          >
             View Profile →
           </Link>
         </div>
 
-        {/* RIGHT — CARDS */}
+        {/* RIGHT */}
         <div className={styles.cards}>
-          
-          {/* ARTICLE CARD */}
-          <Link href={`/articles/${safeSlug(featuredArticle?.slug)}`} className={styles.card}>
-            <Image src={articleImg} alt="Cover Story" fill className={styles.cardImage} />
-            <div className={styles.cardOverlay}>
-              <h3>COVER STORY</h3>
-              <p>{featuredArticle?.title || "Featured Article"}</p>
-            </div>
-          </Link>
+          <FeatureCard
+            href={`/articles/${safeSlug(featuredArticle?.slug)}`}
+            image={articleImg}
+            label="Cover Story"
+            title={featuredArticle?.title}
+          />
 
-          {/* RELEASE CARD */}
-          <Link href={`/albums/${safeSlug(featuredRelease?.slug)}`} className={styles.card}>
-            <Image src={releaseImg} alt="Exclusive Drop" fill className={styles.cardImage} />
-            <div className={styles.cardOverlay}>
-              <h3>EXCLUSIVE DROP</h3>
-              <p>{featuredRelease?.title || "Release Spotlight"}</p>
-            </div>
-          </Link>
+          <FeatureCard
+            href={`/albums/${safeSlug(featuredRelease?.slug)}`}
+            image={releaseImg}
+            label="Release"
+            title={featuredRelease?.title}
+          />
 
-          {/* EVENT CARD */}
-          <Link href={`/events/${safeSlug(featuredEvent?.slug)}`} className={styles.card}>
-            <Image src={eventImg} alt="Live Event" fill className={styles.cardImage} />
-            <div className={styles.cardOverlay}>
-              <h3>LIVE EVENT</h3>
-              <p>{featuredEvent?.title || "Upcoming Event"}</p>
-            </div>
-          </Link>
-
+          <FeatureCard
+            href={`/events/${safeSlug(featuredEvent?.slug)}`}
+            image={eventImg}
+            label="Event"
+            title={featuredEvent?.title}
+          />
         </div>
       </div>
     </section>
+  );
+}
+
+/* ================================= */
+function FeatureCard({
+  href,
+  image,
+  label,
+  title,
+}: {
+  href: string;
+  image: string;
+  label: string;
+  title?: string | null;
+}) {
+  return (
+    <Link href={href} className={styles.card}>
+      <Image src={image} alt={title || label} fill />
+      <div className={styles.cardMeta}>
+        <span>{label}</span>
+        <h3>{title || label}</h3>
+      </div>
+    </Link>
   );
 }

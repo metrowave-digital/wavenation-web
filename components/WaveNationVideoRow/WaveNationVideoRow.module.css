@@ -1,0 +1,117 @@
+.section {
+  padding: 3.5rem 1.5rem;
+  background: #0b0d0f;
+  color: #ffffff;
+}
+
+/* HEADER */
+
+.header {
+  max-width: 1400px;
+  margin: 0 auto 1.5rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.header h2 {
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.header p {
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+  color: #b3b6bb;
+}
+
+.viewAll {
+  font-size: 0.85rem;
+  color: #00b3ff;
+  font-weight: 600;
+}
+
+/* ROW */
+
+.row {
+  max-width: 1400px;
+  margin: 0 auto;
+
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+/* CARD */
+
+.card {
+  min-width: 300px;
+  scroll-snap-align: start;
+  color: #fff;
+}
+
+.imageWrap {
+  position: relative;
+  height: 180px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.imageWrap img {
+  object-fit: cover;
+}
+
+/* BADGE */
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+
+  background: #e92c63;
+  color: #fff;
+}
+
+/* META */
+
+.meta {
+  margin-top: 0.75rem;
+}
+
+.meta h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.meta p {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #b3b6bb;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .card {
+    min-width: 260px;
+  }
+
+  .imageWrap {
+    height: 160px;
+  }
+}

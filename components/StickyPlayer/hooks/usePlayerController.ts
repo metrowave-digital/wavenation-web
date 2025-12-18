@@ -1,325 +1,367 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Track } from "../types";
 
 export interface UsePlayerControllerResult {
   queue: Track[];
   currentIndex: number;
   currentTrack: Track | null;
-  isPlaying: boolean;
-  isLive: boolean;
   currentShow: string | null;
+
+  isLive: boolean;
+  isPlaying: boolean;
   volume: number;
+
   currentTime: number;
   duration: number | null;
-  isQueueOpen: boolean;
+
   expandedMobile: boolean;
-  hasLiveTrack: boolean;
 
   registerAudioEl: (el: HTMLAudioElement | null) => void;
 
   togglePlayPause: () => void;
   playNext: () => void;
   playPrev: () => void;
-  seek: (percent: number) => void;
-  setVolume: (v: number) => void;
-  jumpToLive: () => void;
-  playTrackAtIndex: (index: number) => void;
-  toggleQueue: () => void;
-  setExpandedMobile: (value: boolean) => void;
-  openVoiceMemo: () => void;
+  playTrackAt: (index: number) => void;
 
-  handleTimeUpdate: (e: React.SyntheticEvent<HTMLAudioElement>) => void;
-  handleLoadedMetadata: (e: React.SyntheticEvent<HTMLAudioElement>) => void;
+  seek: (percent: number) => void;
+  jumpToLive: () => void;
+
+  toggleQueue: () => void;
+  setExpandedMobile: (v: boolean) => void;
+  setVolume: (v: number) => void;
+
+  handleTimeUpdate: () => void;
+  handleLoadedMetadata: () => void;
   handleEnded: () => void;
 }
 
+const LIVE_ID = "live";
+const LIVE_SRC = "https://streaming.live365.com/a49099";
+
+/* -------------------------------------------------
+   HELPERS
+-------------------------------------------------- */
+
+function isLiveTrack(track: Track | null): boolean {
+  return Boolean(
+    track &&
+      (track.id === LIVE_ID ||
+        track.type === "live" ||
+        track.isLive === true)
+  );
+}
+
+
+function freshLiveSrc() {
+  const url = new URL(LIVE_SRC);
+  url.searchParams.set("t", Date.now().toString());
+  return url.toString();
+}
+
+/* -------------------------------------------------
+   HOOK
+-------------------------------------------------- */
+
 export function usePlayerController(): UsePlayerControllerResult {
-  /* --------------------------------------------------
-     CORE STATE
-  -------------------------------------------------- */
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
+  // intent & safety guards
+  const userInitiatedRef = useRef(false);
+  const userPausedRef = useRef(false);
+  const blockedRestartRef = useRef(false);
+  const autoPlayAttemptedRef = useRef(false);
 
-  const [queue, setQueue] = useState<Track[]>([
+  /* ---------------------------------
+     STATE
+  ---------------------------------- */
+
+  const [queue] = useState<Track[]>([
     {
-      id: "live-radio",
-      title: "WaveNation FM – Live Stream",
-      artist: "Streaming 24/7",
+      id: LIVE_ID,
+      title: "WaveNation FM — Live",
+      artist: "24/7 Streaming",
       artwork: "/images/wavenation-show-art-live.jpg",
-      src: "https://streaming.live365.com/a49099",
+      src: LIVE_SRC,
       type: "live",
       isLive: true,
-      showName: "WaveNation Live",
-    },
-    {
-      id: "lookout-1",
-      title: "Lookout Weekend – Pop Culture Rundown",
-      artist: "Karesse O’Mor",
-      artwork: "/images/show-lookout-weekend.jpg",
-      src: "https://example.com/audio/episode1.mp3",
-      type: "podcast",
-    },
-    {
-      id: "southern-soul-1",
-      title: "Southern Soul Saturdays – Hour 1",
-      artist: "WaveNation DJ",
-      artwork: "/images/show-southern-soul.jpg",
-      src: "https://example.com/audio/episode2.mp3",
-      type: "vod",
+      showName: "WaveNation FM",
     },
   ]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolumeState] = useState(0.9);
+  const [expandedMobile, setExpandedMobile] = useState(false);
+
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState<number | null>(null);
-  const [volume, setVolume] = useState(0.9);
-
-  const [isQueueOpen, setIsQueueOpen] = useState(false);
-  const [expandedMobile, setExpandedMobile] = useState(false);
-  const [currentShow, setCurrentShow] = useState<string | null>(null);
-
-  /* --------------------------------------------------
-     DERIVED STATE
-  -------------------------------------------------- */
 
   const currentTrack = useMemo(
     () => queue[currentIndex] ?? null,
     [queue, currentIndex]
   );
 
-  const isLive =
-    currentTrack?.type === "live" || currentTrack?.isLive === true;
+  const isLive = isLiveTrack(currentTrack);
+  const currentShow = currentTrack?.showName ?? null;
 
-  const hasLiveTrack = useMemo(
-    () => queue.some((t) => t.type === "live" || t.isLive),
-    [queue]
-  );
-
-  /* --------------------------------------------------
-     NOW PLAYING (LIVE POLL)
-  -------------------------------------------------- */
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadLive = async () => {
-      try {
-        const r = await fetch("/api/now-playing", { cache: "no-store" });
-        const json = await r.json();
-        if (!mounted || !json?.nowPlaying) return;
-
-        const np = json.nowPlaying;
-
-        setQueue((prev) => {
-          const first = prev[0];
-          if (!first || first.type !== "live") return prev;
-
-          return [
-            {
-              ...first,
-              title: np.title ?? first.title,
-              artist: np.artist ?? first.artist,
-              artwork: np.cover ?? first.artwork,
-              showName: np.showName ?? first.showName,
-            },
-            ...prev.slice(1),
-          ];
-        });
-
-        setCurrentShow(np.showName ?? null);
-      } catch {
-        /* silent */
-      }
-    };
-
-    loadLive();
-    const id = setInterval(loadLive, 15000);
-
-    return () => {
-      mounted = false;
-      clearInterval(id);
-    };
-  }, []);
-
-  /* --------------------------------------------------
-     SYNC VOLUME
-  -------------------------------------------------- */
-
-  useEffect(() => {
-    if (audioEl) {
-      audioEl.volume = volume;
-    }
-  }, [audioEl, volume]);
-
-  /* --------------------------------------------------
-     AUTOPLAY LIVE (FIRST LOAD)
-  -------------------------------------------------- */
-
-  useEffect(() => {
-    if (!audioEl || !currentTrack) return;
-    if (!isLive) return;
-
-    audioEl
-      .play()
-      .then(() => setIsPlaying(true))
-      .catch(() => {});
-  }, [audioEl, currentTrack, isLive]);
-
-  /* --------------------------------------------------
-     TRACK CHANGE HANDLING
-  -------------------------------------------------- */
-
-  useEffect(() => {
-    if (!audioEl || !currentTrack) return;
-
-    audioEl.currentTime = 0;
-    setCurrentTime(0);
-    setDuration(null);
-
-    const shouldPlay = currentTrack.type === "live" || isPlaying;
-
-    if (shouldPlay) {
-      audioEl
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => {});
-    } else {
-      audioEl.pause();
-      setIsPlaying(false);
-    }
-  }, [audioEl, currentTrack, isPlaying]);
-
-  /* --------------------------------------------------
-     AUDIO EVENT HANDLERS
-  -------------------------------------------------- */
-
-  const handleTimeUpdate = (
-    e: React.SyntheticEvent<HTMLAudioElement>
-  ) => {
-    if (isLive) return;
-    setCurrentTime(e.currentTarget.currentTime);
-  };
-
-  const handleLoadedMetadata = (
-    e: React.SyntheticEvent<HTMLAudioElement>
-  ) => {
-    if (isLive) return;
-    const d = e.currentTarget.duration;
-    if (!Number.isNaN(d)) {
-      setDuration(d);
-    }
-  };
-
-  const handleEnded = () => {
-    if (!isLive && hasLiveTrack) {
-      jumpToLive();
-    } else {
-      setIsPlaying(false);
-    }
-  };
-
-  /* --------------------------------------------------
-     CONTROLS
-  -------------------------------------------------- */
-
-  const togglePlayPause = () => {
-    if (!audioEl) return;
-
-    if (audioEl.paused) {
-      audioEl.play().then(() => setIsPlaying(true));
-    } else {
-      audioEl.pause();
-      setIsPlaying(false);
-    }
-  };
-
-  const playNext = () => {
-    setCurrentIndex((i) =>
-      i < queue.length - 1 ? i + 1 : i
-    );
-  };
-
-  const playPrev = () => {
-    setCurrentIndex((i) =>
-      i > 0 ? i - 1 : i
-    );
-  };
-
-  const seek = (percent: number) => {
-    if (!audioEl || isLive || duration == null) return;
-
-    const newTime = (percent / 100) * duration;
-    audioEl.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
-  const playTrackAtIndex = (index: number) => {
-    if (index < 0 || index >= queue.length) return;
-    setCurrentIndex(index);
-    setIsPlaying(true);
-  };
-
-  const jumpToLive = () => {
-    const idx = queue.findIndex(
-      (t) => t.type === "live" || t.isLive
-    );
-    if (idx !== -1) {
-      setCurrentIndex(idx);
-      setIsPlaying(true);
-      setExpandedMobile(true);
-    }
-  };
-
-  const toggleQueue = () => {
-    setIsQueueOpen((v) => !v);
-  };
-
-  const openVoiceMemo = () => {
-    window.open(
-      "mailto:voice@wavenation.media?subject=Voice Memo",
-      "_blank"
-    );
-  };
+  /* ---------------------------------
+     AUDIO REGISTRATION
+  ---------------------------------- */
 
   const registerAudioEl = useCallback(
     (el: HTMLAudioElement | null) => {
-      setAudioEl(el);
+      audioRef.current = el;
+      if (!el) return;
+
+      el.volume = volume;
+      el.preload = "none";
     },
-    []
+    [volume]
   );
 
-  /* --------------------------------------------------
-     PUBLIC API
-  -------------------------------------------------- */
+  /* ---------------------------------
+     VOLUME
+  ---------------------------------- */
+
+  const setVolume = useCallback((v: number) => {
+    const next = Math.max(0, Math.min(1, v));
+    setVolumeState(next);
+    if (audioRef.current) audioRef.current.volume = next;
+  }, []);
+
+  /* ---------------------------------
+     LOAD TRACK
+  ---------------------------------- */
+
+  const loadTrack = useCallback((track: Track | null) => {
+    const audio = audioRef.current;
+    if (!audio || !track) return;
+
+    // reset UI state
+    setCurrentTime(0);
+    setDuration(null);
+
+    if (isLiveTrack(track)) {
+      audio.src = freshLiveSrc();
+      audio.load();
+      return;
+    }
+
+    if (audio.src !== track.src) {
+      audio.src = track.src;
+      audio.load();
+    }
+  }, []);
+
+  /* ---------------------------------
+     PLAY / PAUSE CORE
+  ---------------------------------- */
+
+  const playInternal = useCallback(
+    async (reason: "user" | "autoplay") => {
+      const audio = audioRef.current;
+      if (!audio || !currentTrack) return;
+
+      if (blockedRestartRef.current && reason !== "user") return;
+      if (userPausedRef.current && reason !== "user") return;
+
+      if (isLive) loadTrack(currentTrack);
+
+      try {
+        await audio.play();
+        setIsPlaying(true);
+        blockedRestartRef.current = false;
+      } catch {
+        setIsPlaying(false);
+      }
+    },
+    [currentTrack, isLive, loadTrack]
+  );
+
+  const pauseInternal = useCallback((user: boolean) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.pause();
+    setIsPlaying(false);
+
+    if (user) {
+      userPausedRef.current = true;
+      blockedRestartRef.current = true;
+    }
+  }, []);
+
+  /* ---------------------------------
+     AUTOPLAY (LIVE ONLY, ONCE)
+  ---------------------------------- */
+
+  useEffect(() => {
+    if (!currentTrack || !isLive) return;
+    if (autoPlayAttemptedRef.current) return;
+    if (!audioRef.current) return;
+
+    autoPlayAttemptedRef.current = true;
+
+    queueMicrotask(() => {
+      loadTrack(currentTrack);
+      void playInternal("autoplay");
+    });
+  }, [currentTrack, isLive, loadTrack, playInternal]);
+
+  /* ---------------------------------
+     CONTROLS
+  ---------------------------------- */
+
+  const togglePlayPause = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    userInitiatedRef.current = true;
+
+    if (audio.paused) {
+      userPausedRef.current = false;
+      blockedRestartRef.current = false;
+
+      if (isLive) loadTrack(currentTrack);
+      void playInternal("user");
+    } else {
+      pauseInternal(true);
+    }
+  }, [currentTrack, isLive, loadTrack, pauseInternal, playInternal]);
+
+  const playNext = useCallback(() => {
+    setCurrentIndex((i) => (i + 1 < queue.length ? i + 1 : 0));
+    userPausedRef.current = false;
+    blockedRestartRef.current = false;
+  }, [queue.length]);
+
+  const playPrev = useCallback(() => {
+    setCurrentIndex((i) => (i > 0 ? i - 1 : 0));
+    userPausedRef.current = false;
+    blockedRestartRef.current = false;
+  }, []);
+
+  const playTrackAt = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= queue.length) return;
+
+      setCurrentIndex(index);
+      setExpandedMobile(true);
+
+      userInitiatedRef.current = true;
+      userPausedRef.current = false;
+      blockedRestartRef.current = false;
+
+      queueMicrotask(() => {
+        loadTrack(queue[index]);
+        void playInternal("user");
+      });
+    },
+    [queue, loadTrack, playInternal]
+  );
+
+  const seek = useCallback(
+    (percent: number) => {
+      const audio = audioRef.current;
+      if (!audio || isLive || duration == null) return;
+
+      const p = Math.max(0, Math.min(100, percent));
+      const next = (p / 100) * duration;
+
+      audio.currentTime = next;
+      setCurrentTime(next);
+    },
+    [duration, isLive]
+  );
+
+  const jumpToLive = useCallback(() => {
+    setCurrentIndex(0);
+    setExpandedMobile(false);
+
+    if (!currentTrack) return;
+
+    loadTrack(queue[0]);
+
+    if (userInitiatedRef.current) {
+      blockedRestartRef.current = false;
+      userPausedRef.current = false;
+      void playInternal("user");
+    }
+  }, [queue, currentTrack, loadTrack, playInternal]);
+
+  /* ---------------------------------
+     AUDIO EVENTS
+  ---------------------------------- */
+
+  const handleTimeUpdate = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || isLive) return;
+    setCurrentTime(audio.currentTime || 0);
+  }, [isLive]);
+
+  const handleLoadedMetadata = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || isLive) return;
+    if (!Number.isNaN(audio.duration)) setDuration(audio.duration);
+  }, [isLive]);
+
+  const handleEnded = useCallback(() => {
+    setIsPlaying(false);
+    blockedRestartRef.current = true;
+    userPausedRef.current = true;
+  }, []);
+
+  /* ---------------------------------
+     AUDIO ERROR SAFETY
+  ---------------------------------- */
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onError = () => {
+      setIsPlaying(false);
+      blockedRestartRef.current = true;
+      userPausedRef.current = true;
+      try {
+        audio.pause();
+      } catch {}
+    };
+
+    audio.addEventListener("error", onError);
+    return () => audio.removeEventListener("error", onError);
+  }, []);
+
+  /* ---------------------------------
+     API
+  ---------------------------------- */
 
   return {
     queue,
     currentIndex,
     currentTrack,
-    isPlaying,
-    isLive,
     currentShow,
+    isLive,
+    isPlaying,
     volume,
     currentTime,
     duration,
-    isQueueOpen,
     expandedMobile,
-    hasLiveTrack,
 
     registerAudioEl,
+
     togglePlayPause,
     playNext,
     playPrev,
+    playTrackAt,
     seek,
-    setVolume,
     jumpToLive,
-    playTrackAtIndex,
-    toggleQueue,
+    toggleQueue: () => {},
+
     setExpandedMobile,
-    openVoiceMemo,
+    setVolume,
 
     handleTimeUpdate,
     handleLoadedMetadata,

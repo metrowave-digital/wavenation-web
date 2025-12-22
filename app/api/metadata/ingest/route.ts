@@ -48,6 +48,13 @@ function parseFormEncoded(body: string): StationPlaylistPayload {
 ====================================================== */
 
 export async function POST(req: Request) {
+  /* 🔐 AUTH CHECK — MUST BE INSIDE HANDLER */
+  const authHeader = req.headers.get("authorization");
+
+  if (authHeader !== `Bearer ${process.env.WN_AUTPOST_TOKEN}`) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   const contentType = req.headers.get("content-type") ?? "";
   let payload: StationPlaylistPayload;
 

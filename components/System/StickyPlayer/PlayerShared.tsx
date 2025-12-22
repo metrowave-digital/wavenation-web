@@ -36,7 +36,7 @@ export function usePlayerShared() {
    * Overlay NowPlaying metadata onto the LIVE track only.
    * Keeps Track as the stable domain object for UI components.
    */
-  const currentTrack: Track | null = useMemo(() => {
+const currentTrack: Track | null = useMemo(() => {
   const base = controller.currentTrack;
   if (!base) return null;
 
@@ -55,12 +55,13 @@ export function usePlayerShared() {
       showName:
         nowPlaying.mode === "dj"
           ? nowPlaying.djName ?? base.showName ?? "WaveNation Live"
-          : "WaveNation AutoDJ",
+          : nowPlaying.artist || base.artist || base.showName,
     };
   }
 
   return base;
 }, [controller.currentTrack, nowPlaying]);
+
 
 
   const currentShow = currentTrack?.showName ?? controller.currentShow ?? null;

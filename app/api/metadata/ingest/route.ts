@@ -1,4 +1,14 @@
 import { NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
+
+/* ======================================================
+   REDIS CLIENT
+====================================================== */
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
 /* ======================================================
    TYPES
@@ -20,25 +30,11 @@ interface CurrentTrack {
 }
 
 /* ======================================================
-   IN-MEMORY STORE
-   (Replace with Redis later if desired)
-====================================================== */
-
-let currentTrack: CurrentTrack = {
-  artist: "WaveNation FM",
-  title: "Live Broadcast",
-  album: null,
-  duration: null,
-  updatedAt: Date.now(),
-};
-
-/* ======================================================
    HELPERS
 ====================================================== */
 
 function parseFormEncoded(body: string): StationPlaylistPayload {
   const params = new URLSearchParams(body);
-
   return {
     artist: params.get("artist") ?? undefined,
     title: params.get("title") ?? undefined,
@@ -48,12 +44,11 @@ function parseFormEncoded(body: string): StationPlaylistPayload {
 }
 
 /* ======================================================
-   POST — INGEST METADATA FROM STATIONPLAYLIST
+   POST — INGEST FROM STATIONPLAYLIST
 ====================================================== */
 
 export async function POST(req: Request) {
   const contentType = req.headers.get("content-type") ?? "";
-
   let payload: StationPlaylistPayload;
 
   if (contentType.includes("application/json")) {
@@ -66,9 +61,8 @@ export async function POST(req: Request) {
   const artist = payload.artist?.trim();
   const title = payload.title?.trim();
 
-  // Only update when real metadata exists
   if (artist && title) {
-    currentTrack = {
+    const track: CurrentTrack = {
       artist,
       title,
       album: payload.album?.trim() || null,
@@ -77,15 +71,29 @@ export async function POST(req: Request) {
         : null,
       updatedAt: Date.now(),
     };
+
+    await redis.set("wavenation:nowplaying", track);
   }
 
   return NextResponse.json({ ok: true });
 }
 
 /* ======================================================
-   GET — DEBUG / FALLBACK READ
+   GET — READ CURRENT METADATA
 ====================================================== */
 
 export async function GET() {
-  return NextResponse.json(currentTrack);
+  const track = await redis.get<CurrentTrack>(
+    "wavenation:nowplaying"
+  );
+
+  return NextResponse.json(
+    track ?? {
+      artist: "WaveNation FM",
+      title: "Live Broadcast",
+      album: null,
+      duration: null,
+      updatedAt: Date.now(),
+    }
+  );
 }

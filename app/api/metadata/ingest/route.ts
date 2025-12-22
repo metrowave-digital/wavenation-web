@@ -1,106 +1,50 @@
 import { NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
 
-/* ======================================================
-   REDIS CLIENT
-====================================================== */
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
-
-/* ======================================================
-   TYPES
-====================================================== */
-
-interface StationPlaylistPayload {
-  artist?: string;
-  title?: string;
-  album?: string;
-  duration?: string;
-}
-
-interface CurrentTrack {
+type NowPlayingMetadata = {
   artist: string;
   title: string;
-  album: string | null;
-  duration: number | null;
-  updatedAt: number;
-}
+  artwork: string | null;
+  updatedAt: number | null;
+};
 
-/* ======================================================
-   HELPERS
-====================================================== */
-
-function parseFormEncoded(body: string): StationPlaylistPayload {
-  const params = new URLSearchParams(body);
-  return {
-    artist: params.get("artist") ?? undefined,
-    title: params.get("title") ?? undefined,
-    album: params.get("album") ?? undefined,
-    duration: params.get("duration") ?? undefined,
-  };
-}
-
-/* ======================================================
-   POST — INGEST FROM STATIONPLAYLIST
-====================================================== */
+let currentMetadata: NowPlayingMetadata = {
+  artist: "",
+  title: "",
+  artwork: null,
+  updatedAt: null,
+};
 
 export async function POST(req: Request) {
-  /* 🔐 AUTH CHECK — MUST BE INSIDE HANDLER */
-  const authHeader = req.headers.get("authorization");
+  const url = new URL(req.url);
 
-  if (authHeader !== `Bearer ${process.env.WN_AUTPOST_TOKEN}`) {
-    return new Response("Unauthorized", { status: 401 });
+  const artist = url.searchParams.get("artist");
+  const title = url.searchParams.get("title");
+  const artwork = url.searchParams.get("artwork");
+
+  // Optional security token
+  const token = url.searchParams.get("token");
+  if (token !== process.env.METADATA_SECRET) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
   }
 
-  const contentType = req.headers.get("content-type") ?? "";
-  let payload: StationPlaylistPayload;
-
-  if (contentType.includes("application/json")) {
-    payload = (await req.json()) as StationPlaylistPayload;
-  } else {
-    const text = await req.text();
-    payload = parseFormEncoded(text);
+  if (!artist || !title) {
+    return NextResponse.json(
+      { error: "Missing artist or title" },
+      { status: 400 }
+    );
   }
 
-  const artist = payload.artist?.trim();
-  const title = payload.title?.trim();
+  currentMetadata = {
+    artist,
+    title,
+    artwork,
+    updatedAt: Date.now(),
+  };
 
-  if (artist && title) {
-    const track: CurrentTrack = {
-      artist,
-      title,
-      album: payload.album?.trim() || null,
-      duration: payload.duration
-        ? Number(payload.duration)
-        : null,
-      updatedAt: Date.now(),
-    };
+  console.log("🎵 METADATA INGESTED:", currentMetadata);
 
-    await redis.set("wavenation:nowplaying", track);
-  }
-
-  return NextResponse.json({ ok: true });
-}
-
-/* ======================================================
-   GET — READ CURRENT METADATA
-====================================================== */
-
-export async function GET() {
-  const track = await redis.get<CurrentTrack>(
-    "wavenation:nowplaying"
-  );
-
-  return NextResponse.json(
-    track ?? {
-      artist: "WaveNation FM",
-      title: "Live Broadcast",
-      album: null,
-      duration: null,
-      updatedAt: Date.now(),
-    }
-  );
+  return NextResponse.json({ success: true });
 }

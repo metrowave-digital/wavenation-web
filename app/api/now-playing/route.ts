@@ -1,27 +1,51 @@
 import { NextResponse } from "next/server";
 
 /**
- * Single source of truth
- * (StationPlaylist HTTP push)
+ * Read-only Now Playing endpoint
+ * Single source of truth = metadata ingest
  */
 
 export async function GET() {
-  const res = await fetch(
-    "https://wavenation.media/api/metadata/ingest",
-    { cache: "no-store" }
-  );
+  let data;
 
-  const data = await res.json();
+  try {
+    const res = await fetch(
+      "https://wavenation.media/api/metadata/ingest",
+      { cache: "no-store" }
+    );
 
-  const isLive = Date.now() - data.updatedAt < 90_000;
+    if (!res.ok) {
+      throw new Error("Metadata source unavailable");
+    }
+
+    data = await res.json();
+  } catch {
+    return NextResponse.json({
+      nowPlaying: {
+        artist: "",
+        title: "",
+        artwork: "/images/player/default-artwork.jpg",
+        isLive: false,
+        mode: "OFFLINE",
+      },
+    });
+  }
+
+  const updatedAt = data.updatedAt ?? 0;
+
+  const isLive =
+    updatedAt > 0 && Date.now() - updatedAt < 90_000;
 
   return NextResponse.json({
     nowPlaying: {
-      artist: data.artist,
-      title: data.title,
-      artwork: "/images/player/default-artwork.jpg",
+      artist: data.artist ?? "",
+      title: data.title ?? "",
+      artwork:
+        data.artwork && data.artwork.length > 0
+          ? data.artwork
+          : "/images/player/default-artwork.jpg",
       isLive,
-      mode: "LIVE",
+      mode: isLive ? "LIVE" : "AUTO",
     },
   });
 }

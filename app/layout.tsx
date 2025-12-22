@@ -1,50 +1,37 @@
-import type { Metadata } from "next";
-import Script from "next/script";
+import AppShell from "@/components/System/AppShell";
+import { getNewsTicker } from "@/lib/getNewsTicker";
+import type { NewsArticle } from "@/types/news";
 import "./globals.css";
 
-import { WNThemeProvider } from "@/components/ui/ThemeToggle/WNThemeProvider";
-import FullHeader from "@/components/ui/header/FullHeader";
-import NewsTicker from "@/components/ui/NewsTicker";
-import StickyPlayer from "@/components/StickyPlayer/StickyPlayer";
-import { getNewsTicker } from "@/lib/getNewsTicker";
+/* --------------------------------------------------------
+   METADATA (ENTERPRISE BASELINE)
+--------------------------------------------------------- */
 
-export const metadata: Metadata = {
-  title: "WaveNation FM",
-  description: "24/7 Streaming Radio — WaveNation Media Group",
+export const metadata = {
+  title: {
+    default: "WaveNation",
+    template: "%s | WaveNation",
+  },
+  description: "24/7 Streaming Radio, TV & Culture — WaveNation Media",
+  applicationName: "WaveNation",
+  metadataBase: new URL("https://wavenation.media"),
 };
+
+/* --------------------------------------------------------
+   ROOT LAYOUT
+--------------------------------------------------------- */
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const articles = await getNewsTicker();
+  // Server-side fetch (safe in App Router)
+  const articles: NewsArticle[] = await getNewsTicker();
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        {/* GOOGLE ADSENSE */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3124981228718299"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-
-        <WNThemeProvider>
-          {/* GLOBAL NEWS TICKER */}
-          <NewsTicker articles={articles} />
-
-          {/* GLOBAL HEADER */}
-          <FullHeader />
-
-          {/* MAIN CONTENT */}
-          <main>{children}</main>
-
-          {/* GLOBAL STICKY PLAYER */}
-          <StickyPlayer />
-        </WNThemeProvider>
-      </body>
-    </html>
+    <AppShell articles={articles}>
+      {children}
+    </AppShell>
   );
 }

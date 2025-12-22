@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import MegaMenu from "./MegaMenu";
-import { NAV_ITEMS, type NavItem } from "./navData";
+import MegaMenu from "../../System/Header/MegaMenu";
+import { NAV_ITEMS, type NavItem } from "../../System/Header/nav.config";
 import { useWNTheme } from "@/components/ui/ThemeToggle/WNThemeProvider";
 
 // Icons

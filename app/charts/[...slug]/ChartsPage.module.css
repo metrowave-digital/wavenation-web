@@ -1,0 +1,735 @@
+/* ============================================================
+   WAVENATION CHARTS — EDITORIAL EDITION
+   Authority • Readability • Cultural Weight
+============================================================ */
+
+/* ============================================================
+   ROOT + THEME TOKENS
+============================================================ */
+
+.root {
+  position: relative;
+}
+
+.page {
+  --bg: #0b0d0f;
+  --surface: #111418;
+  --panel: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.12);
+
+  --text: #ffffff;
+  --muted: #9fb0c3;
+
+  --blue: #00bfff;
+  --green: #39ff14;
+  --magenta: #e92c63;
+  --gold: #f2c94c;
+
+  background: var(--bg);
+  color: var(--text);
+
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 2.5rem;
+}
+
+/* ============================================================
+   LIGHT THEME (SAFE)
+============================================================ */
+
+:global([data-theme="light"]) .page,
+:global(html.light) .page,
+:global(body.light) .page {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --panel: rgba(0,0,0,0.04);
+  --border: rgba(11,13,15,0.14);
+
+  --text: #0b0d0f;
+  --muted: rgba(11,13,15,0.65);
+}
+
+@media (max-width: 1024px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   HEADER
+============================================================ */
+
+.header {
+  grid-column: 1 / -1;
+  padding-bottom: 1.75rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--blue), var(--magenta));
+  color: #0b0d0f;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: clamp(2.4rem, 4.2vw, 3.4rem);
+  margin: 0.8rem 0 0.35rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.official,
+.poweredBy {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.poweredBy a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.description {
+  margin-top: 1rem;
+  max-width: 720px;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ============================================================
+   MAIN
+============================================================ */
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+/* ============================================================
+   TOP 10 DIVIDER (VISUAL ONLY)
+============================================================ */
+
+.top10Divider {
+  margin: 1.25rem 0 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 2px solid var(--border);
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ============================================================
+   CHART LIST
+============================================================ */
+
+.chart {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 52px minmax(0,1fr) 140px 64px;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+
+.row * {
+  min-width: 0;
+}
+
+/* ============================================================
+   RANK
+============================================================ */
+
+.rank {
+  font-size: 1.45rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.topRow .rank {
+  color: var(--gold);
+}
+
+/* ============================================================
+   TRACK INFO
+============================================================ */
+
+.trackBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.trackTitle {
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.artist {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   BADGES — FULLY STYLED & SAFE
+============================================================ */
+
+.badgeRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+/* Base badge style */
+.badgeEditorial,
+.debutBadge,
+.biggestGainer,
+.topBadge {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* NEW / DEBUT */
+.debutBadge {
+  background: linear-gradient(135deg, var(--blue), var(--magenta));
+  color: #0b0d0f;
+}
+
+/* BIGGEST GAINER */
+.biggestGainer {
+  background: linear-gradient(135deg, var(--green), rgba(57,255,20,0.6));
+  color: #0b0d0f;
+}
+
+/* #1 BADGE (OPTIONAL USE) */
+.topBadge {
+  background: linear-gradient(135deg, var(--gold), rgba(242,201,76,0.6));
+  color: #0b0d0f;
+}
+
+/* ============================================================
+   SPARKLINE
+============================================================ */
+
+.sparkline {
+  width: 120px;
+  height: 22px;
+  margin-top: 0.35rem;
+  opacity: 0.55;
+  color: var(--muted);
+}
+
+/* ============================================================
+   STATS
+============================================================ */
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   MOVEMENT
+============================================================ */
+
+.movement {
+  font-size: 0.85rem;
+  font-weight: 900;
+  text-align: right;
+}
+
+.new { color: var(--blue); }
+.up { color: var(--green); }
+.down { color: #ff6b6b; }
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 40px minmax(0,1fr) 44px;
+    grid-template-areas:
+      "rank track move"
+      ". stats stats";
+    row-gap: 0.4rem;
+  }
+
+  .rank { grid-area: rank; }
+  .trackBlock { grid-area: track; }
+  .movement { grid-area: move; }
+  .stats { grid-area: stats; }
+
+  .sparkline {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   DROPPED SECTION
+============================================================ */
+
+.droppedSection {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--border);
+}
+
+.ghostRow {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.sidebarBox {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.sidebarTitle {
+  font-size: 0.95rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+}
+
+.sidebarText {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* ============================================================
+   NEWSLETTER
+============================================================ */
+
+.newsletterForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.newsletterForm input {
+  height: 42px;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.newsletterForm button {
+  height: 42px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  color: #0b0d0f;
+}
+
+/* ============================================================
+   SOCIAL ICONS
+============================================================ */
+
+.socialIcons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.socialIcons a {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 900;
+}
+
+/* ============================================================
+   AD SLOT
+============================================================ */
+
+.adSlot {
+  aspect-ratio: 1 / 1;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   TOP 10 — SUBTLE EDITORIAL HIGHLIGHT (SAFE)
+   Applies ONLY to first 10 rows rendered
+============================================================ */
+
+.chart > div:nth-child(-n+10) .row {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.035),
+    rgba(255,255,255,0)
+  );
+  border-radius: 12px;
+  padding-inline: 0.5rem;
+}
+
+/* ============================================================
+   MOBILE CHART SWIPER
+============================================================ */
+
+.mobileSwiper {
+  position: relative;
+  overflow: hidden;
+}
+
+.swipeCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.swipeRank {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--gold);
+  margin-bottom: 0.25rem;
+}
+
+.swipeTitle {
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.swipeArtist {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.miniStats {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+
+.miniMovement {
+  margin-top: 0.75rem;
+  font-weight: 900;
+}
+
+.miniMovement.new { color: var(--blue); }
+.miniMovement.up { color: var(--green); }
+.miniMovement.down { color: #ff6b6b; }
+
+/* ============================================================
+   MODERN DOTS — EDITORIAL REDESIGN
+   Subtle • Premium • Touch-Friendly
+============================================================ */
+
+.modernDots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0.9rem;
+}
+
+/* Base dot */
+.modernDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 55%, transparent);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  transition:
+    width 0.25s ease,
+    background-color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+/* Hover (desktop only) */
+@media (hover: hover) {
+  .modernDot:hover {
+    opacity: 0.85;
+  }
+}
+
+/* Active dot — becomes a pill */
+.modernDotActive {
+  width: 22px;
+  background: linear-gradient(
+    90deg,
+    var(--blue),
+    var(--green)
+  );
+  opacity: 1;
+}
+
+/* ============================================================
+   LIGHT THEME TUNING
+============================================================ */
+
+:global([data-theme="light"]) .modernDot {
+  background: rgba(11,13,15,0.25);
+}
+
+:global([data-theme="light"]) .modernDotActive {
+  background: linear-gradient(
+    90deg,
+    var(--blue),
+    var(--green)
+  );
+}
+
+
+/* ============================================================
+   CHART HIGHLIGHT CARDS
+============================================================ */
+
+.mobileGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .mobileGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   TOP-10 NUMBERING — TYPOGRAPHY UPGRADE (SAFE)
+============================================================ */
+
+/* Target first 10 rendered chart rows only */
+.chart > div:nth-child(-n+10) .rank {
+  font-size: 1.75rem;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+
+/* Extra authority for #1 */
+.chart > div:nth-child(1) .rank {
+  color: var(--gold);
+  font-size: 1.9rem;
+}
+
+/* ============================================================
+   LIGHT THEME — SWIPE CARD POLISH
+============================================================ */
+
+:global([data-theme="light"]) .swipeCard,
+:global(html.light) .swipeCard,
+:global(body.light) .swipeCard {
+  background: #ffffff;
+  border: 1px solid rgba(11,13,15,0.12);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+:global([data-theme="light"]) .swipeTitle {
+  color: #0b0d0f;
+}
+
+:global([data-theme="light"]) .swipeArtist {
+  color: rgba(11,13,15,0.65);
+}
+
+:global([data-theme="light"]) .miniStats {
+  color: rgba(11,13,15,0.6);
+}
+
+/* ============================================================
+   MOBILE GRID — FORCE SIDE-BY-SIDE CARDS (SAFE OVERRIDE)
+============================================================ */
+
+/* Keep two cards side-by-side on mobile */
+@media (max-width: 640px) {
+  .mobileGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+/* Ultra-small phones only collapse if absolutely needed */
+@media (max-width: 360px) {
+  .mobileGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   LIGHT THEME — SWIPE CARD POLISH
+============================================================ */
+
+:global([data-theme="light"]) .swipeCard,
+:global(html.light) .swipeCard,
+:global(body.light) .swipeCard {
+  background: #ffffff;
+  border: 1px solid rgba(11,13,15,0.12);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+:global([data-theme="light"]) .swipeTitle {
+  color: #0b0d0f;
+}
+
+:global([data-theme="light"]) .swipeArtist {
+  color: rgba(11,13,15,0.65);
+}
+
+:global([data-theme="light"]) .miniStats {
+  color: rgba(11,13,15,0.6);
+}
+
+/* ============================================================
+   MOBILE GRID — FORCE SIDE-BY-SIDE CARDS (SAFE OVERRIDE)
+============================================================ */
+
+/* Keep two cards side-by-side on mobile */
+@media (max-width: 640px) {
+  .mobileGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+/* Ultra-small phones only collapse if absolutely needed */
+@media (max-width: 360px) {
+  .mobileGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   STICKY SIDEBAR (EDITORIAL SAFE)
+============================================================ */
+
+/* Desktop & tablet */
+@media (min-width: 1025px) {
+  .sidebar {
+    position: sticky;
+    top: 96px; /* clears header + breathing room */
+    align-self: start;
+  }
+}
+
+/* Mobile: disable sticky to avoid overlap */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: static;
+  }
+}
+
+/* ============================================================
+   SIDEBAR FADE-IN (EDITORIAL, NON-INTRUSIVE)
+============================================================ */
+
+.sidebar {
+  animation: sidebarFadeIn 0.6s ease-out both;
+  animation-delay: 0.15s;
+}
+
+@keyframes sidebarFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   STICKY AD ONLY (DESKTOP)
+============================================================ */
+
+@media (min-width: 1025px) {
+  .adSlot {
+    position: sticky;
+    top: 120px; /* clears header + spacing */
+  }
+}
+
+/* ============================================================
+   STICKY NEWSLETTER (DESKTOP)
+============================================================ */
+
+@media (min-width: 1025px) {
+  .newsletterForm {
+    position: sticky;
+    top: 96px;
+  }
+}
+
+/* ============================================================
+   MOBILE SAFETY — DISABLE STICKY
+============================================================ */
+
+@media (max-width: 1024px) {
+  .newsletterForm,
+  .adSlot {
+    position: static;
+  }
+}

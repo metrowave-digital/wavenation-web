@@ -1,0 +1,189 @@
+/* ============================================================
+   ChartsFeature.module.css
+   Matches FeaturedPlaylists surface + theming
+============================================================ */
+
+/* ================= SECTION SURFACE ================= */
+
+.section {
+  width: 100%;
+  padding: 4.5rem 0;
+  color: var(--wn-text);
+
+  /* Dark mode default */
+  background: linear-gradient(
+    180deg,
+    var(--wn-bg) 0%,
+    var(--wn-bg-alt) 100%
+  );
+}
+
+.inner {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* 🌞 LIGHT MODE OVERRIDE — SAME AS FEATURED PLAYLISTS */
+:global(html.light) .section {
+  background: linear-gradient(
+    180deg,
+    #eef2f7 0%,
+    #ffffff 100%
+  );
+}
+
+/* ================= HEADER ================= */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.headerCta {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--wn-electric);
+  text-decoration: none;
+}
+
+/* ================= GRID ================= */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ================= CARDS ================= */
+
+.card,
+.cardPrimary {
+  position: relative;
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: 18px;
+  padding: 1.6rem;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.card:hover,
+.cardPrimary:hover {
+  transform: translateY(-2px);
+  border-color: var(--wn-electric);
+}
+
+.cardPrimary {
+  grid-column: span 2;
+}
+
+/* ================= TEXT ================= */
+
+.badge {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wn-electric);
+}
+
+.cardTitle {
+  font-size: 1.15rem;
+  font-weight: 900;
+  margin-top: 0.25rem;
+}
+
+.artist {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--wn-text-muted);
+}
+
+/* ================= DELTAS ================= */
+
+.deltaUp {
+  margin-top: 0.6rem;
+  font-weight: 900;
+  color: var(--wn-green);
+}
+
+.deltaDown {
+  margin-top: 0.6rem;
+  font-weight: 900;
+  color: var(--wn-magenta);
+}
+
+.gainer,
+.drop {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.gainer {
+  color: var(--wn-green);
+}
+
+.drop {
+  color: var(--wn-magenta);
+}
+
+/* ================= SPONSOR OVERLAYS ================= */
+
+.sponsorBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wn-gold);
+}
+
+.sponsorFooter {
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--wn-text-muted);
+}
+
+.sponsorInline {
+  margin-top: 0.75rem;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wn-text-muted);
+}
+
+.sponsoredFlagship {
+  box-shadow: 0 0 18px rgba(242, 201, 76, 0.28);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .cardPrimary {
+    grid-column: span 1;
+  }
+}

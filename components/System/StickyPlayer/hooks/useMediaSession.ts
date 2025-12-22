@@ -1,0 +1,41 @@
+"use client";
+
+import { useEffect } from "react";
+
+export function useMediaSession(
+  enabled: boolean,
+  title: string,
+  artist: string,
+  artwork?: string,
+  onPlay?: () => void,
+  onPause?: () => void
+) {
+  useEffect(() => {
+    if (!enabled) return;
+    if (!("mediaSession" in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title,
+      artist,
+      artwork: artwork
+        ? [
+            {
+              src: artwork,
+              sizes: "512x512",
+              type: "image/png",
+            },
+          ]
+        : [],
+    });
+
+    if (onPlay)
+      navigator.mediaSession.setActionHandler("play", onPlay);
+    if (onPause)
+      navigator.mediaSession.setActionHandler("pause", onPause);
+
+    return () => {
+      navigator.mediaSession.setActionHandler("play", null);
+      navigator.mediaSession.setActionHandler("pause", null);
+    };
+  }, [enabled, title, artist, artwork, onPlay, onPause]);
+}

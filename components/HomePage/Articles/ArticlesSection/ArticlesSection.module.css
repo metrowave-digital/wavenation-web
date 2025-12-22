@@ -1,0 +1,145 @@
+/* ============================================================
+   ArticlesSection.module.css
+   Editorial surface • Dark + Light safe
+============================================================ */
+
+/* ================= SECTION SURFACE ================= */
+
+.section {
+  width: 100%;
+  padding: 4.5rem 0;
+  color: var(--wn-text);
+
+  /* Dark mode default */
+  background: linear-gradient(
+    180deg,
+    var(--wn-bg) 0%,
+    var(--wn-bg-alt) 100%
+  );
+}
+
+.inner {
+  width: 92%;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* 🌞 LIGHT MODE OVERRIDE — MATCHES FEATURED PLAYLISTS */
+:global(html.light) .section {
+  background: linear-gradient(
+    180deg,
+    #eef2f7 0%,
+    #ffffff 100%
+  );
+}
+
+/* ================= DESKTOP GRID ================= */
+
+.grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ================= CARD ================= */
+
+.card {
+  background: var(--wn-card);
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  border: 1px solid var(--wn-border);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: var(--wn-electric);
+}
+
+/* ================= IMAGE ================= */
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.06);
+}
+
+/* ================= CATEGORY TAG ================= */
+
+.category {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  background: rgba(11, 13, 15, 0.75);
+  padding: 4px 12px;
+
+  font-size: 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: var(--wn-electric);
+  border: 1px solid rgba(0, 179, 255, 0.35);
+}
+
+/* 🌞 LIGHT MODE CATEGORY */
+:global(html.light) .category {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 179, 255, 0.4);
+}
+
+/* ================= CONTENT ================= */
+
+.content {
+  padding: 1rem 1.2rem 1.7rem;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--wn-text);
+}
+
+.excerpt {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--wn-text-muted);
+}
+
+/* ================= MOBILE SLIDER ================= */
+
+@media (max-width: 768px) {
+  .grid {
+    display: flex;
+    gap: 1.2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 1rem;
+  }
+
+  .grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .card {
+    flex: 0 0 88%;
+    scroll-snap-align: center;
+  }
+}

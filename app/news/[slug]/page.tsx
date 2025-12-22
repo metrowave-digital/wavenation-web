@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 
 /* ---------------------------------
    TYPES (API-SAFE)
@@ -109,7 +108,7 @@ export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
-}): Promise<Metadata> {
+}) {
   const article = await getArticle(params.slug);
   if (!article) return {};
 
@@ -146,6 +145,7 @@ export async function generateMetadata({
     },
   };
 }
+
 
 /* ---------------------------------
    PAGE

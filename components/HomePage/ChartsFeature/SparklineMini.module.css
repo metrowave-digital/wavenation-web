@@ -1,0 +1,19 @@
+.sparkline {
+  display: flex;
+  gap: 4px;
+  margin-top: 0.75rem;
+  align-items: flex-end;
+  height: 28px;
+}
+
+.bar {
+  width: 6px;
+  border-radius: 3px;
+  background: var(--wn-electric);
+  opacity: 0.85;
+}
+
+/* Light mode safety */
+:global(html.light) .bar {
+  background: var(--wn-electric);
+}

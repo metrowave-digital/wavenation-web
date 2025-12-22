@@ -1,0 +1,271 @@
+/* ============================================================
+   NewsletterCTA.module.css
+   Premium CTA surface • Dark + Light safe
+============================================================ */
+
+/* ================= FULL-BLEED SURFACE ================= */
+
+.fullBleed {
+  width: 100%;
+  padding: 4.5rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  color: var(--wn-text);
+
+  /* Dark mode default */
+  background: linear-gradient(
+    180deg,
+    var(--wn-bg) 0%,
+    var(--wn-bg-alt) 100%
+  );
+}
+
+/* 🌞 LIGHT MODE OVERRIDE — MATCHES HOMEPAGE SECTIONS */
+:global(html.light) .fullBleed {
+  background: linear-gradient(
+    180deg,
+    #eef2f7 0%,
+    #ffffff 100%
+  );
+}
+
+/* ================= GLOW LAYER ================= */
+
+.glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    rgba(255, 0, 77, 0.25),
+    transparent 60%
+  );
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+/* Reduce glow in light mode */
+:global(html.light) .glow {
+  background: radial-gradient(
+    circle at top right,
+    rgba(255, 0, 77, 0.18),
+    transparent 60%
+  );
+}
+
+/* ================= CONTAINER ================= */
+
+.container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ================= TEXT ================= */
+
+.heading {
+  font-size: 2.7rem;
+  font-weight: 700;
+  color: var(--wn-text);
+}
+
+.sub {
+  margin-top: 8px;
+  font-size: 1.05rem;
+  color: var(--wn-text-muted);
+}
+
+/* ================= FORM LAYOUT ================= */
+
+.form {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+@media (min-width: 900px) {
+  .form {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.left {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .left {
+    width: 42%;
+  }
+}
+
+.right {
+  width: 100%;
+  text-align: left;
+}
+
+@media (min-width: 900px) {
+  .right {
+    width: 55%;
+  }
+}
+
+/* ================= INPUTS ================= */
+
+.input {
+  width: 100%;
+  padding: 18px;
+  font-size: 1rem;
+
+  background: var(--wn-card);
+  color: var(--wn-text);
+
+  border-radius: 14px;
+  border: 1px solid var(--wn-border);
+  outline: none;
+
+  backdrop-filter: blur(10px);
+  transition: 0.25s ease;
+}
+
+.input::placeholder {
+  color: var(--wn-text-muted);
+}
+
+.input:focus {
+  border-color: var(--wn-magenta);
+  box-shadow: 0 0 12px rgba(233, 44, 99, 0.35);
+}
+
+/* ================= PREFERENCES ================= */
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--wn-text);
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.prefButton {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+
+  color: var(--wn-text-muted);
+  background: var(--wn-card);
+
+  border-radius: 12px;
+  border: 1px solid var(--wn-border);
+
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.prefButton:hover {
+  border-color: var(--wn-electric);
+}
+
+.prefActive {
+  background: rgba(233, 44, 99, 0.28);
+  border-color: var(--wn-magenta);
+  color: var(--wn-text);
+}
+
+/* ================= BUTTON ================= */
+
+.button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 16px;
+
+  background: var(--wn-magenta);
+  color: #fff;
+
+  font-weight: 600;
+  font-size: 1.1rem;
+
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.button:hover {
+  background: #ff1f62;
+}
+
+/* ================= STATUS MESSAGE ================= */
+
+.statusMessage {
+  margin-top: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  min-height: 22px;
+
+  color: var(--wn-magenta);
+  letter-spacing: 0.3px;
+
+  text-shadow: 0 0 12px rgba(233, 44, 99, 0.45);
+}
+
+/* ================= TOAST ================= */
+
+.toastContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .toastContainer {
+    left: 0;
+    right: 0;
+    justify-content: center;
+  }
+}
+
+.toast {
+  background: var(--wn-card);
+  padding: 18px 22px;
+  border-radius: 14px;
+  border: 1px solid var(--wn-border);
+
+  color: var(--wn-text);
+  width: 260px;
+
+  box-shadow: 0 0 18px rgba(233, 44, 99, 0.18);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.toast strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.toast p {
+  font-size: 0.9rem;
+  color: var(--wn-text-muted);
+}

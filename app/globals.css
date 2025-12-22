@@ -1,138 +1,323 @@
+/* ============================================================
+   WAVENATION — GLOBALS.CSS (CANONICAL / STABLE)
+   Tailwind + Tokens + Modes + Player-Safe Utilities
+============================================================ */
+
+/* ✅ REQUIRED FOR TAILWIND */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* -------------------------------------------------------
-   🌊 WaveNation Global Theme
--------------------------------------------------------- */
+/* ------------------------------------------------------------
+   BASE LAYER (SAFE DEFAULTS)
+------------------------------------------------------------- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-html.dark body {
-  @apply bg-wn-black text-white;
+  html {
+    scroll-behavior: smooth;
+    background: #0b0d0f;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--wn-bg);
+    color: var(--wn-text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--wn-electric);
+    outline-offset: 2px;
+  }
 }
 
-html.light body {
-  @apply bg-wn-bg-light text-wn-text-light;
+/* ------------------------------------------------------------
+   WAVENATION DESIGN TOKENS
+------------------------------------------------------------- */
+:root {
+  /* Core */
+  --wn-bg: #0b0d0f;
+  --wn-bg-alt: #161a2d;
+  --wn-card: rgba(255, 255, 255, 0.06);
+
+  --wn-text: #ffffff;
+  --wn-text-muted: #a2b3c7;
+
+  /* Brand */
+  --wn-electric: #00b3ff;
+  --wn-magenta: #e92c63;
+  --wn-green: #39ff14;
+
+  /* Borders */
+  --wn-border: rgba(255, 255, 255, 0.1);
+
+  /* Header offsets */
+  --header-brandbar-h: 64px;
+  --header-nav-h: 56px;
+  --header-total-h: calc(var(--header-brandbar-h) + var(--header-nav-h));
+
+  /* Footer */
+  --footer-bg: #0b0d0f;
+  --footer-text: rgba(255, 255, 255, 0.75);
+  --footer-text-muted: rgba(255, 255, 255, 0.45);
 }
 
-body {
-  @apply bg-wn-black text-white transition-colors duration-300;
-  font-family: var(--font-fira-sans), sans-serif;
-  overscroll-behavior: none;
+/* ------------------------------------------------------------
+   LIGHT THEME (SAFE)
+------------------------------------------------------------- */
+html.light {
+  --wn-bg: #f7f9fc;
+  --wn-bg-alt: #ffffff;
+  --wn-card: rgba(0, 0, 0, 0.04);
+
+  --wn-text: #0b0d0f;
+  --wn-text-muted: #4b5563;
+
+  --wn-border: rgba(0, 0, 0, 0.12);
+
+  --footer-bg: #ffffff;
+  --footer-text: rgba(0, 0, 0, 0.75);
+  --footer-text-muted: rgba(0, 0, 0, 0.45);
 }
 
-/* -------------------------------------------------------
-   UX IMPROVEMENTS
--------------------------------------------------------- */
-
-* {
-  -webkit-tap-highlight-color: transparent;
+/* Anchor offset helper */
+#content {
+  scroll-margin-top: var(--header-total-h);
 }
 
-img,
-svg {
-  user-select: none;
-  pointer-events: none;
-  -webkit-user-drag: none;
+/* ------------------------------------------------------------
+   ENTERPRISE MODES (OPT-IN ONLY)
+------------------------------------------------------------- */
+
+/* 🔴 Breaking News */
+body.news-lock {
+  background-color: #000;
 }
 
-html {
-  scroll-behavior: smooth;
+body.news-lock header {
+  background-color: #000 !important;
+  border-bottom: 1px solid var(--wn-magenta);
 }
 
-::-webkit-scrollbar {
+body.news-lock main {
+  filter: grayscale(0.08) contrast(1.02);
+}
+
+@keyframes breakingGlow {
+  0% { box-shadow: 0 0 0 rgba(233,44,99,0.22); }
+  50% { box-shadow: 0 0 10px rgba(233,44,99,0.38); }
+  100% { box-shadow: 0 0 0 rgba(233,44,99,0.22); }
+}
+
+.breaking-pulse {
+  animation: breakingGlow 2.6s ease-in-out infinite;
+}
+
+/* 💎 WaveNation+ */
+body.plus-mode {
+  background: radial-gradient(circle at top center, #161a2d 0%, #0b0d0f 65%);
+}
+
+body.plus-mode header {
+  border-bottom: 1px solid rgba(57,255,20,0.22);
+}
+
+body.plus-mode .premium-glow {
+  box-shadow: 0 0 18px rgba(57,255,20,0.28);
+}
+
+/* ------------------------------------------------------------
+   FOOTER (VISUAL ONLY)
+------------------------------------------------------------- */
+footer {
+  background-color: var(--footer-bg);
+  color: var(--footer-text);
+  border-top: 1px solid var(--wn-border);
+}
+
+footer h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+footer a {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--footer-text-muted);
+}
+
+footer a:hover {
+  color: var(--wn-electric);
+}
+
+footer .legal {
+  margin-top: 2rem;
+  font-size: 0.75rem;
+  color: var(--footer-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ------------------------------------------------------------
+   CANONICAL PLAYER ANIMATIONS (SINGLE SOURCE)
+------------------------------------------------------------- */
+
+.wn-wave-shimmer {
+  opacity: 0.55;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0,179,255,0.18) 25%,
+    rgba(233,44,99,0.16) 50%,
+    rgba(0,179,255,0.18) 75%,
+    transparent 100%
+  );
+  transform: translateX(-40%);
+  animation: wnWaveShimmer 2.2s ease-in-out infinite;
+}
+
+@keyframes wnWaveShimmer {
+  0%   { transform: translateX(-40%); }
+  100% { transform: translateX(40%); }
+}
+
+.wn-live-dot {
   width: 8px;
   height: 8px;
+  border-radius: 999px;
+  background: var(--wn-magenta);
+  box-shadow: 0 0 12px rgba(233,44,99,0.55);
+  animation: wnLivePulse 1.3s ease-in-out infinite;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.15);
-  border-radius: 6px;
+@keyframes wnLivePulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.25);
+/* ------------------------------------------------------------
+   DESKTOP PLAYER SAFETY (CRITICAL)
+------------------------------------------------------------- */
+@media (min-width: 768px) {
+  body {
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  main {
+    padding-bottom: 88px; /* desktop player height */
+  }
 }
 
-html.light ::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.25);
+/* ------------------------------------------------------------
+   MOBILE NAV COLLAPSE (SCOPED)
+------------------------------------------------------------- */
+@media (max-width: 767px) {
+  body.player-expanded nav {
+    transform: translateY(100%);
+  }
 }
 
-/* -------------------------------------------------------
-   PREMIUM TICKER (NON-JUMP HOVER)
--------------------------------------------------------- */
-
-/* Outer wrapper isolates layout */
-.wn-ticker-wrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: 1.25rem;
-  overflow: visible;
+/* ------------------------------------------------------------
+   GLOBAL UTILITY ANIMATIONS
+------------------------------------------------------------- */
+@keyframes neonPulse {
+  0% { opacity: 0.45; transform: scaleX(0.92); }
+  50% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0.45; transform: scaleX(0.92); }
 }
 
-/* Inner illusion wrapper — this is what scales, NOT the text */
-.wn-ticker-illusion {
-  display: inline-block;
-  will-change: transform, text-shadow;
-  transition: transform 0.25s ease, text-shadow 0.25s ease, color 0.25s ease;
+.animate-neonPulse {
+  animation: neonPulse 1.2s ease-in-out infinite;
 }
 
-/* Text element — never scales, so no layout shift EVER */
-.wn-ticker-link {
-  position: relative;
-  padding-bottom: 1px;
-  display: inline-block;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Neon underline */
-.wn-ticker-link::after {
-  content: "";
-  position: absolute;
-  left: 0; bottom: -1px;
-  width: 100%;
-  height: 1px;
-  background: #00B3FF;
-  opacity: .8;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s ease;
+.animate-fadeIn {
+  animation: fadeIn 160ms ease-out both;
 }
 
-.wn-ticker-wrapper:hover .wn-ticker-link::after {
-  transform: scaleX(1);
+@keyframes flyoutFade {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-/* Glow and micro-scale (illusion wrapper ONLY) */
-.wn-ticker-wrapper:hover .wn-ticker-illusion {
-  transform: translateZ(0) scale(1.04);
-  text-shadow: 0 0 6px rgba(0, 179, 255, 0.75);
+.animate-flyoutFade {
+  animation: flyoutFade 140ms ease-out both;
 }
 
-/* -------------------------------------------------------
-   APPLE NEWS FADE MASKS
--------------------------------------------------------- */
-
-.wn-ticker-mask {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 60px;
-  pointer-events: none;
-  z-index: 10;
+/* ------------------------------------------------------------
+   REDUCED MOTION (ACCESSIBILITY)
+------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-.wn-ticker-mask-left {
-  left: 0;
-  background: linear-gradient(to right, rgba(15,15,15,1), rgba(15,15,15,0));
+/* ------------------------------------------------------------
+   OPTIONAL TOKEN HELPERS
+------------------------------------------------------------- */
+.text-electric { color: var(--wn-electric); }
+.text-magenta { color: var(--wn-magenta); }
+
+.bg-white\/8 { background-color: rgba(255,255,255,0.08); }
+.bg-white\/12 { background-color: rgba(255,255,255,0.12); }
+
+/* ------------------------------------------------------------
+   PAGE PADDING TOKENS (MATCH MAIN PX CLASSES)
+------------------------------------------------------------- */
+main {
+  --page-padding: 1rem;
 }
 
-.wn-ticker-mask-right {
-  right: 0;
-  background: linear-gradient(to left, rgba(15,15,15,1), rgba(15,15,15,0));
+@media (min-width: 640px) {
+  main { --page-padding: 1.5rem; }
 }
 
-@keyframes tickerLoop {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+@media (min-width: 1024px) {
+  main { --page-padding: 2.5rem; }
 }
 
+@media (min-width: 1280px) {
+  main { --page-padding: 3.5rem; }
+}
+
+@media (min-width: 1536px) {
+  main { --page-padding: 5rem; }
+}

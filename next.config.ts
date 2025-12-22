@@ -1,13 +1,12 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactCompiler: true,
 
   images: {
     domains: [
       "wavenation-cms-1dfs.onrender.com",
       "wavenation-monorepo-qhux.onrender.com",
-      "wavenation.media"
+      "wavenation.media",
     ],
     remotePatterns: [
       {
@@ -24,7 +23,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "wavenation.media",
         pathname: "/api/media/file/**",
-      }
+      },
     ],
   },
 };

@@ -1,0 +1,156 @@
+/* ============================================================
+   FULL CHART — EDITORIAL LEDGER
+============================================================ */
+
+.chart {
+  display: grid;
+  gap: 0.35rem;
+}
+
+/* TOP 10 DIVIDER */
+.top10Divider {
+  margin: 1.2rem 0 0.5rem;
+  text-align: center;
+}
+
+.top10Divider span {
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  font-weight: 800;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ROW */
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1.6fr) 1fr 56px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.04),
+    rgba(255,255,255,0.015)
+  );
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* GHOST RANK */
+.ghostRank {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.04);
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* RANK */
+.rank {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* TRACK */
+.track {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.trackMain {
+  display: flex;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+/* ARTWORK */
+.artwork {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.artwork img {
+  object-fit: cover;
+}
+
+/* TEXT */
+.trackText {
+  min-width: 0;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* SPARKLINE */
+.trend {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* STATS */
+.stats {
+  display: flex;
+  gap: 0.45rem;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.55);
+}
+
+/* MOVEMENT */
+.movement {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.up {
+  color: #39ff14;
+}
+
+.down {
+  color: #ff4d4d;
+}
+
+.new {
+  color: #00bfff;
+}
+
+.flat {
+  color: rgba(255,255,255,0.45);
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 36px minmax(0, 1fr) 48px;
+  }
+
+  .stats {
+    display: none;
+  }
+}

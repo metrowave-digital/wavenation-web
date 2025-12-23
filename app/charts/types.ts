@@ -1,6 +1,7 @@
 export interface ManualTrackInfo {
   title?: string
   artist?: string
+  artwork?: string
 }
 
 export type Movement =

@@ -1,0 +1,147 @@
+/* ============================================================
+   MOBILE TOP 10 SWIPER — EDITORIAL REDESIGN
+   Premium • Cinematic • Billboard-Level
+============================================================ */
+
+.mobileSwiper {
+  margin-top: 1.25rem;
+  position: relative;
+}
+
+/* CARD */
+.swipeCard {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+  border-radius: 22px;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.45);
+  overflow: hidden;
+}
+
+/* INNER GRID */
+.swipeInner {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+/* ARTWORK */
+.swipeArtworkWrap {
+  position: relative;
+}
+
+.swipeArtwork {
+  width: 96px;
+  height: 96px;
+  border-radius: 18px;
+  object-fit: cover;
+  box-shadow:
+    0 10px 28px rgba(0,0,0,0.6);
+}
+
+/* Fallback */
+.swipeArtworkFallback {
+  width: 96px;
+  height: 96px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.08);
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+}
+
+/* INFO */
+.swipeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+/* BIG RANK (EDITORIAL) */
+.swipeRank {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.55);
+}
+
+/* TITLE */
+.swipeTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ARTIST */
+.swipeArtist {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* STATS ROW */
+.miniStats {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  margin-top: 0.2rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* MOVEMENT BADGE */
+.miniMovement {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(255,255,255,0.08);
+}
+
+.miniMovement.up {
+  color: #39ff14;
+}
+
+.miniMovement.down {
+  color: #ff4d4d;
+}
+
+.miniMovement.new {
+  color: #00bfff;
+}
+
+/* DOTS */
+.modernDots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.modernDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  border: none;
+}
+
+.modernDotActive {
+  background: #ffffff;
+}

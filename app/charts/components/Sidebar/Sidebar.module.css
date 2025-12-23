@@ -1,0 +1,138 @@
+/* ============================================================
+   EDITORIAL SIDEBAR
+============================================================ */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* CARD */
+.card {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.05),
+    rgba(255,255,255,0.02)
+  );
+  border-radius: 18px;
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* VARIANTS */
+.brand {
+  border-left: 3px solid #00bfff;
+}
+
+.newsletter {
+  border-left: 3px solid #39ff14;
+}
+
+.ad {
+  opacity: 0.85;
+}
+
+/* EYEBROW */
+.eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 0.25rem;
+}
+
+/* HEADINGS */
+.heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.35rem;
+}
+
+/* BODY */
+.body {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.45;
+  margin-bottom: 0.6rem;
+}
+
+/* SOCIALS */
+.socials {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.socials a {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.socials a:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+/* FORM */
+.form {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.form input {
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 999px;
+  padding: 0.45rem 0.7rem;
+  color: #ffffff;
+  font-size: 0.75rem;
+}
+
+.form button {
+  background: #39ff14;
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* CTAs */
+.primaryCta {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #00bfff;
+  text-decoration: none;
+}
+
+.textLink {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+}
+
+.textLink:hover {
+  text-decoration: underline;
+}
+
+/* AD SLOT */
+.adSlot {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.5);
+}

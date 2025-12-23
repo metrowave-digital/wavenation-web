@@ -1,0 +1,109 @@
+/* ============================================================
+   CHART HIGHLIGHT CARDS — EDITORIAL SYSTEM
+============================================================ */
+
+.card {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+  border-radius: 20px;
+  padding: 1rem 1.1rem 1.1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 16px 38px rgba(0,0,0,0.45);
+  overflow: hidden;
+}
+
+/* BADGES */
+.badgeNew,
+.badgeUp {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+}
+
+.badgeNew {
+  color: #00bfff;
+}
+
+.badgeUp {
+  color: #39ff14;
+}
+
+/* CONTENT */
+.content {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+/* ARTWORK */
+.artworkWrap {
+  position: relative;
+}
+
+.artwork {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.6);
+}
+
+.artworkFallback {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.1);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: rgba(255,255,255,0.7);
+}
+
+/* TEXT */
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* METRIC */
+.metric {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.metric span {
+  font-weight: 700;
+  color: #ffffff;
+}

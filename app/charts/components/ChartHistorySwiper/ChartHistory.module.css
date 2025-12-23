@@ -1,0 +1,151 @@
+/* ============================================================
+   CHART HISTORY — EDITORIAL ARCHIVE
+============================================================ */
+
+.wrapper {
+  margin-top: 2.5rem;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.toggle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+}
+
+/* GROUP */
+.group {
+  margin-bottom: 1.5rem;
+}
+
+.groupLabel {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 0.5rem;
+}
+
+/* SCROLLER */
+.scroller {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: hidden;
+  padding-bottom: 0.25rem;
+}
+
+/* CARD */
+.card {
+  flex: 0 0 260px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+  border-radius: 18px;
+  padding: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* WEEK */
+.week {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+}
+
+/* TOP ROW */
+.topRow {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.artwork {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.artwork img {
+  object-fit: cover;
+}
+
+.topText {
+  min-width: 0;
+}
+
+.topLabel {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.6);
+}
+
+.topTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* LIST */
+.list {
+  margin-top: 0.35rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.list li {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.listRank {
+  font-weight: 700;
+}
+
+.listTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CTA */
+.cta {
+  margin-top: auto;
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: none;
+  border: none;
+  color: #00bfff;
+  cursor: pointer;
+}

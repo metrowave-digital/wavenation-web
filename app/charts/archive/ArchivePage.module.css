@@ -1,0 +1,59 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--page-padding);
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+}
+
+.subhead {
+  font-size: 0.9rem;
+  color: var(--wn-text-muted);
+  margin-top: 0.4rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(260px, 1fr)
+  );
+}
+
+.card {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: 18px;
+  padding: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.badge {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--wn-electric);
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.cardMeta {
+  font-size: 0.75rem;
+  color: var(--wn-text-muted);
+}

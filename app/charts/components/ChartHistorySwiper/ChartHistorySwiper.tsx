@@ -5,23 +5,36 @@ import { motion, useReducedMotion } from "framer-motion"
 import Image from "next/image"
 import styles from "./ChartHistory.module.css"
 
+/* ------------------------------------------------------------
+   Types (aligned with charts)
+------------------------------------------------------------ */
+
+interface ChartHistoryEntry {
+  rank: number
+  manualTrackInfo?: {
+    title?: string
+    artwork?: string | null
+    dominantColor?: string | null
+  } | null
+}
+
 interface ChartSnapshot {
   id: number
   period: string
-  entries: {
-    rank: number
-    manualTrackInfo?: {
-      title?: string
-      artwork?: string
-    } | null
-  }[]
+  entries: ChartHistoryEntry[]
 }
 
 interface Props {
   snapshots: ChartSnapshot[]
 }
 
-export default function ChartHistorySwiper({ snapshots }: Props) {
+/* ------------------------------------------------------------
+   Component
+------------------------------------------------------------ */
+
+export default function ChartHistorySwiper({
+  snapshots,
+}: Props) {
   const prefersReducedMotion = useReducedMotion()
   const [expanded, setExpanded] = useState(true)
 
@@ -71,7 +84,10 @@ export default function ChartHistorySwiper({ snapshots }: Props) {
       {/* BODY */}
       {expanded &&
         grouped.map(([groupLabel, weeks]) => (
-          <section key={groupLabel} className={styles.group}>
+          <section
+            key={groupLabel}
+            className={styles.group}
+          >
             <h4 className={styles.groupLabel}>
               {groupLabel}
             </h4>
@@ -88,6 +104,14 @@ export default function ChartHistorySwiper({ snapshots }: Props) {
                 const topEntry = week.entries.find(
                   (e) => e.rank === 1
                 )
+
+                const artwork =
+                  topEntry?.manualTrackInfo?.artwork ??
+                  null
+
+                const dominantColor =
+                  topEntry?.manualTrackInfo
+                    ?.dominantColor ?? "#111418"
 
                 return (
                   <motion.article
@@ -128,29 +152,48 @@ export default function ChartHistorySwiper({ snapshots }: Props) {
                     {/* #1 SPOTLIGHT */}
                     <div className={styles.topRow}>
                       <div
-                        className={styles.artwork}
+                        className={styles.artworkWrap}
+                        style={{
+                          backgroundColor: dominantColor,
+                        }}
                         aria-hidden="true"
                       >
-                        {topEntry?.manualTrackInfo?.artwork ? (
+                        {artwork ? (
                           <Image
-                            src={
-                              topEntry.manualTrackInfo
-                                .artwork
-                            }
-                            alt=""
+                            src={artwork}
+                            alt={`${topEntry?.manualTrackInfo?.title ?? "Track"} cover`}
                             width={48}
                             height={48}
+                            className={styles.artwork}
                           />
                         ) : (
-                          <span>#1</span>
+                          <span
+                            className={
+                              styles.artworkFallback
+                            }
+                          >
+                            #1
+                          </span>
                         )}
+
+                        {/* BLUR-UP */}
+                        <div
+                          className={styles.artworkBlur}
+                          style={{
+                            backgroundColor:
+                              dominantColor,
+                          }}
+                          aria-hidden
+                        />
                       </div>
 
                       <div className={styles.topText}>
                         <div className={styles.topLabel}>
                           #1 This Week
                         </div>
-                        <strong className={styles.topTitle}>
+                        <strong
+                          className={styles.topTitle}
+                        >
                           {topEntry?.manualTrackInfo
                             ?.title ?? "—"}
                         </strong>
@@ -165,10 +208,18 @@ export default function ChartHistorySwiper({ snapshots }: Props) {
                           <li
                             key={`${week.id}-${entry.rank}`}
                           >
-                            <span className={styles.listRank}>
+                            <span
+                              className={
+                                styles.listRank
+                              }
+                            >
                               #{entry.rank}
                             </span>
-                            <span className={styles.listTitle}>
+                            <span
+                              className={
+                                styles.listTitle
+                              }
+                            >
                               {entry.manualTrackInfo
                                 ?.title ?? "—"}
                             </span>

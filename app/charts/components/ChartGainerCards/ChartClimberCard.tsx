@@ -3,26 +3,7 @@
 import styles from "./GainerCard.module.css"
 import { motion, useReducedMotion } from "framer-motion"
 import Image from "next/image"
-
-/* ------------------------------------------------------------
-   Types
------------------------------------------------------------- */
-
-interface ManualTrackInfo {
-  title?: string
-  artist?: string
-  artwork?: string
-}
-
-export interface ChartEntry {
-  rank: number
-  lastWeek?: number | null
-  manualTrackInfo?: ManualTrackInfo | null
-}
-
-interface ChartClimberCardProps {
-  entries: ChartEntry[]
-}
+import { ChartEntry } from "../../types"
 
 /* ------------------------------------------------------------
    Helpers
@@ -48,9 +29,11 @@ function findBiggestClimber(
    Component
 ------------------------------------------------------------ */
 
-export default function ChartClimberCard({
-  entries,
-}: ChartClimberCardProps) {
+interface Props {
+  entries: ChartEntry[]
+}
+
+export default function ChartClimberCard({ entries }: Props) {
   const climber = findBiggestClimber(entries)
   const prefersReducedMotion = useReducedMotion()
 
@@ -58,6 +41,8 @@ export default function ChartClimberCard({
 
   const jump = climber.lastWeek - climber.rank
   const artwork = climber.manualTrackInfo?.artwork ?? null
+  const dominantColor =
+    climber.manualTrackInfo?.dominantColor ?? "#111418"
 
   return (
     <section
@@ -76,11 +61,14 @@ export default function ChartClimberCard({
 
       <div className={styles.content}>
         {/* ARTWORK */}
-        <div className={styles.artworkWrap}>
+        <div
+          className={styles.artworkWrap}
+          style={{ backgroundColor: dominantColor }}
+        >
           {artwork ? (
             <Image
               src={artwork}
-              alt=""
+              alt={`${climber.manualTrackInfo?.title ?? "Track"} cover`}
               width={72}
               height={72}
               className={styles.artwork}
@@ -88,6 +76,13 @@ export default function ChartClimberCard({
           ) : (
             <div className={styles.artworkFallback}>▲</div>
           )}
+
+          {/* BLUR-UP */}
+          <div
+            className={styles.artworkBlur}
+            style={{ backgroundColor: dominantColor }}
+            aria-hidden
+          />
         </div>
 
         {/* TEXT */}

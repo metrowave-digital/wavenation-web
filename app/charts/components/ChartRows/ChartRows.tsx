@@ -17,7 +17,6 @@ export default function ChartRows({
   return (
     <section
       className={styles.chart}
-      data-wn-chart
       aria-label="Full chart"
     >
       {entries.map((entry) => {
@@ -47,6 +46,10 @@ export default function ChartRows({
             .map((e) => e.rank)
             .concat(entry.rank) ?? [entry.rank]
 
+        const artwork = entry.manualTrackInfo?.artwork ?? null
+        const dominantColor =
+          entry.manualTrackInfo?.dominantColor ?? "#111418"
+
         return (
           <div key={entry.id}>
             {/* TOP 10 DIVIDER */}
@@ -63,7 +66,10 @@ export default function ChartRows({
               aria-label={`Rank ${entry.rank}`}
             >
               {/* GHOST RANK */}
-              <div className={styles.ghostRank} aria-hidden="true">
+              <div
+                className={styles.ghostRank}
+                aria-hidden="true"
+              >
                 {entry.rank}
               </div>
 
@@ -75,22 +81,35 @@ export default function ChartRows({
               {/* TRACK */}
               <div className={styles.track}>
                 <div className={styles.trackMain}>
+                  {/* ARTWORK */}
                   <div
-                    className={styles.artwork}
+                    className={styles.artworkWrap}
+                    style={{ backgroundColor: dominantColor }}
                     aria-hidden="true"
                   >
-                    {entry.manualTrackInfo?.artwork ? (
+                    {artwork ? (
                       <Image
-                        src={entry.manualTrackInfo.artwork}
-                        alt=""
+                        src={artwork}
+                        alt={`${entry.manualTrackInfo?.title ?? "Track"} cover`}
                         width={44}
                         height={44}
+                        className={styles.artwork}
                       />
                     ) : (
-                      <span>♪</span>
+                      <span className={styles.artworkFallback}>
+                        ♪
+                      </span>
                     )}
+
+                    {/* BLUR-UP */}
+                    <div
+                      className={styles.artworkBlur}
+                      style={{ backgroundColor: dominantColor }}
+                      aria-hidden
+                    />
                   </div>
 
+                  {/* TEXT */}
                   <div className={styles.trackText}>
                     <div className={styles.title}>
                       {entry.manualTrackInfo?.title ?? "—"}

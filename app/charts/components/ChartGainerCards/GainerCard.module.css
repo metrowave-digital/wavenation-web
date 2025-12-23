@@ -49,15 +49,27 @@
 /* ARTWORK */
 .artworkWrap {
   position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.artworkBlur {
+  position: absolute;
+  inset: 0;
+  filter: blur(16px);
+  opacity: 0.6;
+  transform: scale(1.1);
+  z-index: 0;
 }
 
 .artwork {
-  width: 72px;
-  height: 72px;
-  border-radius: 16px;
-  object-fit: cover;
-  box-shadow: 0 10px 26px rgba(0,0,0,0.6);
+  position: relative;
+  z-index: 1;
+  border-radius: 14px;
 }
+
 
 .artworkFallback {
   width: 72px;

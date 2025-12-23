@@ -1,8 +1,10 @@
 export interface ManualTrackInfo {
   title?: string
   artist?: string
-  artwork?: string
+  artwork?: string | null
+  dominantColor?: string | null
 }
+
 
 export type Movement =
   | "up"

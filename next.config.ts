@@ -7,7 +7,11 @@ const nextConfig = {
       "wavenation-cms-1dfs.onrender.com",
       "wavenation-monorepo-qhux.onrender.com",
       "wavenation.media",
+
+      // ✅ SPOTIFY CDN
+      "i.scdn.co",
     ],
+
     remotePatterns: [
       {
         protocol: "https",
@@ -23,6 +27,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "wavenation.media",
         pathname: "/api/media/file/**",
+      },
+
+      {
+        protocol: "https",
+        hostname: "i.scdn.co",
+        pathname: "/image/**",
       },
     ],
   },

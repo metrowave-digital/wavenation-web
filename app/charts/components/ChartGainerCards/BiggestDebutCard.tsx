@@ -17,6 +17,8 @@ export default function BiggestDebutCard({ entries }: Props) {
   if (!debut) return null
 
   const artwork = debut.manualTrackInfo?.artwork ?? null
+  const dominantColor =
+    debut.manualTrackInfo?.dominantColor ?? "#111418"
 
   return (
     <section
@@ -35,11 +37,14 @@ export default function BiggestDebutCard({ entries }: Props) {
 
       <div className={styles.content}>
         {/* ARTWORK */}
-        <div className={styles.artworkWrap}>
+        <div
+          className={styles.artworkWrap}
+          style={{ backgroundColor: dominantColor }}
+        >
           {artwork ? (
             <Image
               src={artwork}
-              alt=""
+              alt={`${debut.manualTrackInfo?.title ?? "Track"} cover`}
               width={72}
               height={72}
               priority
@@ -48,6 +53,13 @@ export default function BiggestDebutCard({ entries }: Props) {
           ) : (
             <div className={styles.artworkFallback}>NEW</div>
           )}
+
+          {/* BLUR-UP */}
+          <div
+            className={styles.artworkBlur}
+            style={{ backgroundColor: dominantColor }}
+            aria-hidden
+          />
         </div>
 
         {/* TEXT */}

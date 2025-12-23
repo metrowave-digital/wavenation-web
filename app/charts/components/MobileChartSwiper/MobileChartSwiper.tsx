@@ -1,14 +1,22 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import {
-  motion,
-  AnimatePresence,
-  useReducedMotion,
-} from "framer-motion"
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import Image from "next/image"
 import styles from "./MobileChartSwiper.module.css"
 import { ChartEntry } from "../../types"
+
+/* ------------------------------------------------------------
+   LOCAL SAFE EXTENSION (NO GLOBAL TYPE CHANGE)
+------------------------------------------------------------ */
+
+type TrackInfoWithColor = {
+  dominantColor?: string | null
+}
+
+/* ------------------------------------------------------------
+   COMPONENT
+------------------------------------------------------------ */
 
 interface Props {
   entries: ChartEntry[]
@@ -19,6 +27,10 @@ export default function MobileChartSwiper({
   entries,
   period,
 }: Props) {
+  /* ------------------------------------------------------------
+     PREP SLIDES
+  ------------------------------------------------------------ */
+
   const slides = [...entries]
     .sort((a, b) => a.rank - b.rank)
     .slice(0, 10)
@@ -28,7 +40,7 @@ export default function MobileChartSwiper({
   const prefersReducedMotion = useReducedMotion()
 
   /* ------------------------------------------------------------
-     AUTOPLAY CONTROL
+     AUTOPLAY
   ------------------------------------------------------------ */
 
   const stopAuto = () => {
@@ -43,7 +55,7 @@ export default function MobileChartSwiper({
 
     timerRef.current = setInterval(() => {
       setIndex((i) => (i + 1) % slides.length)
-    }, 4000)
+    }, 4200)
   }
 
   useEffect(() => {
@@ -55,6 +67,10 @@ export default function MobileChartSwiper({
 
   if (!slides.length) return null
 
+  /* ------------------------------------------------------------
+     CURRENT ENTRY
+  ------------------------------------------------------------ */
+
   const entry = slides[index]
 
   const delta =
@@ -62,8 +78,19 @@ export default function MobileChartSwiper({
       ? entry.lastWeek - entry.rank
       : null
 
-  const artwork =
-    entry.manualTrackInfo?.artwork ?? null
+  const artwork = entry.manualTrackInfo?.artwork ?? null
+
+  /**
+   * SAFELY extract dominant color
+   * (works even if ManualTrackInfo doesn't define it)
+   */
+  const dominantColor =
+    (entry.manualTrackInfo as TrackInfoWithColor | null)
+      ?.dominantColor ?? "#111418"
+
+  /* ------------------------------------------------------------
+     RENDER
+  ------------------------------------------------------------ */
 
   return (
     <div
@@ -83,11 +110,9 @@ export default function MobileChartSwiper({
             if (info.offset.x < -80 && index < slides.length - 1) {
               setIndex((i) => i + 1)
             }
-
             if (info.offset.x > 80 && index > 0) {
               setIndex((i) => i - 1)
             }
-
             startAuto()
           }}
           initial={
@@ -106,31 +131,21 @@ export default function MobileChartSwiper({
             ease: "easeOut",
           }}
         >
-          {/* GHOSTED RANK — EDITORIAL BACKDROP */}
-          <div
-            style={{
-              position: "absolute",
-              right: "12px",
-              top: "6px",
-              fontSize: "3.5rem",
-              fontWeight: 800,
-              color: "rgba(255,255,255,0.06)",
-              pointerEvents: "none",
-              lineHeight: 1,
-              zIndex: 0,
-            }}
-          >
+          {/* GHOST RANK */}
+          <div className={styles.ghostRank}>
             {entry.rank}
           </div>
 
-          {/* CONTENT LAYER */}
-          <div className={styles.swipeInner} style={{ position: "relative", zIndex: 1 }}>
+          <div className={styles.swipeInner}>
             {/* ARTWORK */}
-            <div className={styles.swipeArtworkWrap}>
+            <div
+              className={styles.swipeArtworkWrap}
+              style={{ backgroundColor: dominantColor }}
+            >
               {artwork ? (
                 <Image
                   src={artwork}
-                  alt=""
+                  alt={`${entry.manualTrackInfo?.title ?? "Track"} cover`}
                   width={96}
                   height={96}
                   priority={entry.rank <= 3}
@@ -141,6 +156,13 @@ export default function MobileChartSwiper({
                   #{entry.rank}
                 </div>
               )}
+
+              {/* BLUR-UP PLACEHOLDER */}
+              <div
+                className={styles.artworkBlur}
+                style={{ backgroundColor: dominantColor }}
+                aria-hidden
+              />
             </div>
 
             {/* INFO */}
@@ -185,7 +207,7 @@ export default function MobileChartSwiper({
         </motion.div>
       </AnimatePresence>
 
-      {/* PROGRESS DOTS */}
+      {/* DOTS */}
       <div className={styles.modernDots}>
         {slides.map((_, i) => (
           <button

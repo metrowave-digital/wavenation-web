@@ -1,12 +1,13 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { motion, useReducedMotion } from "framer-motion"
+import { useMemo, useRef, useState } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useReducedMotion } from "framer-motion"
 import styles from "./ChartHistory.module.css"
 
 /* ------------------------------------------------------------
-   Types (aligned with charts)
+   Types
 ------------------------------------------------------------ */
 
 interface ChartHistoryEntry {
@@ -26,6 +27,25 @@ interface ChartSnapshot {
 
 interface Props {
   snapshots: ChartSnapshot[]
+  chartFamily: string
+}
+
+/* ------------------------------------------------------------
+   Utilities
+------------------------------------------------------------ */
+
+function periodToDateSlug(period: string) {
+  // Accepts "YYYY-MM-DD" or ISO strings
+  const [year, month, day] = period.split("T")[0].split("-")
+  return `${year}${month}${day}`
+}
+
+
+/* Haptic (safe + optional) */
+function triggerHaptic() {
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    navigator.vibrate(10)
+  }
 }
 
 /* ------------------------------------------------------------
@@ -34,222 +54,224 @@ interface Props {
 
 export default function ChartHistorySwiper({
   snapshots,
+  chartFamily,
 }: Props) {
+  const router = useRouter()
   const prefersReducedMotion = useReducedMotion()
+
   const [expanded, setExpanded] = useState(true)
+
+  const scrollerRef = useRef<HTMLDivElement | null>(null)
+  const lastScrollLeft = useRef(0)
+
+  /* ----------------------------------------------------------
+     Group snapshots by Month + Year
+  ---------------------------------------------------------- */
 
   const grouped = useMemo(() => {
     const map = new Map<string, ChartSnapshot[]>()
 
     snapshots.forEach((snap) => {
-      const date = new Date(snap.period)
-      const key = `${date.getFullYear()} • ${date.toLocaleString(
+      const d = new Date(snap.period)
+      const label = `${d.getFullYear()} • ${d.toLocaleString(
         "en-US",
         { month: "long" }
       )}`
 
-      if (!map.has(key)) map.set(key, [])
-      map.get(key)!.push(snap)
+      if (!map.has(label)) map.set(label, [])
+      map.get(label)!.push(snap)
     })
 
     return Array.from(map.entries())
   }, [snapshots])
 
-  if (!snapshots?.length) return null
+  if (!snapshots.length) return null
+
+  /* ----------------------------------------------------------
+     Render
+  ---------------------------------------------------------- */
 
   return (
-    <section
-      className={styles.wrapper}
-      aria-labelledby="chart-history-heading"
-    >
+    <section className={styles.wrapper}>
       {/* HEADER */}
       <header className={styles.header}>
-        <h3
-          id="chart-history-heading"
-          className={styles.title}
-        >
-          Chart History
-        </h3>
-
+        <h3 className={styles.title}>Chart History</h3>
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
           className={styles.toggle}
+          aria-expanded={expanded}
         >
           {expanded ? "Collapse" : "Expand"}
         </button>
       </header>
 
-      {/* BODY */}
       {expanded &&
         grouped.map(([groupLabel, weeks]) => (
-          <section
-            key={groupLabel}
-            className={styles.group}
-          >
-            <h4 className={styles.groupLabel}>
-              {groupLabel}
-            </h4>
+          <section key={groupLabel} className={styles.group}>
+            <h4 className={styles.groupLabel}>{groupLabel}</h4>
 
-            <motion.div
-              className={styles.scroller}
-              role="list"
-              drag={prefersReducedMotion ? false : "x"}
-              dragConstraints={{ left: -320, right: 0 }}
-              dragElastic={0.08}
-              aria-label={`Charts from ${groupLabel}`}
-            >
-              {weeks.map((week) => {
-                const topEntry = week.entries.find(
-                  (e) => e.rank === 1
-                )
+            <div className={styles.scrollerMask}>
+              <div
+                ref={scrollerRef}
+                className={styles.scroller}
+                onScroll={(e) => {
+                  const el = e.currentTarget
+                  if (
+                    Math.abs(
+                      el.scrollLeft - lastScrollLeft.current
+                    ) > 56 &&
+                    !prefersReducedMotion
+                  ) {
+                    triggerHaptic()
+                    lastScrollLeft.current = el.scrollLeft
+                  }
+                }}
+                onTouchEnd={(e) => {
+                  const el = e.currentTarget
+                  const cardWidth = 260 + 12
+                  const index = Math.round(
+                    el.scrollLeft / cardWidth
+                  )
 
-                const artwork =
-                  topEntry?.manualTrackInfo?.artwork ??
-                  null
+                  el.scrollTo({
+                    left: index * cardWidth,
+                    behavior: "smooth",
+                  })
+                }}
+              >
+                {weeks.map((week) => {
+                  const topEntry = week.entries.find(
+                    (e) => e.rank === 1
+                  )
 
-                const dominantColor =
-                  topEntry?.manualTrackInfo
-                    ?.dominantColor ?? "#111418"
+                  const artwork =
+                    topEntry?.manualTrackInfo?.artwork ??
+                    null
 
-                return (
-                  <motion.article
-                    key={week.id}
-                    className={styles.card}
-                    role="listitem"
-                    whileTap={
-                      prefersReducedMotion
-                        ? undefined
-                        : { scale: 0.96 }
-                    }
-                    initial={
-                      prefersReducedMotion
-                        ? false
-                        : { opacity: 0, y: 10 }
-                    }
-                    animate={
-                      prefersReducedMotion
-                        ? false
-                        : { opacity: 1, y: 0 }
-                    }
-                    transition={{
-                      duration: 0.3,
-                      ease: "easeOut",
-                    }}
-                  >
-                    {/* WEEK */}
-                    <div className={styles.week}>
-                      {new Date(
-                        week.period
-                      ).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </div>
+                  const dominantColor =
+                    topEntry?.manualTrackInfo
+                      ?.dominantColor ?? "#111418"
 
-                    {/* #1 SPOTLIGHT */}
-                    <div className={styles.topRow}>
-                      <div
-                        className={styles.artworkWrap}
-                        style={{
-                          backgroundColor: dominantColor,
-                        }}
-                        aria-hidden="true"
-                      >
-                        {artwork ? (
-                          <Image
-                            src={artwork}
-                            alt={`${topEntry?.manualTrackInfo?.title ?? "Track"} cover`}
-                            width={48}
-                            height={48}
-                            className={styles.artwork}
-                          />
-                        ) : (
-                          <span
-                            className={
-                              styles.artworkFallback
-                            }
-                          >
-                            #1
-                          </span>
-                        )}
+                  return (
+                    <article
+                      key={week.id}
+                      className={styles.card}
+                    >
+                      {/* WEEK */}
+                      <div className={styles.week}>
+                        {new Date(
+                          week.period
+                        ).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </div>
 
-                        {/* BLUR-UP */}
+                      {/* #1 SPOTLIGHT */}
+                      <div className={styles.topRow}>
                         <div
-                          className={styles.artworkBlur}
+                          className={styles.artworkWrap}
                           style={{
                             backgroundColor:
                               dominantColor,
                           }}
-                          aria-hidden
-                        />
-                      </div>
-
-                      <div className={styles.topText}>
-                        <div className={styles.topLabel}>
-                          #1 This Week
-                        </div>
-                        <strong
-                          className={styles.topTitle}
                         >
-                          {topEntry?.manualTrackInfo
-                            ?.title ?? "—"}
-                        </strong>
-                      </div>
-                    </div>
+                          {artwork ? (
+                            <Image
+                              src={artwork}
+                              alt=""
+                              width={48}
+                              height={48}
+                              className={styles.artwork}
+                            />
+                          ) : (
+                            <span
+                              className={
+                                styles.artworkFallback
+                              }
+                            >
+                              #1
+                            </span>
+                          )}
 
-                    {/* TOP 5 LIST */}
-                    <ul className={styles.list}>
-                      {week.entries
-                        .slice(0, 5)
-                        .map((entry) => (
-                          <li
-                            key={`${week.id}-${entry.rank}`}
+                          <div
+                            className={styles.artworkBlur}
+                            style={{
+                              backgroundColor:
+                                dominantColor,
+                            }}
+                            aria-hidden
+                          />
+                        </div>
+
+                        <div className={styles.topText}>
+                          <div className={styles.topLabel}>
+                            #1 This Week
+                          </div>
+                          <strong
+                            className={styles.topTitle}
                           >
-                            <span
-                              className={
-                                styles.listRank
-                              }
-                            >
-                              #{entry.rank}
-                            </span>
-                            <span
-                              className={
-                                styles.listTitle
-                              }
-                            >
-                              {entry.manualTrackInfo
-                                ?.title ?? "—"}
-                            </span>
-                          </li>
-                        ))}
-                    </ul>
+                            {topEntry?.manualTrackInfo
+                              ?.title ?? "—"}
+                          </strong>
+                        </div>
+                      </div>
 
-                    {/* CTA */}
-                    <button
-                      type="button"
-                      className={styles.cta}
-                      onClick={() => {
-                        const params =
-                          new URLSearchParams(
-                            window.location.search
-                          )
-                        params.set(
-                          "week",
-                          week.period
-                        )
-                        window.location.search =
-                          params.toString()
-                      }}
-                    >
-                      View full chart →
-                    </button>
-                  </motion.article>
-                )
-              })}
-            </motion.div>
+                      {/* TOP 5 */}
+                      <ul className={styles.list}>
+                        {week.entries
+                          .slice(0, 5)
+                          .map((entry) => (
+                            <li
+                              key={`${week.id}-${entry.rank}`}
+                            >
+                              <span
+                                className={
+                                  styles.listRank
+                                }
+                              >
+                                #{entry.rank}
+                              </span>
+                              <span
+                                className={
+                                  styles.listTitle
+                                }
+                              >
+                                {entry.manualTrackInfo
+                                  ?.title ?? "—"}
+                              </span>
+                            </li>
+                          ))}
+                      </ul>
+
+                      {/* CTA */}
+                      <button
+  type="button"
+  className={styles.cta}
+  onClick={() => {
+    const slugDate = periodToDateSlug(week.period)
+
+    router.push(
+      `/charts/${chartFamily}-${slugDate}`,
+      { scroll: true }
+    )
+  }}
+>
+  View full chart →
+</button>
+
+                    </article>
+                  )
+                })}
+              </div>
+
+              {/* Swipe Hint */}
+              <div className={styles.swipeHint}>
+                SWIPE →
+              </div>
+            </div>
           </section>
         ))}
     </section>

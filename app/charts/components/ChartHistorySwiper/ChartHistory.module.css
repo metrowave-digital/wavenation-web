@@ -42,30 +42,108 @@
   margin-bottom: 0.5rem;
 }
 
-/* SCROLLER */
+/* ------------------------------------------------------------
+   SCROLLER (MOBILE-NATIVE, NO OVERFLOW)
+------------------------------------------------------------ */
+
 .scroller {
   display: flex;
   gap: 0.75rem;
-  overflow-x: hidden;
-  padding-bottom: 0.25rem;
+
+  width: 100%;
+  max-width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  /* ✅ INTERNAL PADDING — NOT NEGATIVE MARGINS */
+  padding: 0.25rem 1rem 0.75rem;
+
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none; /* Firefox */
 }
 
-/* CARD */
+.scroller::-webkit-scrollbar {
+  display: none; /* iOS / Chrome */
+}
+
+/* ------------------------------------------------------------
+   CARD
+------------------------------------------------------------ */
+
 .card {
   flex: 0 0 260px;
+  scroll-snap-align: start;
+
   background: linear-gradient(
     180deg,
     rgba(255,255,255,0.06),
     rgba(255,255,255,0.02)
   );
+
   border-radius: 18px;
   padding: 0.9rem;
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 14px 36px rgba(0,0,0,0.45);
+
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+
+  /* Peek animation baseline */
+  transform: translateX(0);
+  transition: transform 220ms ease;
 }
+
+/* ------------------------------------------------------------
+   THIS WEEK HIGHLIGHT
+------------------------------------------------------------ */
+
+.card.isCurrent {
+  border-color: rgba(0,191,255,0.55);
+  box-shadow:
+    0 18px 42px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(0,191,255,0.35),
+    0 0 22px rgba(0,191,255,0.25);
+}
+
+/* Badge */
+.currentBadge {
+  align-self: flex-start;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+
+  padding: 0.25rem 0.45rem;
+  border-radius: 999px;
+
+  color: #0b0d0f;
+  background: linear-gradient(
+    135deg,
+    #00bfff,
+    #39ff14
+  );
+
+  margin-bottom: 0.25rem;
+}
+
+/* ------------------------------------------------------------
+   PEEK HINT (FIRST LOAD ONLY)
+------------------------------------------------------------ */
+
+.peekHint {
+  animation: peek-slide 1.6s ease-out 0.6s both;
+}
+
+@keyframes peek-slide {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(-14px); }
+  70%  { transform: translateX(0); }
+  100% { transform: translateX(0); }
+}
+
 
 /* WEEK */
 .week {
@@ -171,4 +249,106 @@
   border: none;
   color: #00bfff;
   cursor: pointer;
+}
+
+/* ------------------------------------------------------------
+   EDGE FADE MASK (ULTRA-SUBTLE)
+------------------------------------------------------------ */
+
+.scrollerMask {
+  position: relative;
+}
+
+/* Left + Right fades */
+.scrollerMask::before,
+.scrollerMask::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Left edge */
+.scrollerMask::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    rgba(11,13,15,0.45),
+    rgba(11,13,15,0.15),
+    rgba(11,13,15,0)
+  );
+}
+
+/* Right edge */
+.scrollerMask::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    rgba(11,13,15,0.45),
+    rgba(11,13,15,0.15),
+    rgba(11,13,15,0)
+  );
+}
+
+/* Mobile tuning */
+@media (max-width: 640px) {
+  .scrollerMask::before,
+  .scrollerMask::after {
+    width: 24px;
+  }
+}
+
+
+/* ------------------------------------------------------------
+   SWIPE HINT (LONGER + CALMER)
+------------------------------------------------------------ */
+
+.swipeHint {
+  margin-top: 0.85rem; /* more breathing room */
+  text-align: right;
+
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+
+  color: rgba(255,255,255,0.55);
+  pointer-events: none;
+
+  animation: swipe-hint 4.6s ease-out 1s forwards;
+}
+
+@keyframes swipe-hint {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateX(-12px);
+  }
+
+  75% {
+    opacity: 1; /* pause moment */
+    transform: translateX(-12px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+}
+
+/* Desktop: hide hint */
+@media (min-width: 768px) {
+  .swipeHint {
+    display: none;
+  }
 }

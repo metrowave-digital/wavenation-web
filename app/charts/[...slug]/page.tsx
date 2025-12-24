@@ -10,6 +10,7 @@ import DroppedSongs from "../components/DroppedSongs/DroppedSongs"
 import ChartHistorySwiper from "../components/ChartHistorySwiper/ChartHistorySwiper"
 import Sidebar from "../components/Sidebar/Sidebar"
 import ChartAnimations from "./ChartAnimations"
+import ScrollToTopOnSlugChange from "../components/ScrollToTopOnSlugChange"
 
 import type { Chart, ChartEntry } from "../types"
 import type { Metadata } from "next/dist/lib/metadata/types/metadata-interface"
@@ -24,7 +25,7 @@ interface PageProps {
 }
 
 /* ============================================================
-   METADATA (SEO + SHARING)
+   METADATA
 ============================================================ */
 
 export async function generateMetadata(
@@ -72,13 +73,16 @@ function getChartFamily(slug: string) {
   return slug.replace(/-\d{8}$/, "")
 }
 
-function getTrackKey(entry: ChartEntry): string {
-  const title =
-    entry.manualTrackInfo?.title?.trim().toLowerCase() ?? ""
-  const artist =
-    entry.manualTrackInfo?.artist?.trim().toLowerCase() ?? ""
-  return `${artist}__${title}`
+function getTrackKey(entry: ChartEntry): string | null {
+  const info = entry.manualTrackInfo
+
+  if (!info?.title || !info?.artist) return null
+
+  return `${info.artist.trim().toLowerCase()}__${info.title
+    .trim()
+    .toLowerCase()}`
 }
+
 
 function getDroppedSongs(
   current: ChartEntry[],
@@ -87,13 +91,18 @@ function getDroppedSongs(
   if (!previous || previous.length === 0) return []
 
   const currentKeys = new Set(
-    current.map(getTrackKey)
+    current
+      .map(getTrackKey)
+      .filter((k): k is string => Boolean(k))
   )
 
-  return previous.filter(
-    (prev) => !currentKeys.has(getTrackKey(prev))
-  )
+  return previous.filter((prev) => {
+    const key = getTrackKey(prev)
+    return key !== null && !currentKeys.has(key)
+  })
 }
+
+
 
 function toWeekLabel(period: string) {
   return new Date(period).toLocaleDateString("en-US", {
@@ -129,11 +138,13 @@ export default async function ChartPage({
      CURRENT CHART
   ------------------------------------------------------------ */
 
-  const res = await fetch(
-    `${API_BASE}/api/charts?where[slug][like]=${chartFamily}-%&sort=-period&limit=1`,
-    { cache: "no-store" }
-  )
+  const isDatedSlug = /-\d{8}$/.test(slug)
 
+  const chartQuery = isDatedSlug
+    ? `${API_BASE}/api/charts?where[slug][equals]=${slug}&limit=1`
+    : `${API_BASE}/api/charts?where[slug][like]=${chartFamily}-%&sort=-period&limit=1`
+
+  const res = await fetch(chartQuery, { cache: "no-store" })
   const data: { docs: Chart[] } = await res.json()
   const chart = data.docs[0]
 
@@ -207,6 +218,7 @@ export default async function ChartPage({
 
   return (
     <main className={styles.page}>
+      <ScrollToTopOnSlugChange />
       <ChartAnimations />
 
       {/* ================= HEADER ================= */}
@@ -262,6 +274,12 @@ export default async function ChartPage({
             }}
             previous={prevChart}
           />
+{/* ===== INLINE AD (Between History & Full Chart) ===== */}
+          <div className={styles.inlineAd}>
+            <div className={styles.adUnit}>
+              Advertisement
+            </div>
+          </div>
 
           <ChartRows
             entries={sortedEntries}
@@ -274,12 +292,21 @@ export default async function ChartPage({
           />
 
           <ChartHistorySwiper
+            chartFamily={chartFamily}
             snapshots={historyData.docs.map((c) => ({
               id: c.id,
               period: c.period,
               entries: c.entries,
             }))}
           />
+
+          {/* ===== INLINE AD (Between History & Full Chart) ===== */}
+          <div className={styles.inlineAd}>
+            <div className={styles.adUnit}>
+              Advertisement
+            </div>
+          </div>
+          
         </section>
 
         {/* -------- SIDEBAR -------- */}
@@ -287,6 +314,7 @@ export default async function ChartPage({
           <Sidebar />
         </aside>
       </div>
+          
     </main>
   )
 }

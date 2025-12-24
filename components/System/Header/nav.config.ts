@@ -1,9 +1,7 @@
-// components/ui/header/navData.ts
-
 export interface NavLink {
   label: string;
   href: string;
-  flyout?: NavLink[]; // optional submenu flyout
+  flyout?: NavLink[];
 }
 
 export interface NavSection {
@@ -16,9 +14,7 @@ export interface NavItem {
   sections: NavSection[];
 }
 
-/* ---------------------------------------------
-   GENRES (Flyout Menu)
----------------------------------------------- */
+/* Charts submenu */
 export const CHART_ITEMS: NavLink[] = [
   { label: "Top 20", href: "/charts/top20" },
   { label: "Rhythmic", href: "/charts/rhythmic" },
@@ -31,13 +27,7 @@ export const CHART_ITEMS: NavLink[] = [
   { label: "Riddim", href: "/charts/riddim" },
 ];
 
-/* ---------------------------------------------
-   FULL MENU STRUCTURE
----------------------------------------------- */
 export const NAV_ITEMS: NavItem[] = [
-  /* ----------------------
-     DISCOVER
-  ----------------------- */
   {
     label: "Discover",
     sections: [
@@ -55,13 +45,7 @@ export const NAV_ITEMS: NavItem[] = [
         links: [
           { label: "Trending", href: "/explore/trending" },
           { label: "New Releases", href: "/explore/new" },
-
-          // Genres with flyout
-          {
-            label: "Charts",
-            href: "/explore/charts",
-            flyout: CHART_ITEMS,
-          },
+          { label: "Charts", href: "/explore/charts", flyout: CHART_ITEMS },
         ],
       },
       {
@@ -73,10 +57,6 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-
-  /* ----------------------
-     ON-AIR
-  ----------------------- */
   {
     label: "On-Air",
     sections: [
@@ -106,10 +86,6 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-
-  /* ----------------------
-     NEWS
-  ----------------------- */
   {
     label: "News",
     sections: [
@@ -124,7 +100,7 @@ export const NAV_ITEMS: NavItem[] = [
         ],
       },
       {
-        title: "Featured Stories",
+        title: "Featured",
         links: [
           { label: "HBCU", href: "/news/hbcu" },
           { label: "Capitol Watch", href: "/news/capitol-watch" },
@@ -134,10 +110,6 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-
-  /* ----------------------
-     WATCH
-  ----------------------- */
   {
     label: "Watch",
     sections: [
@@ -153,10 +125,6 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-
-  /* ----------------------
-     SHOP
-  ----------------------- */
   {
     label: "Shop",
     sections: [
@@ -179,10 +147,6 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-
-  /* ----------------------
-     CONNECT
-  ----------------------- */
   {
     label: "Connect",
     sections: [

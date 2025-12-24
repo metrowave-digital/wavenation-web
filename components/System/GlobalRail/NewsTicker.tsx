@@ -1,8 +1,9 @@
 "use client";
 
-import { Facebook, Instagram, Youtube, X } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState, useRef, useEffect } from "react";
+import { Facebook, Instagram, Youtube, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import styles from "./NewsTicker.module.css";
 import { SOCIAL_LINKS } from "@/config/socialLinks";
 
 /* -------------------------------------------------------
@@ -53,7 +54,7 @@ export default function NewsTicker({ articles }: { articles: Article[] }) {
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   /* -------------------------------------------------------
-     PURE BREAKING DETECTION (NO SIDE EFFECTS)
+     BREAKING DETECTION
   -------------------------------------------------------- */
 
   const cmsBreakingArticle = useMemo(
@@ -62,7 +63,7 @@ export default function NewsTicker({ articles }: { articles: Article[] }) {
   );
 
   /* -------------------------------------------------------
-     BREAKING STATE MACHINE (ESLINT-SAFE)
+     BREAKING STATE MACHINE
   -------------------------------------------------------- */
 
   useEffect(() => {
@@ -71,34 +72,17 @@ export default function NewsTicker({ articles }: { articles: Article[] }) {
       timerRef.current = null;
     }
 
-    // No breaking OR already dismissed → do nothing
-    if (
-      !cmsBreakingArticle ||
-      cmsBreakingArticle.id === dismissedBreakingId
-    ) {
+    if (!cmsBreakingArticle || cmsBreakingArticle.id === dismissedBreakingId) {
       return;
     }
 
-    // New breaking article arrived → clear dismissal (ASYNC)
-    if (
-      dismissedBreakingId &&
-      cmsBreakingArticle.id !== dismissedBreakingId
-    ) {
-      setTimeout(() => {
-        setDismissedBreakingId(null);
-      }, 0);
-    }
-
-    // Show breaking (ASYNC)
     timerRef.current = setTimeout(() => {
       setActiveBreaking(cmsBreakingArticle);
       setShowBreaking(true);
     }, 0);
 
-    // Auto-expire
     timerRef.current = setTimeout(() => {
       setShowBreaking(false);
-
       setTimeout(() => {
         setActiveBreaking(null);
         setDismissedBreakingId(cmsBreakingArticle.id);
@@ -106,15 +90,12 @@ export default function NewsTicker({ articles }: { articles: Article[] }) {
     }, BREAKING_DURATION_MS);
 
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [cmsBreakingArticle, dismissedBreakingId]);
 
   /* -------------------------------------------------------
-     NON-BREAKING TICKER ITEMS
+     NON-BREAKING ITEMS
   -------------------------------------------------------- */
 
   const crawlItems: CrawlItem[] = useMemo(() => {
@@ -133,24 +114,20 @@ export default function NewsTicker({ articles }: { articles: Article[] }) {
   }, [articles]);
 
   /* -------------------------------------------------------
-     DRAG HANDLING
+     DRAG CONTROL
   -------------------------------------------------------- */
 
   const onStart = () => {
     if (activeBreaking) return;
     setIsDragging(true);
-    if (dragRef.current) {
-      dragRef.current.style.animationPlayState = "paused";
-    }
+    dragRef.current?.style.setProperty("animation-play-state", "paused");
   };
 
   const onEnd = () => {
     if (!isDragging || activeBreaking) return;
     setIsDragging(false);
-    if (dragRef.current) {
-      dragRef.current.style.animationPlayState = "running";
-      dragRef.current.style.transform = "";
-    }
+    dragRef.current?.style.setProperty("animation-play-state", "running");
+    dragRef.current?.style.removeProperty("transform");
   };
 
   if (!articles.length) return null;
@@ -160,78 +137,66 @@ export default function NewsTicker({ articles }: { articles: Article[] }) {
   -------------------------------------------------------- */
 
   return (
-    <div className="w-full border-b border-white/10 overflow-hidden">
+    <div className={styles.ticker} role="region" aria-label="WaveNation News Ticker">
 
-      {/* BREAKING BANNER */}
+      {/* BREAKING */}
       {activeBreaking && (
         <Link
           href={`/news/${activeBreaking.slug}`}
-          className={`
-            block bg-[#E92C63] text-white
-            transition-opacity
-            ${showBreaking ? "opacity-100" : "opacity-0"}
-            breaking-pulse
-          `}
+          className={`${styles.breaking} ${
+            showBreaking ? styles.breakingVisible : styles.breakingHidden
+          }`}
           style={{ transitionDuration: `${FADE_DURATION_MS}ms` }}
         >
-          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-4">
-            <span className="text-[10px] font-extrabold tracking-widest uppercase bg-black/30 px-3 py-1 rounded-full">
-              Breaking
-            </span>
-            <span className="text-sm sm:text-base font-semibold truncate">
+          <div className={styles.inner}>
+            <span className={styles.breakingBadge}>BREAKING</span>
+            <span className={styles.breakingTitle}>
               {activeBreaking.title}
             </span>
           </div>
         </Link>
       )}
 
-      {/* STANDARD TICKER */}
+      {/* STANDARD */}
       {!activeBreaking && (
-        <div className="bg-[#0B0D0F]/90 backdrop-blur-xl">
-          <div className="max-w-7xl mx-auto flex items-center px-4 py-2 gap-4">
-
-            <div className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#00B3FF]/10 text-[#00B3FF]">
-              Trending
-            </div>
+        <div className={styles.standard}>
+          <div className={styles.inner}>
+            <span className={styles.trendingBadge}>Trending</span>
 
             <div
-              className="flex-1 overflow-hidden relative h-6"
+              className={styles.crawlMask}
               onPointerDown={onStart}
               onPointerUp={onEnd}
               onPointerLeave={onEnd}
               onTouchStart={onStart}
               onTouchEnd={onEnd}
             >
-              <div className="absolute inset-0 flex items-center whitespace-nowrap">
+              <div className={styles.crawlTrack}>
                 <div
                   ref={dragRef}
-                  className="flex"
-                  style={{ animation: "tickerLoop 130s linear infinite" }}
+                  className={styles.crawl}
+                  style={{ animationDuration: "130s" }}
                 >
-                  {[0, 1].map(track => (
-                    <div key={track} className="flex items-center gap-6">
-                      {crawlItems.map((item, i) =>
-                        item.type === "separator" ? (
-                          <span key={i} className="text-[#00B3FF]/70">•</span>
-                        ) : (
-                          <Link
-                            key={i}
-                            href={`/news/${item.data.slug}`}
-onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
-                            className="text-[11px] sm:text-sm text-white/90 hover:text-[#00B3FF]"
-                          >
-                            {item.data.title}
-                          </Link>
-                        )
-                      )}
-                    </div>
-                  ))}
+                  {crawlItems.map((item, i) =>
+                    item.type === "separator" ? (
+                      <span key={i} className={styles.separator}>•</span>
+                    ) : (
+                      <Link
+  key={i}
+  href={`/news/${item.data.slug}`}
+  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
+  className={styles.headline}
+>
+
+                        {item.data.title}
+                      </Link>
+                    )
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* SOCIAL ICONS */}
-            <div className="hidden sm:flex items-center gap-3 text-white/80">
+            <div className={styles.social}>
               {SOCIAL_LINKS.map(link => {
                 const href =
                   isMobile && link.appUrl ? link.appUrl : link.webUrl;
@@ -250,7 +215,7 @@ onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
                     rel="noopener noreferrer"
                     aria-label={`WaveNation on ${link.name}`}
                   >
-                    <Icon size={14} className="hover:text-[#00B3FF]" />
+                    <Icon size={14} />
                   </a>
                 );
               })}
@@ -258,23 +223,6 @@ onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
           </div>
         </div>
       )}
-
-      <style>{`
-        @keyframes tickerLoop {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-
-        @keyframes breakingPulse {
-          0% { box-shadow: 0 0 0 rgba(233,44,99,.4); }
-          50% { box-shadow: 0 0 14px rgba(233,44,99,.6); }
-          100% { box-shadow: 0 0 0 rgba(233,44,99,.4); }
-        }
-
-        .breaking-pulse {
-          animation: breakingPulse 2.5s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }

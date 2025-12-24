@@ -80,10 +80,6 @@ export default function MobileChartSwiper({
 
   const artwork = entry.manualTrackInfo?.artwork ?? null
 
-  /**
-   * SAFELY extract dominant color
-   * (works even if ManualTrackInfo doesn't define it)
-   */
   const dominantColor =
     (entry.manualTrackInfo as TrackInfoWithColor | null)
       ?.dominantColor ?? "#111418"
@@ -157,7 +153,6 @@ export default function MobileChartSwiper({
                 </div>
               )}
 
-              {/* BLUR-UP PLACEHOLDER */}
               <div
                 className={styles.artworkBlur}
                 style={{ backgroundColor: dominantColor }}
@@ -207,7 +202,10 @@ export default function MobileChartSwiper({
         </motion.div>
       </AnimatePresence>
 
-      {/* DOTS */}
+      {/* --------------------------------------------------------
+         WAVEFORM DOTS (FIXED)
+      -------------------------------------------------------- */}
+
       <div className={styles.modernDots}>
         {slides.map((_, i) => (
           <button
@@ -222,7 +220,12 @@ export default function MobileChartSwiper({
             }}
             aria-label={`Slide ${i + 1}`}
             aria-current={i === index ? "true" : undefined}
-          />
+          >
+            {/* WAVEFORM BARS */}
+            <span />
+            <span />
+            <span />
+          </button>
         ))}
       </div>
     </div>

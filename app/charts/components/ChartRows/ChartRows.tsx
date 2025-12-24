@@ -1,5 +1,6 @@
 "use client"
 
+import { useRef } from "react"
 import styles from "./ChartRows.module.css"
 import Sparkline from "../Sparkline/Sparkline"
 import Image from "next/image"
@@ -10,144 +11,212 @@ interface Props {
   previousEntries?: ChartEntry[] | null
 }
 
+/* ------------------------------------------------------------
+   RANGE BUILDER
+------------------------------------------------------------ */
+
+function buildRanges(entries: ChartEntry[]) {
+  const sorted = [...entries].sort((a, b) => a.rank - b.rank)
+
+  const ranges: {
+    id: string
+    label: string
+    items: ChartEntry[]
+  }[] = []
+
+  const top10 = sorted.filter((e) => e.rank <= 10)
+  if (top10.length) {
+    ranges.push({
+      id: "top-10",
+      label: "Top 10",
+      items: top10,
+    })
+  }
+
+  let start = 11
+  while (start <= sorted.length) {
+    const end = Math.min(start + 19, sorted.length)
+    const items = sorted.filter(
+      (e) => e.rank >= start && e.rank <= end
+    )
+
+    if (items.length) {
+      ranges.push({
+        id: `range-${start}-${end}`,
+        label: `Ranked ${start}–${end}`,
+        items,
+      })
+    }
+
+    start += 20
+  }
+
+  return ranges
+}
+
+/* ------------------------------------------------------------
+   COMPONENT
+------------------------------------------------------------ */
+
 export default function ChartRows({
   entries,
   previousEntries,
 }: Props) {
-  return (
-    <section
-      className={styles.chart}
-      aria-label="Full chart"
-    >
-      {entries.map((entry) => {
-        const delta =
-          typeof entry.lastWeek === "number"
-            ? entry.lastWeek - entry.rank
-            : null
+  const ranges = buildRanges(entries)
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
-        const movementClass =
-          entry.movement === "new"
-            ? styles.new
-            : delta !== null
-            ? delta > 0
-              ? styles.up
-              : styles.down
-            : styles.flat
+  const scrollToRange = (id: string) => {
+    const el = sectionRefs.current[id]
+    if (!el) return
 
-        const trend =
-          previousEntries
-            ?.filter(
-              (e) =>
-                e.manualTrackInfo?.title ===
-                  entry.manualTrackInfo?.title &&
-                e.manualTrackInfo?.artist ===
-                  entry.manualTrackInfo?.artist
-            )
-            .map((e) => e.rank)
-            .concat(entry.rank) ?? [entry.rank]
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    })
+  }
 
-        const artwork = entry.manualTrackInfo?.artwork ?? null
-        const dominantColor =
-          entry.manualTrackInfo?.dominantColor ?? "#111418"
+  const renderRow = (entry: ChartEntry) => {
+    const delta =
+      typeof entry.lastWeek === "number"
+        ? entry.lastWeek - entry.rank
+        : null
 
-        return (
-          <div key={entry.id}>
-            {/* TOP 10 DIVIDER */}
-            {entry.rank === 11 && (
-              <div className={styles.top10Divider}>
-                <span>TOP 10</span>
-              </div>
-            )}
+    const movementClass =
+      entry.movement === "new"
+        ? styles.new
+        : delta !== null
+        ? delta > 0
+          ? styles.up
+          : styles.down
+        : styles.flat
 
-            {/* ROW */}
+    const trend =
+      previousEntries
+        ?.filter(
+          (e) =>
+            e.manualTrackInfo?.title ===
+              entry.manualTrackInfo?.title &&
+            e.manualTrackInfo?.artist ===
+              entry.manualTrackInfo?.artist
+        )
+        .map((e) => e.rank)
+        .concat(entry.rank) ?? [entry.rank]
+
+    const artwork = entry.manualTrackInfo?.artwork ?? null
+    const dominantColor =
+      entry.manualTrackInfo?.dominantColor ?? "#111418"
+
+    return (
+      <div key={entry.id} className={styles.row}>
+        <div className={styles.ghostRank} aria-hidden>
+          {entry.rank}
+        </div>
+
+        <div className={styles.rank}>{entry.rank}</div>
+
+        <div className={styles.track}>
+          <div className={styles.trackMain}>
             <div
-              className={styles.row}
-              role="group"
-              aria-label={`Rank ${entry.rank}`}
+              className={styles.artworkWrap}
+              style={{ backgroundColor: dominantColor }}
             >
-              {/* GHOST RANK */}
+              {artwork ? (
+                <Image
+                  src={artwork}
+                  alt={`${entry.manualTrackInfo?.title ?? "Track"} cover`}
+                  width={44}
+                  height={44}
+                  className={styles.artwork}
+                />
+              ) : (
+                <span className={styles.artworkFallback}>♪</span>
+              )}
               <div
-                className={styles.ghostRank}
-                aria-hidden="true"
-              >
-                {entry.rank}
+                className={styles.artworkBlur}
+                style={{ backgroundColor: dominantColor }}
+                aria-hidden
+              />
+            </div>
+
+            <div className={styles.trackText}>
+              <div className={styles.trackTitle}>
+                {entry.manualTrackInfo?.title ?? "—"}
               </div>
-
-              {/* RANK */}
-              <div className={styles.rank}>
-                {entry.rank}
-              </div>
-
-              {/* TRACK */}
-              <div className={styles.track}>
-                <div className={styles.trackMain}>
-                  {/* ARTWORK */}
-                  <div
-                    className={styles.artworkWrap}
-                    style={{ backgroundColor: dominantColor }}
-                    aria-hidden="true"
-                  >
-                    {artwork ? (
-                      <Image
-                        src={artwork}
-                        alt={`${entry.manualTrackInfo?.title ?? "Track"} cover`}
-                        width={44}
-                        height={44}
-                        className={styles.artwork}
-                      />
-                    ) : (
-                      <span className={styles.artworkFallback}>
-                        ♪
-                      </span>
-                    )}
-
-                    {/* BLUR-UP */}
-                    <div
-                      className={styles.artworkBlur}
-                      style={{ backgroundColor: dominantColor }}
-                      aria-hidden
-                    />
-                  </div>
-
-                  {/* TEXT */}
-                  <div className={styles.trackText}>
-                    <div className={styles.title}>
-                      {entry.manualTrackInfo?.title ?? "—"}
-                    </div>
-                    <div className={styles.artist}>
-                      {entry.manualTrackInfo?.artist ?? "—"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* SPARKLINE */}
-                <div className={styles.trend}>
-                  <Sparkline ranks={trend} />
-                </div>
-              </div>
-
-              {/* STATS */}
-              <div className={styles.stats}>
-                <span>LW {entry.lastWeek ?? "—"}</span>
-                <span>PK {entry.peak ?? "—"}</span>
-                <span>WOC {entry.weeksOnChart ?? "—"}</span>
-              </div>
-
-              {/* MOVEMENT */}
-              <div
-                className={`${styles.movement} ${movementClass}`}
-                aria-label="Chart movement"
-              >
-                {entry.movement === "new"
-                  ? "NEW"
-                  : delta !== null
-                  ? `${delta > 0 ? "▲" : "▼"} ${Math.abs(delta)}`
-                  : "—"}
+              <div className={styles.artist}>
+                {entry.manualTrackInfo?.artist ?? "—"}
               </div>
             </div>
           </div>
-        )
-      })}
+
+          <div className={styles.trend}>
+            <Sparkline ranks={trend} />
+          </div>
+        </div>
+
+        <div className={styles.stats}>
+          <span>LW {entry.lastWeek ?? "—"}</span>
+          <span>PK {entry.peak ?? "—"}</span>
+          <span>WOC {entry.weeksOnChart ?? "—"}</span>
+        </div>
+
+        <div className={`${styles.movement} ${movementClass}`}>
+          {entry.movement === "new"
+            ? "NEW"
+            : delta !== null
+            ? `${delta > 0 ? "▲" : "▼"} ${Math.abs(delta)}`
+            : "—"}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <section className={styles.chart} aria-label="Full chart">
+      <header className={styles.header}>
+        <h2 className={styles.title}>Full Chart</h2>
+
+        <select
+          className={styles.jumpSelect}
+          onChange={(e) => {
+            if (e.target.value) scrollToRange(e.target.value)
+          }}
+        >
+          <option value="">Jump to…</option>
+          {ranges.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.label}
+            </option>
+          ))}
+        </select>
+      </header>
+
+      {ranges.map((range) => (
+        <div
+          key={range.id}
+          ref={(el) => {
+            sectionRefs.current[range.id] = el
+          }}
+          className={styles.rangeSection}
+        >
+          <div className={styles.rangeHeader}>
+            <span className={styles.rangeLabel}>
+              {range.label}
+            </span>
+          </div>
+
+          <div className={styles.section}>
+            {range.items.map(renderRow)}
+          </div>
+
+          {range.id !== "top-10" && (
+            <div className={styles.rangeAd}>
+              <div className={styles.adUnit}>
+                Advertisement
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
     </section>
   )
 }

@@ -19,7 +19,7 @@
 
 .swipeCard {
   position: relative;
-  width: 100%;                /* 🔒 REQUIRED */
+  width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 
@@ -75,11 +75,9 @@
   overflow: hidden;
   flex-shrink: 0;
 
-  /* 🔒 CONTAINS BLUR PAINT */
   contain: paint;
 }
 
-/* BLUR-UP BACKPLATE */
 .artworkBlur {
   position: absolute;
   inset: 0;
@@ -90,7 +88,6 @@
   z-index: 0;
 }
 
-/* IMAGE */
 .swipeArtwork {
   position: relative;
   z-index: 1;
@@ -101,7 +98,6 @@
   box-shadow: 0 10px 28px rgba(0,0,0,0.6);
 }
 
-/* FALLBACK */
 .swipeArtworkFallback {
   width: 96px;
   height: 96px;
@@ -125,14 +121,12 @@
   min-width: 0;
 }
 
-/* RANK */
 .swipeRank {
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   color: rgba(255,255,255,0.55);
 }
 
-/* TITLE */
 .swipeTitle {
   font-size: 1.05rem;
   font-weight: 600;
@@ -143,7 +137,6 @@
   text-overflow: ellipsis;
 }
 
-/* ARTIST */
 .swipeArtist {
   font-size: 0.85rem;
   color: rgba(255,255,255,0.65);
@@ -152,7 +145,6 @@
   text-overflow: ellipsis;
 }
 
-/* STATS */
 .miniStats {
   display: flex;
   gap: 0.6rem;
@@ -176,47 +168,109 @@
   background: rgba(255,255,255,0.08);
 }
 
-.miniMovement.up {
-  color: #39ff14;
-}
-
-.miniMovement.down {
-  color: #ff4d4d;
-}
-
-.miniMovement.new {
-  color: #00bfff;
-}
+.miniMovement.up   { color: #39ff14; }
+.miniMovement.down { color: #ff4d4d; }
+.miniMovement.new  { color: #00bfff; }
 
 /* ------------------------------------------------------------
-   DOTS
+   DOTS — WAVEFORM PAGINATION (FINAL)
 ------------------------------------------------------------ */
 
 .modernDots {
   display: flex;
   justify-content: center;
-  gap: 0.4rem;
+  align-items: flex-end;
+  gap: 0.6rem;
   margin-top: 0.75rem;
 }
 
+/* One waveform unit */
 .modernDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+
+  height: 14px;
+  background: transparent;
   border: none;
+  padding: 0;
 }
 
-.modernDotActive {
-  background: #ffffff;
+/* Wave bars */
+.modernDot span {
+  width: 3px;
+  height: 6px;
+  border-radius: 2px;
+
+  background: rgba(255,255,255,0.35);
+
+  transition:
+    height 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 180ms ease;
+}
+
+/* Idle waveform */
+.modernDot span:nth-child(1) { height: 6px; }
+.modernDot span:nth-child(2) { height: 10px; }
+.modernDot span:nth-child(3) { height: 7px; }
+
+/* ACTIVE — SIGNAL PULSE */
+.modernDotActive span {
+  background: linear-gradient(
+    to top,
+    #00bfff,
+    #39ff14
+  );
+
+  box-shadow:
+    0 0 6px rgba(0,191,255,0.55),
+    0 0 10px rgba(57,255,20,0.35);
+}
+
+.modernDotActive span:nth-child(1) { height: 10px; }
+.modernDotActive span:nth-child(2) { height: 16px; }
+.modernDotActive span:nth-child(3) { height: 12px; }
+
+/* Hover polish */
+@media (hover: hover) {
+  .modernDot:hover span {
+    background: rgba(255,255,255,0.6);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .modernDot span {
+    transition: none;
+  }
 }
 
 /* ------------------------------------------------------------
-   SAFARI-SPECIFIC CLAMP (LAST RESORT)
+   SAFARI-SPECIFIC CLAMP
 ------------------------------------------------------------ */
 
 @supports (-webkit-touch-callout: none) {
   .mobileSwiper {
     overflow-x: clip;
+  }
+}
+
+/* ------------------------------------------------------------
+   MOBILE TUNING
+------------------------------------------------------------ */
+
+@media (max-width: 640px) {
+  .modernDots {
+    gap: 0.45rem;
+  }
+
+  .modernDot {
+    height: 12px;
+  }
+
+  .modernDot span {
+    width: 2.5px;
   }
 }

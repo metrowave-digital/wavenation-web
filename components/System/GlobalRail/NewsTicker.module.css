@@ -1,0 +1,162 @@
+/* ============================================================
+   WAVENATION — NEWS TICKER (EDITORIAL / PREMIUM)
+============================================================ */
+
+.ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 100;
+
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+/* ------------------------------------------------------------
+   SHARED
+------------------------------------------------------------ */
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 36px;
+}
+
+.separator {
+  color: rgba(0,179,255,0.6);
+  margin: 0 12px;
+}
+
+/* ------------------------------------------------------------
+   BREAKING
+------------------------------------------------------------ */
+
+.breaking {
+  display: block;
+  background: rgba(233,44,99,0.95);
+  color: #fff;
+  text-decoration: none;
+}
+
+.breakingVisible {
+  opacity: 1;
+}
+
+.breakingHidden {
+  opacity: 0;
+}
+
+.breakingBadge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.25);
+}
+
+.breakingTitle {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------------------------------------
+   STANDARD
+------------------------------------------------------------ */
+
+.standard {
+  background: rgba(11,13,15,0.92);
+  backdrop-filter: blur(12px);
+}
+
+.trendingBadge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  background: rgba(0,179,255,0.12);
+  color: #00B3FF;
+}
+
+/* ------------------------------------------------------------
+   CRAWL
+------------------------------------------------------------ */
+
+.crawlMask {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  height: 18px;
+  cursor: grab;
+}
+
+.crawlTrack {
+  position: absolute;
+  inset: 0;
+  white-space: nowrap;
+}
+
+.crawl {
+  display: inline-flex;
+  align-items: center;
+  animation-name: tickerLoop;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.headline {
+  font-size: 12px;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.headline:hover {
+  color: #00B3FF;
+}
+
+/* ------------------------------------------------------------
+   SOCIAL
+------------------------------------------------------------ */
+
+.social {
+  display: none;
+  gap: 12px;
+  color: rgba(255,255,255,0.75);
+}
+
+.social a:hover {
+  color: #00B3FF;
+}
+
+/* ------------------------------------------------------------
+   ANIMATION
+------------------------------------------------------------ */
+
+@keyframes tickerLoop {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+------------------------------------------------------------ */
+
+@media (min-width: 768px) {
+  .social {
+    display: flex;
+  }
+}

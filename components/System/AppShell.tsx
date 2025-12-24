@@ -32,14 +32,19 @@ export default function AppShell({ children, articles }: AppShellProps) {
         />
 
         <WNThemeProvider>
-          {/* GLOBAL NEWS */}
-          <NewsTicker articles={articles} />
+          {/* FIXED GLOBAL CHROME */}
+<div id="global-chrome">
+  <NewsTicker articles={articles} />
+  <HeaderSystem />
+</div>
 
-          {/* GLOBAL HEADER */}
-          <HeaderSystem />
 
           {/* 🔑 PAGE ROOT — NO PADDING */}
-          <main id="content" className="relative min-h-screen">
+<main
+  id="content"
+  className="relative min-h-screen"
+  style={{ paddingTop: "152px" }} 
+>
             {children}
           </main>
 

@@ -1,0 +1,586 @@
+/* ============================================================
+   WAVENATION HEADER SYSTEM — PREMIUM / EDITORIAL-FIRST
+   - Collapses Brand row on scroll (nav remains)
+   - Mobile minimal (logo + hamburger + search)
+   - Desktop mega menu click-to-open
+============================================================ */
+
+.header {
+  position: fixed;
+  top: 36px;
+  left: 0;
+  right: 0;
+
+  z-index: 90;
+
+  background: rgba(11,13,15,0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  transform: translateZ(0);
+}
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ------------------------------------------------------------
+   BRAND ROW (COLLAPSES)
+------------------------------------------------------------ */
+
+.brandRow {
+  transition:
+    height 220ms cubic-bezier(.4,0,.2,1),
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(.4,0,.2,1);
+  height: 60px;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+}
+
+.isCollapsed .brandRow {
+  height: 0px;
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* BrandBar layout */
+.brandBar {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brandLockup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.logo {
+  display: block;
+  filter: drop-shadow(0 0 0 rgba(0,0,0,0));
+}
+
+.brandText {
+  line-height: 1.05;
+}
+
+.brandName {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 16px;
+}
+
+.brandSub {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ------------------------------------------------------------
+   MAIN ROW
+------------------------------------------------------------ */
+
+.mainRow {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+/* Optional page menu row (tabs/filters/etc.) */
+.pageMenuRow {
+  padding: 10px 0 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ------------------------------------------------------------
+   PRIMARY NAV (DESKTOP)
+------------------------------------------------------------ */
+
+.primaryNavWrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  z-index: 5;
+}
+
+.primaryNav {
+  display: none;
+  align-items: center;
+  gap: 22px;
+}
+
+.navItem {
+  position: relative;
+}
+
+.navButton {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 10px 6px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.navChevron {
+  margin-left: 7px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ------------------------------------------------------------
+   MEGA MENU
+------------------------------------------------------------ */
+
+.megaWrap {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 20;
+}
+
+.megaPanel {
+  min-width: 720px;
+  border-radius: 18px;
+
+  background: rgba(17, 20, 24, 0.86);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+
+  overflow: hidden;
+}
+
+.megaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 14px 10px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.megaTitle {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 700;
+}
+
+.megaClose {
+  appearance: none;
+  border: 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.megaClose:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.megaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 14px 16px 10px;
+}
+
+.megaCol {
+  min-width: 0;
+}
+
+.megaSectionTitle {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.megaList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.megaListItem {
+  position: relative;
+}
+
+.megaLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  text-decoration: none;
+  padding: 10px 10px;
+  border-radius: 12px;
+
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.megaLink:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.10);
+  transform: translateY(-1px);
+}
+
+.flyoutArrow {
+  color: rgba(255, 255, 255, 0.40);
+}
+
+.flyout {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 10px);
+  z-index: 95;
+}
+
+.flyoutPanel {
+  min-width: 220px;
+  border-radius: 16px;
+  background: rgba(17, 20, 24, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  padding: 12px 12px 10px;
+}
+
+.flyoutTitle {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 800;
+  margin: 2px 2px 10px;
+}
+
+.flyoutList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.flyoutLink {
+  display: block;
+  text-decoration: none;
+  padding: 9px 10px;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.flyoutLink:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+.megaFooter {
+  padding: 10px 16px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.megaGhost {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.megaGhost:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ------------------------------------------------------------
+   UTILITY BAR
+------------------------------------------------------------ */
+
+.utilityWrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  z-index: 3;
+}
+
+.utilityDesktop {
+  display: none;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ------------------------------------------------------------
+   MOBILE UTILITY BAR LAYOUT
+------------------------------------------------------------ */
+.utilityMobile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 👈 LEFT / RIGHT */
+  width: 100%;
+  gap: 12px;
+}
+
+.iconButton {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.88);
+  border-radius: 14px;
+  padding: 10px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  text-decoration: none;
+}
+
+.iconButton:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.iconWithDot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dot {
+  position: absolute;
+  right: -1px;
+  top: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(233, 44, 99, 1);
+  box-shadow: 0 0 0 2px rgba(11, 13, 15, 1);
+}
+
+/* ------------------------------------------------------------
+   SEARCH MODAL
+------------------------------------------------------------ */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: grid;
+  place-items: start center;
+  padding: 90px 16px 16px;
+}
+
+.modalBackdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+}
+
+.modal {
+  position: relative;
+  width: min(720px, 100%);
+  border-radius: 18px;
+  background: rgba(17, 20, 24, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.60);
+  overflow: hidden;
+}
+
+.modalTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modalTitle {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 800;
+}
+
+.modalClose {
+  appearance: none;
+  border: 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.modalBody {
+  padding: 14px 16px 16px;
+}
+
+.searchInput {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  padding: 12px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.searchHintRow {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.searchHint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.50);
+}
+
+.searchLink {
+  font-size: 12px;
+  text-decoration: none;
+  color: rgba(0, 179, 255, 0.90);
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS
+------------------------------------------------------------ */
+
+@media (min-width: 768px) {
+  .primaryNav {
+    display: flex;
+  }
+
+    .utilityWrap {
+    flex-shrink: 0;       
+    width: auto;  
+    }
+
+  .utilityDesktop {
+    display: flex;
+  }
+
+  .utilityMobile {
+    display: none;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .brandName {
+    font-size: 15px;
+  }
+  .surfacePill,
+  .surfacePillMuted {
+    padding: 7px 10px;
+    font-size: 10px;
+  }
+  .megaWrap {
+    display: none; /* mega menu is desktop-only */
+  }
+}
+
+@media (max-width: 767px) {
+  .brandRow {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   MOBILE BRAND HEADER (UTILITY BAR)
+------------------------------------------------------------ */
+
+/* LEFT — BRAND */
+.mobileBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+  min-width: 0; /* prevents overflow push */
+}
+
+.mobileBrandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.mobileBrandName {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.mobileBrandSub {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+/* RIGHT — ACTIONS */
+.mobileActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* 👈 prevents brand from pushing icons */
+}
+

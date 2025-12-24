@@ -1,116 +1,83 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { NavItem, NavLink } from "./nav.config";
+import styles from "./Header.module.css";
 
-interface MegaMenuProps {
-  item: NavItem | null;
-}
-
-export default function MegaMenu({ item }: MegaMenuProps) {
+export default function MegaMenu({
+  item,
+  onClose,
+}: {
+  item: NavItem;
+  onClose: () => void;
+}) {
   const [flyout, setFlyout] = useState<NavLink | null>(null);
 
-  if (!item) return null;
+  const hasFlyout = useMemo(() => {
+    return item.sections.some((s) => s.links.some((l) => l.flyout?.length));
+  }, [item]);
 
   return (
-    <div className="absolute top-full left-0 z-40 pt-2 animate-fadeIn">
-      {/* Invisible map above entire menu (for safe hover zone) */}
-      <div className="absolute -top-2 left-0 right-0 h-5"></div>
+    <div className={styles.megaWrap} role="dialog" aria-label={`${item.label} menu`}>
+      <div className={styles.megaPanel}>
+        <div className={styles.megaHeader}>
+          <div className={styles.megaTitle}>{item.label}</div>
+          <button type="button" className={styles.megaClose} onClick={onClose} aria-label="Close">
+            ✕
+          </button>
+        </div>
 
-      <div
-        className="
-          relative flex gap-6
-          bg-white/5 backdrop-blur-xl
-          border border-white/15 rounded-2xl
-          shadow-xl px-5 py-4
-          min-w-max
-        "
-      >
-        {item.sections.map((section) => (
-          <div key={section.title} className="min-w-[160px] whitespace-nowrap relative">
-            <h3 className="text-xs font-semibold tracking-widest text-electric uppercase mb-2">
-              {section.title}
-            </h3>
+        <div className={styles.megaGrid} data-has-flyout={hasFlyout ? "true" : "false"}>
+          {item.sections.map((section) => (
+            <div key={section.title} className={styles.megaCol}>
+              <div className={styles.megaSectionTitle}>{section.title}</div>
 
-            <ul className="space-y-1.5">
-              {section.links.map((link) => (
-                <li
-                  key={link.href}
-                  className="relative group"
-                  onMouseEnter={() => setFlyout(link.flyout ? link : null)}
-                  onMouseLeave={() =>
-                    setFlyout((prev) =>
-                      prev?.label === link.label ? null : prev
-                    )
-                  }
-                >
-                  <div className="flex items-center justify-between">
-                    <Link
-                      href={link.href}
-                      className="
-                        block text-sm text-white/90
-                        group-hover:text-electric transition-colors
-                      "
+              <ul className={styles.megaList}>
+                {section.links.map((link) => {
+                  const isFlyout = Boolean(link.flyout?.length);
+
+                  return (
+                    <li
+                      key={link.href}
+                      className={styles.megaListItem}
+                      onMouseEnter={() => setFlyout(isFlyout ? link : null)}
+                      onMouseLeave={() => setFlyout((prev) => (prev?.href === link.href ? null : prev))}
                     >
-                      {link.label}
-                    </Link>
+                      <Link href={link.href} className={styles.megaLink} onClick={onClose}>
+                        <span>{link.label}</span>
+                        {isFlyout ? <span className={styles.flyoutArrow}>›</span> : null}
+                      </Link>
 
-                    {link.flyout && (
-                      <span
-                        className="
-                          text-white/40 group-hover:text-electric
-                          ml-2 text-xs transition-transform
-                          group-hover:translate-x-[3px]
-                        "
-                      >
-                        ▶
-                      </span>
-                    )}
-                  </div>
+                      {isFlyout && flyout?.href === link.href ? (
+                        <div className={styles.flyout}>
+                          <div className={styles.flyoutPanel}>
+                            <div className={styles.flyoutTitle}>{link.label}</div>
+                            <ul className={styles.flyoutList}>
+                              {link.flyout!.map((sub) => (
+                                <li key={sub.href}>
+                                  <Link href={sub.href} className={styles.flyoutLink} onClick={onClose}>
+                                    {sub.label}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
 
-                  {/* Flyout submenu – TOUCHING the menu item */}
-                  {flyout?.label === link.label && flyout.flyout && (
-                    <div
-                      className="
-                        absolute top-0 left-[98%]
-                        z-50 animate-flyoutFade
-                      "
-                    >
-                      {/* Invisible hover bridge */}
-                      <div className="absolute left-[-18px] w-10 h-full"></div>
-
-                      <div
-                        className="
-                          bg-white/5 backdrop-blur-xl
-                          border border-white/15 rounded-2xl
-                          shadow-xl px-4 py-4
-                          min-w-[160px]
-                        "
-                      >
-                        <ul className="space-y-1.5">
-                          {flyout.flyout.map((sub) => (
-                            <li key={sub.href}>
-                              <Link
-                                href={sub.href}
-                                className="
-                                  block text-sm text-white/90
-                                  hover:text-electric transition-colors
-                                "
-                              >
-                                {sub.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <div className={styles.megaFooter}>
+          <button type="button" className={styles.megaGhost} onClick={onClose}>
+            Close menu
+          </button>
+        </div>
       </div>
     </div>
   );
